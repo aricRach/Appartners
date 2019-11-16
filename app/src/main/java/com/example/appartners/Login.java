@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
@@ -45,37 +46,41 @@ public class Login extends AppCompatActivity {
             @Override
             public void onClick(View v) {
             //    Toast.makeText(Login.this, "HI your mail is: "+text_name.getText().toString(), Toast.LENGTH_SHORT).show();
+                String userName=editUserName.getText().toString();
+                String pass=editPassword.getText().toString();
+
+                Map<String,Object> note = new HashMap<>();
+                note.put(Key_Username,userName);
+                note.put(Key_password,pass);
+
+                db.collection("notebook").document("my first note").set(note)
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+
+                                Toast.makeText(Login.this, "success", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+
+                                Toast.makeText(Login.this, "Fail", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+
             }
         });
     }
 
     public void goToReg(View view){
 
-        String userName=editUserName.getText().toString();
-        String pass=editPassword.getText().toString();
 
-        Map<String,Object> note = new HashMap<>();
-        note.put(Key_Username,userName);
-        note.put(Key_password,pass);
+        Intent intent=new Intent(this,register.class);
 
-         db.collection("notebook").document("my first note").set(note)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-
-                        Toast.makeText(Login.this, "success", Toast.LENGTH_SHORT).show();
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-
-                        Toast.makeText(Login.this, "Fail", Toast.LENGTH_SHORT).show();
-                    }
-                });
-
-
+        startActivity(intent);
         Toast.makeText(this, "Clicked on Button", Toast.LENGTH_LONG).show();
+
 
 
     }
