@@ -8,7 +8,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,88 +28,74 @@ import java.util.Map;
 public class Login extends AppCompatActivity {
 
 
-    private EditText editUserName;
-    private EditText editPassword;
-
-    private FirebaseAuth mAuth;
-    FirebaseAuth.AuthStateListener mAuthListener;
+    EditText mEmail, mPassword;
+    Button mLoginBtn;
+    TextView mCreateBtn;
+    ProgressBar progressBar;
+    FirebaseAuth fAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        mAuth=FirebaseAuth.getInstance();
+        mEmail = findViewById(R.id.Email);
+        mPassword = findViewById(R.id.password);
+        progressBar = findViewById(R.id.progressBar);
+        fAuth = FirebaseAuth.getInstance();
+        mLoginBtn = findViewById(R.id.loginBtn);
+        mCreateBtn = findViewById(R.id.createText);
 
-        CardView card_view = (CardView) findViewById(R.id.LoginCard); // creating a CardView and assigning a value.
-
-        editUserName= (EditText)findViewById(R.id.EmailText);
-        editPassword= (EditText)findViewById(R.id.passText);
-
-        mAuthListener = new FirebaseAuth.AuthStateListener() {
+        mLoginBtn.setOnClickListener(new View.OnClickListener(){
             @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+            public void onClick(View v){
 
+                String email = mEmail.getText().toString().trim();
+                String password = mPassword.getText().toString().trim();
 
-                if (firebaseAuth.getCurrentUser()!=null){
-
-                    //goToReg(); //if i allow this it will take me to registration page but cant go back to login because
-                    // i already logged in ! need to fix it!! because it on "onCreate" function
+                if(TextUtils.isEmpty(email)){
+                    mEmail.setError("Email is Required.");
+                    return;
                 }
-            }
-        };
 
-        card_view.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+                if(TextUtils.isEmpty(password)){
+                    mPassword.setError("Password is Required.");
+                    return;
+                }
 
-                tryToLogin();
+                if(password.length() < 6){
+                    mPassword.setError("Password Must be >= 6 Characters");
+                    return;
+                }
+
+                progressBar.setVisibility(View.VISIBLE);
+
+
+                //authenticate the user
+
+                fAuth.signInWithEmailAndPassword(email,password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if(task.isSuccessful()){
+                            Toast.makeText(Login.this, "Logged in Successfuly", Toast.LENGTH_SHORT).show();
+                            startActivity(new Intent(getApplicationContext(),MainActivity.class));
+                        }else{
+                            Toast.makeText(Login.this, "Error ! " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                            progressBar.setVisibility(View.GONE);
+                        }
+                    }
+                });
+
 
             }
         });
-    }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        mAuth.addAuthStateListener(mAuthListener);
-    }
-
-    public void tryToLogin(){
-
-        String email=editUserName.getText().toString();
-        String password=editPassword.getText().toString();
-
-        if(TextUtils.isEmpty(email)|| TextUtils.isEmpty(password)){
-
-            Toast.makeText(Login.this, "empty fields", Toast.LENGTH_SHORT).show();
-
-        }else{
-
-            mAuth.signInWithEmailAndPassword(email,password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                @Override
-                public void onComplete(@NonNull Task<AuthResult> task) {
-
-                    if (!task.isSuccessful()){
-
-                        Toast.makeText(Login.this, "Login not successed", Toast.LENGTH_SHORT).show();
-                    }else{
-
-                        Toast.makeText(Login.this, "You Logged in", Toast.LENGTH_SHORT).show();
-
-                    }
-                }
-            });
-
-        }
-
-    }
-
-    public void goToReg(View view){
-
-        Intent intent=new Intent(this,register.class);
-        startActivity(intent);
-        Toast.makeText(this, "Clicked on Button", Toast.LENGTH_LONG).show();
+        mCreateBtn.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                startActivity(new Intent(getApplicationContext(), register.class));
+            }
+        });
 
     }
 
