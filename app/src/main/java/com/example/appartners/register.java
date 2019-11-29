@@ -12,6 +12,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
@@ -21,13 +22,20 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 
@@ -44,14 +52,19 @@ public class register extends AppCompatActivity {
     boolean chosenGender;
     RadioGroup genderGroup;
     RadioButton genderBtn;
+    DatePicker mBirthday;
 
+    DatabaseReference databaseRegister;
 
+    //private FirebaseFirestore db =FirebaseFirestore.getInstance(); // aric
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
+
+        databaseRegister = FirebaseDatabase.getInstance().getReference("Users");
 
         mFullName = findViewById(R.id.fullName);
         mEmail = findViewById(R.id.Email);
@@ -60,9 +73,8 @@ public class register extends AppCompatActivity {
         mRegisterBtn = findViewById(R.id.registerBtn);
         mLoginBtn = findViewById(R.id.createText);
         spnCity=findViewById(R.id.citySpinner);
-
         genderGroup=findViewById(R.id.radioGroup);
-
+        mBirthday = findViewById(R.id.Birthday);
 
 
         fAuto = FirebaseAuth.getInstance();
@@ -77,11 +89,21 @@ public class register extends AppCompatActivity {
         mRegisterBtn.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
+
+                String name = mFullName.getText().toString().trim();
                 String email = mEmail.getText().toString().trim();
                 String password = mPassword.getText().toString().trim();
+                String gender = genderGroup.toString();
                 String yourCity = spnCity.getSelectedItem().toString();
+                String birthday = mBirthday.toString();
+
+
 
                 int selectedRadioButtonID = genderGroup.getCheckedRadioButtonId();
+
+                String id = databaseRegister.push().getKey();
+                Users user = new Users(id,name,gender,yourCity,birthday);
+                databaseRegister.child(id).setValue(user);
 
                 // If nothing is selected from Radio Group, then it return -1
                 if (selectedRadioButtonID != -1) {
@@ -122,6 +144,7 @@ if(chosenCity && chosenGender) {
         @Override
         public void onComplete(@NonNull Task<AuthResult> task) {
             if (task.isSuccessful()) {
+                addUser(task.getResult().getUser().getUid());
                 Toast.makeText(register.this, "User Created.", Toast.LENGTH_SHORT).show();
                 startActivity(new Intent(getApplicationContext(), MainActivity.class));
             } else {
@@ -143,6 +166,32 @@ if(chosenCity && chosenGender) {
                 startActivity(new Intent(getApplicationContext(), Login.class));
             }
         });
+
+    }
+
+    private void addUser(String id){
+
+
+
+        /*Map<String,Object> note = new HashMap<>();
+       note.put("username",mFullName);
+        note.put("gender",genderGroup);
+
+                db.collection("notebook").document("my first note").set(note)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+
+                        Toast.makeText(register.this, "success", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+
+                        Toast.makeText(register.this, "Fail", Toast.LENGTH_SHORT).show();
+                    }
+                });*/
 
     }
 }
