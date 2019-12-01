@@ -5,11 +5,10 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
-import androidx.core.content.FileProvider;
 
 import android.Manifest;
+import android.content.ClipData;
 import android.content.ContentResolver;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -18,9 +17,9 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -46,7 +45,8 @@ import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 public class personal_details extends AppCompatActivity {
 
@@ -57,7 +57,6 @@ public class personal_details extends AppCompatActivity {
 
     private Button mButtonChooseImage;
     private Button mButtonTakePic;
-    private TextView mTextViewShowUploads;
     private EditText mEditTextFileName;
     private ImageView mImageView;
     private ProgressBar mProgressBar;
@@ -75,11 +74,15 @@ public class personal_details extends AppCompatActivity {
 
     private StorageTask mUploadTask;
 
+    String imageEncoded;
+    List<String> imagesEncodedList;
+    ArrayList<Uri> mArrayUri;
+
 // menu code
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.loggedmenue, menu);
+        inflater.inflate(R.menu.logged_menu, menu);
         return true;
     }
 
@@ -92,7 +95,7 @@ public class personal_details extends AppCompatActivity {
                 return true;
             case R.id.LogOutItem:
                 FirebaseAuth.getInstance().signOut();
-                startActivity(new Intent(getApplicationContext(),Login.class));
+                startActivity(new Intent(getApplicationContext(), login.class));
                 finish();
                 return true;
             default:
@@ -108,7 +111,6 @@ public class personal_details extends AppCompatActivity {
 
         mButtonChooseImage = findViewById(R.id.button_choose_image);
         mButtonTakePic = findViewById(R.id.takePicButton);
-        mTextViewShowUploads = findViewById(R.id.text_view_show_uploads);
         mEditTextFileName = findViewById(R.id.edit_text_file_name);
         mImageView = findViewById(R.id.image_view);
         mProgressBar = findViewById(R.id.progress_bar);
@@ -124,7 +126,7 @@ public class personal_details extends AppCompatActivity {
         // While the file names are the same, the references point to different files
         mountainsRef.getName().equals(mountainImagesRef.getName());    // true
         mountainsRef.getPath().equals(mountainImagesRef.getPath());    // false
-
+        mArrayUri = new ArrayList<Uri>();
 
         mButtonChooseImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -138,7 +140,7 @@ public class personal_details extends AppCompatActivity {
             public void onClick(View v) {
 
                 if (mUploadTask != null && mUploadTask.isInProgress()) { // if not null and not already uploaded
-                    Toast.makeText(personal_details.this, "Upload in progress", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(personal_details.this, "upload in progress", Toast.LENGTH_SHORT).show();
                 } else {
 
                     if(uploadFrom==1){
@@ -169,22 +171,19 @@ public class personal_details extends AppCompatActivity {
             }
         });
 
-
-        mTextViewShowUploads.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
     }
 
     private void openFileChooser() {
+
+        mArrayUri.clear();
         Intent intent = new Intent();
         intent.setType("image/*");
+        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
         intent.setAction(Intent.ACTION_GET_CONTENT);
         startActivityForResult(intent, PICK_IMAGE_REQUEST);
 
     }
+
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
@@ -192,15 +191,51 @@ public class personal_details extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK // successfully picked image
-                && data != null && data.getData() != null) {
-            mImageUri = data.getData(); // the ui of the image we picked
+                && data != null) {
 
-            Picasso.with(this).load(mImageUri).into(mImageView); // load the image to the image view
+            String[] filePathColumn = { MediaStore.Images.Media.DATA };
+            imagesEncodedList = new ArrayList<String>();
+            if(data.getData()!=null) {
+                mImageUri = data.getData(); // the ui of the image we picked
+
+                Cursor cursor = getContentResolver().query(mImageUri,
+                        filePathColumn, null, null, null);
+                // Move to first row
+                cursor.moveToFirst();
+                int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+                imageEncoded = cursor.getString(columnIndex);
+                cursor.close();
+
+            }
+            else {
+                if (data.getClipData() != null) {
+                    ClipData mClipData = data.getClipData();
+//                    ArrayList<Uri> mArrayUri = new ArrayList<Uri>();
+                    for (int i = 0; i < mClipData.getItemCount(); i++) {
+
+                        ClipData.Item item = mClipData.getItemAt(i);
+                        Uri uri = item.getUri();
+                        mArrayUri.add(uri);
+                        Toast.makeText(this, ""+uri, Toast.LENGTH_SHORT).show();
+                        // Get the cursor
+                        Cursor cursor = getContentResolver().query(uri, filePathColumn, null, null, null);
+                        // Move to first row
+                        cursor.moveToFirst();
+
+                        int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+                        imageEncoded  = cursor.getString(columnIndex);
+                        imagesEncodedList.add(imageEncoded);
+                        cursor.close();
+
+                    }
+                    Log.v("LOG_TAG", "Selected Images" + mArrayUri.size());
+                }
+            }
+//            Picasso.with(this).load(mImageUri).into(mImageView); // load the image to the image view
             uploadFrom=1;
         }else{
 
             if (requestCode == TakedPicture && resultCode==RESULT_OK) {
-
                 bitmap = (Bitmap) data.getExtras().get("data");
 
                 mImageView.setImageBitmap(bitmap);
@@ -254,8 +289,52 @@ public class personal_details extends AppCompatActivity {
     }
 
     private void uploadFileFromGallery() {
+        if(!mArrayUri.isEmpty()){
+            for(int i=0; i<mArrayUri.size(); i++){
+                mImageUri=mArrayUri.get(i);
+                StorageReference fileReference = mStorageRef.child(System.currentTimeMillis() // to get unique id we put current time
+                        + "." + getFileExtension(mImageUri));
 
-        if (mImageUri != null) {
+                mUploadTask = fileReference.putFile(mImageUri)
+                        .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                            @Override
+                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                Handler handler = new Handler(); // to delay the progress bar for 0.5 sec
+                                handler.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        mProgressBar.setProgress(0);
+                                    }
+                                }, 500);
+
+                                Toast.makeText(personal_details.this, "upload successful", Toast.LENGTH_LONG).show();
+                                upload upload = new upload(mEditTextFileName.getText().toString().trim(), // (name,url)
+                                        taskSnapshot.getMetadata().getReference().getDownloadUrl().toString()); // https://stackoverflow.com/questions/50660975/firebase-storage-getdownloadurl-method-cant-be-resolved
+                                String uploadId = mDatabaseRef.push().getKey(); // create new entry in our database
+                                mDatabaseRef.child(uploadId).setValue(upload); // then take the unique id and set the data to the upload
+
+
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Toast.makeText(personal_details.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                            @Override
+                            public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                                double progress = (100.0 * taskSnapshot.getBytesTransferred() / taskSnapshot.getTotalByteCount());
+                                mProgressBar.setProgress((int) progress);
+                            }
+                        });
+
+            }
+
+        }
+
+        else if (mImageUri != null) { // only one pic
             StorageReference fileReference = mStorageRef.child(System.currentTimeMillis() // to get unique id we put current time
                     + "." + getFileExtension(mImageUri));
 
@@ -271,8 +350,8 @@ public class personal_details extends AppCompatActivity {
                                 }
                             }, 500);
 
-                            Toast.makeText(personal_details.this, "Upload successful", Toast.LENGTH_LONG).show();
-                            Upload upload = new Upload(mEditTextFileName.getText().toString().trim(), // (name,url)
+                            Toast.makeText(personal_details.this, "upload successful", Toast.LENGTH_LONG).show();
+                            upload upload = new upload(mEditTextFileName.getText().toString().trim(), // (name,url)
                                     taskSnapshot.getMetadata().getReference().getDownloadUrl().toString()); // https://stackoverflow.com/questions/50660975/firebase-storage-getdownloadurl-method-cant-be-resolved
                             String uploadId = mDatabaseRef.push().getKey(); // create new entry in our database
                             mDatabaseRef.child(uploadId).setValue(upload); // then take the unique id and set the data to the upload
@@ -293,7 +372,7 @@ public class personal_details extends AppCompatActivity {
                             mProgressBar.setProgress((int) progress);
                         }
                     });
-        } else {
+        } else { // no pictures
 
             Toast.makeText(this, "No file selected", Toast.LENGTH_SHORT).show();
         }
@@ -328,10 +407,13 @@ public class personal_details extends AppCompatActivity {
                     }
                 }, 500);
 
-                Toast.makeText(personal_details.this, "Upload successful", Toast.LENGTH_LONG).show();
+                Toast.makeText(personal_details.this, "upload successful", Toast.LENGTH_LONG).show();
 
-                Upload upload = new Upload(mEditTextFileName.getText().toString().trim(), // (name,url)
+                upload upload = new upload(mEditTextFileName.getText().toString().trim(), // (name,url)
                         taskSnapshot.getMetadata().getReference().getDownloadUrl().toString());
+
+                Toast.makeText(personal_details.this, taskSnapshot.getMetadata().getReference().getDownloadUrl().toString(), Toast.LENGTH_LONG).show();
+
                 String uploadId = mDatabaseRef.push().getKey(); // create new entry in our database
                 mDatabaseRef.child(uploadId).setValue(upload); // then take the unique id and set the data to the upload
 

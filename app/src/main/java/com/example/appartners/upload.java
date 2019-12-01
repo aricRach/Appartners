@@ -1,15 +1,15 @@
 package com.example.appartners;
 
-public class Upload {
+public class upload {
 
         private String mName;
         private String mImageUrl;
 
-        public Upload() {
+        public upload() {
             //empty constructor needed
         }
 
-        public Upload(String name, String imageUrl) {
+        public upload(String name, String imageUrl) {
             if (name.trim().equals(""))  {  // trim->ignore spaces
                 name = "No Name";
             }

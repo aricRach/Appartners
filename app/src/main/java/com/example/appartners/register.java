@@ -55,7 +55,7 @@ public class register extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-        databaseRegister = FirebaseDatabase.getInstance().getReference("Users");
+        databaseRegister = FirebaseDatabase.getInstance().getReference("user");
 
         mFullName = findViewById(R.id.fullName);
         mEmail = findViewById(R.id.Email);
@@ -76,9 +76,8 @@ public class register extends AppCompatActivity {
         actv.setThreshold(1); // Will start working from first character
         actv.setAdapter(adapter); // Setting the adapter data into the AutoCompleteTextView
 
-        if(fAuto.getCurrentUser() != null){
-            startActivity(new Intent(getApplicationContext(),MainActivity.class));
-            finish();
+        if(fAuto.getCurrentUser() != null){ // check If it works *********
+            FirebaseAuth.getInstance().signOut();
         }
 
         mBirthday.setOnClickListener((new View.OnClickListener() {
@@ -148,7 +147,7 @@ public class register extends AppCompatActivity {
                 }
 
                 String id = databaseRegister.push().getKey();
-                Users user = new Users(id,name,gender,yourCity,age);
+                user user = new user(id,name,gender,yourCity,age);
                 databaseRegister.child(id).setValue(user);
 
                 progressBar.setVisibility(View.VISIBLE);
@@ -161,7 +160,8 @@ public class register extends AppCompatActivity {
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {
                                 Toast.makeText(register.this, "User Created.", Toast.LENGTH_SHORT).show();
-                                startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                                startActivity(new Intent(getApplicationContext(), personal_details.class));
+
                             } else {
                                 Toast.makeText(register.this, "Error ! " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                                 progressBar.setVisibility(View.GONE);
@@ -178,7 +178,7 @@ public class register extends AppCompatActivity {
         mLoginBtn.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
-                startActivity(new Intent(getApplicationContext(), Login.class));
+                startActivity(new Intent(getApplicationContext(), login.class));
             }
         });
     }

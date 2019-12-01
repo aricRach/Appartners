@@ -2,7 +2,6 @@ package com.example.appartners;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,17 +14,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.util.HashMap;
-import java.util.Map;
-
-public class Login extends AppCompatActivity {
+public class login extends AppCompatActivity {
 
 
     EditText mEmail, mPassword;
@@ -45,6 +38,7 @@ public class Login extends AppCompatActivity {
         fAuth = FirebaseAuth.getInstance();
         mLoginBtn = findViewById(R.id.loginBtn);
         mCreateBtn = findViewById(R.id.createText);
+//        progressBar.setVisibility(View.INVISIBLE);
 
         mLoginBtn.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -77,16 +71,15 @@ public class Login extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(task.isSuccessful()){
-                            Toast.makeText(Login.this, "Logged in Successfuly", Toast.LENGTH_SHORT).show();
-                            startActivity(new Intent(getApplicationContext(),MainActivity.class));
+                            Toast.makeText(login.this, "Logged in Successfuly", Toast.LENGTH_SHORT).show();
+                            // if( looking for partners/apartments -> send one to partners_scan and second to apartments_scan)
+                            startActivity(new Intent(getApplicationContext(), partners_scan.class));
                         }else{
-                            Toast.makeText(Login.this, "Error ! " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(login.this, "Error ! " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                             progressBar.setVisibility(View.GONE);
                         }
                     }
                 });
-
-
             }
         });
 
@@ -96,10 +89,5 @@ public class Login extends AppCompatActivity {
                 startActivity(new Intent(getApplicationContext(), register.class));
             }
         });
-
     }
-
-
 }
-
-

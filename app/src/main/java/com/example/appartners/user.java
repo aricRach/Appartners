@@ -5,18 +5,18 @@ import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 
-public class Users {
+public class user {
     private String UserId;
     private String UserName;
     private String UserGender;
     private String UserCity;
     private int UserBirthday;
 
-    public Users(){
+    public user(){
 
     }
 
-    public Users(String userId, String userName, String userGender, String userCity, int userBirthday) {
+    public user(String userId, String userName, String userGender, String userCity, int userBirthday) {
         UserId = userId;
         UserName = userName;
         UserGender = userGender;
