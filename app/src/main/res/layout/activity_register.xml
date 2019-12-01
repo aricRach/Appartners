@@ -46,34 +46,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/Email" />
 
-    <!--    <EditText
-            android:id="@+id/phone"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
-            android:ems="10"
-            android:hint="Phone"
-            android:inputType="textPhonetic"
-            android:padding="10dp"
-            android:textSize="14sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/password" />-->
 
     <RadioGroup
         android:id="@+id/radioGroup"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:gravity="center"
         android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/radioGroup2"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/password"
-        app:layout_constraintVertical_bias="0.75">
+        app:layout_constraintTop_toBottomOf="@+id/password">
 
         <RadioButton
             android:id="@+id/radioButton"
@@ -89,16 +71,41 @@
 
     </RadioGroup>
 
-    <Spinner
-        android:id="@+id/citySpinner"
+    <RadioGroup
+        android:id="@+id/radioGroup2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_marginTop="16dp"
+        app:layout_constraintStart_toEndOf="@+id/radioGroup"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/password">
+
+        <RadioButton
+            android:id="@+id/radioButton3"
+            android:layout_width="92dp"
+            android:layout_height="22dp"
+            android:text="Seller" />
+
+        <RadioButton
+            android:id="@+id/radioButton4"
+            android:layout_width="92dp"
+            android:layout_height="22dp"
+            android:text="Buyer" />
+
+    </RadioGroup>
+
+
+
+
+    <EditText
+        android:id="@+id/city"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:ems="10"
-        android:entries="@array/city_Array"
-        android:spinnerMode="dialog"
         android:padding="10dp"
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -106,18 +113,37 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/radioGroup" />
 
-    <DatePicker
+    <AutoCompleteTextView
+        android:id="@+id/autoCompleteTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:hint="Choose city"
+        android:ems="10"
+        android:padding="10dp"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/radioGroup"
+        android:singleLine="true"/>
+
+
+
+    <TextView
         android:id="@+id/Birthday"
         android:layout_width="322dp"
         android:layout_height="76dp"
         android:layout_marginTop="12dp"
         android:calendarViewShown="false"
         android:datePickerMode="spinner"
+        android:text="birthday"
         android:headerBackground="@color/cardview_light_background"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/citySpinner" />
-
+        app:layout_constraintTop_toBottomOf="@+id/city" />
 
     <Button
         android:id="@+id/registerBtn"

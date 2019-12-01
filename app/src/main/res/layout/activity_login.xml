@@ -11,119 +11,97 @@
     android:background="@drawable/gradient"
     tools:ignore="NamespaceTypo">
 
-    <EditText
-        android:id="@+id/EmailText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="103dp"
-        android:layout_marginLeft="103dp"
-        android:layout_marginTop="94dp"
-        android:layout_marginEnd="100dp"
-        android:layout_marginRight="100dp"
-        android:layout_marginBottom="314dp"
-        android:background="#11000000"
-        android:drawableLeft="@drawable/ic_action_user"
-        android:ems="10"
-
-        android:hint="Email"
-        android:inputType="textPersonName"
-        android:textSize="16dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView2" />
 
     <EditText
-        android:id="@+id/passText"
-        android:layout_width="wrap_content"
+        android:id="@+id/password"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="103dp"
-        android:layout_marginLeft="103dp"
-        android:layout_marginTop="41dp"
-        android:layout_marginEnd="100dp"
-        android:layout_marginRight="100dp"
-        android:layout_marginBottom="224dp"
-        android:background="#11000000"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
         android:ems="10"
         android:hint="password"
+        android:inputType="textPassword"
+        android:padding="10dp"
+        android:textSize="14sp"
         android:drawableLeft="@drawable/ic_action_pass"
-        android:inputType="textPersonName"
-        android:textSize="16dp"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/EmailText"
-        app:layout_constraintVertical_bias="0.0" />
-
-    <androidx.cardview.widget.CardView
-        android:id="@+id/LoginCard"
-        android:layout_width="300dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="116dp"
-        android:layout_marginBottom="144dp"
-        app:cardBackgroundColor="@color/colorAccent"
-        app:cardCornerRadius="25dp"
-        app:cardElevation="10dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-
-
-        app:layout_constraintTop_toBottomOf="@+id/passText">
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <TextView
-                android:id="@+id/Login"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:text="Login"
-                android:textColor="@android:color/white"
-
-                android:textSize="18dp" />
-        </RelativeLayout>
-    </androidx.cardview.widget.CardView>
-
-
+        app:layout_constraintTop_toBottomOf="@+id/Email" />
 
     <Button
-        android:id="@+id/RegisterButton"
-        android:layout_width="105dp"
-        android:layout_height="30dp"
-        android:layout_marginStart="134dp"
-        android:layout_marginLeft="134dp"
-        android:layout_marginTop="35dp"
-        android:layout_marginEnd="132dp"
-        android:layout_marginRight="132dp"
-        android:layout_marginBottom="57dp"
-        android:background="@android:color/transparent"
-        android:onClick="goToReg"
-        android:text="register now!"
-        android:textSize="10dp"
+        android:id="@+id/loginBtn"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="36dp"
+        android:layout_marginEnd="16dp"
+        android:text="LOGIN"
+        android:textSize="13dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/password" />
+
+    <EditText
+        android:id="@+id/Email"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="16dp"
+        android:drawableLeft="@drawable/ic_action_user"
+        android:ems="10"
+        android:hint="your Mail"
+        android:inputType="textEmailAddress"
+        android:padding="10dp"
+        android:textSize="14sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/LoginCard" />
+        app:layout_constraintTop_toBottomOf="@+id/imageView2"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:id="@+id/createText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="New Here ? Create Account"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/loginBtn" />
 
     <ImageView
         android:id="@+id/imageView2"
-        android:layout_width="225dp"
-        android:layout_height="211dp"
-        android:layout_marginStart="111dp"
-        android:layout_marginLeft="111dp"
-        android:layout_marginTop="75dp"
-        android:layout_marginEnd="100dp"
-        android:layout_marginRight="100dp"
-        android:layout_marginBottom="43dp"
-        app:layout_constraintBottom_toTopOf="@+id/EmailText"
+        android:layout_width="217dp"
+        android:layout_height="167dp"
+        android:layout_marginStart="115dp"
+        android:layout_marginLeft="115dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="115dp"
+        android:layout_marginRight="115dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/partners" />
 
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/createText"
+        app:layout_constraintVertical_bias="0.071" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
+
+

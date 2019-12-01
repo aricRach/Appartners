@@ -24,7 +24,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-analytics:17.2.1'
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
-    implementation 'com.google.firebase:firebase-core:17.2.1' // גגגגגעככככ מג נגנכע
+    implementation 'com.google.firebase:firebase-core:17.2.1'
     implementation 'com.google.firebase:firebase-firestore:21.3.0'
     implementation 'com.android.support:multidex:1.0.3'
 
