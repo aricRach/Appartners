@@ -105,10 +105,12 @@ public class Login extends AppCompatActivity {
 
     public void goToReg(View view){
 
-        Intent intent=new Intent(this,register.class);
-        startActivity(intent);
-        Toast.makeText(this, "Clicked on Button", Toast.LENGTH_LONG).show();
+     //   Intent intent=new Intent(this,register.class);
+       // startActivity(intent);
 
+
+      Intent intent=new Intent(this,personal_details.class);
+        startActivity(intent);
     }
 
 
