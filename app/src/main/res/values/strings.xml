@@ -4,7 +4,6 @@
     <string name="country_prompt">Choose a country</string>
 
     <string-array name="city_Array">
-        <item>	city                  	</item>
         <item>	אבו גוש                  	</item>
         <item>	אבו סנאן                 	</item>
         <item>	אבו תלול                 	</item>

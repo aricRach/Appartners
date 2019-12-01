@@ -6,17 +6,17 @@ import android.widget.RadioGroup;
 import android.widget.Spinner;
 
 public class Users {
-    String UserId;
-    String UserName;
-    String UserGender;
-    String UserCity;
-    String UserBirthday;
+    private String UserId;
+    private String UserName;
+    private String UserGender;
+    private String UserCity;
+    private int UserBirthday;
 
     public Users(){
 
     }
 
-    public Users(String userId, String userName, String userGender, String userCity, String userBirthday) {
+    public Users(String userId, String userName, String userGender, String userCity, int userBirthday) {
         UserId = userId;
         UserName = userName;
         UserGender = userGender;
@@ -40,7 +40,9 @@ public class Users {
         return UserCity;
     }
 
-    public String getUserBirthday() {
+    public int getUserBirthday() {
         return UserBirthday;
     }
+
+
 }
