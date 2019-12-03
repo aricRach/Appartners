@@ -2,8 +2,8 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/personalItem"
-        android:title="Personal details" />
+        android:id="@+id/apartment_details_Item"
+        android:title="Apartment details" />
 
     <item
         android:id="@+id/filterItem"
@@ -12,5 +12,6 @@
     <item
         android:id="@+id/LogOutItem"
         android:title="Log Out" />
+
 
 </menu>

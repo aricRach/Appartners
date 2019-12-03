@@ -2,17 +2,17 @@
   "project_info": {
     "project_number": "87969809691",
     "firebase_url": "https://appartners-2735b.firebaseio.com",
-    "project_id": "appartners-2735b",
-    "storage_bucket": "appartners-2735b.appspot.com"
-  },
-  "client": [
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:87969809691:android:a4ec32d1072b2202f8bfbe",
-        "android_client_info": {
-          "package_name": "com.company.Appartners"
-        }
-      },
+      "project_id": "appartners-2735b",
+      "storage_bucket": "appartners-2735b.appspot.com"
+    },
+    "client": [
+      {
+        "client_info": {
+          "mobilesdk_app_id": "1:87969809691:android:a4ec32d1072b2202f8bfbe",
+          "android_client_info": {
+            "package_name": "com.company.Appartners"
+          }
+        },
       "oauth_client": [
         {
           "client_id": "87969809691-mbs2uavu8ltssdnuvhb8mmia40r83e17.apps.googleusercontent.com",

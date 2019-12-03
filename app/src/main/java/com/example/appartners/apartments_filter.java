@@ -10,19 +10,8 @@ import android.view.MenuItem;
 
 import com.google.firebase.auth.FirebaseAuth;
 
-public class partners_scan extends AppCompatActivity {
+public class apartments_filter extends AppCompatActivity {
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_partners_scan);
-    }
-
-    @Override
-    public void onBackPressed() {
-        startActivity(new Intent(this,login.class));
-        return;
-    }
 
     // menu code
     @Override
@@ -55,5 +44,11 @@ public class partners_scan extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_results_filter);
     }
 }

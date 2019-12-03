@@ -6,18 +6,10 @@
         android:title="Apartment details" />
 
     <item
-        android:id="@+id/personal_details_item"
-        android:title="Personal details" />
-
-
-
-    <item
         android:id="@+id/filterItem"
         android:title="Results filter" />
 
     <item
         android:id="@+id/LogOutItem"
         android:title="Log Out" />
-
-
 </menu>
