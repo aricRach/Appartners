@@ -36,6 +36,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.auth.User;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
@@ -49,6 +50,7 @@ import java.util.List;
 
 public class apartment_details extends AppCompatActivity {
 
+    // pictures and database
     private static final int PICK_IMAGE_REQUEST = 1;
     private static final int TakedPicture=2;
     private int uploadFrom=0; // image not choosed yet / 1 is gallery / 2 is camera
@@ -75,6 +77,15 @@ public class apartment_details extends AppCompatActivity {
     String imageEncoded;
     List<String> imagesEncodedList;
     ArrayList<Uri> mArrayUri;
+
+
+    // details
+
+    private EditText mNumOfRooms;
+    private EditText mOccupants;
+    private EditText mPhone;
+    private EditText mStreet;
+    private EditText mPrice;
 
 
     // menu code
@@ -136,6 +147,16 @@ public class apartment_details extends AppCompatActivity {
         mountainsRef.getName().equals(mountainImagesRef.getName());    // true
         mountainsRef.getPath().equals(mountainImagesRef.getPath());    // false
         mArrayUri = new ArrayList<Uri>();
+
+
+        // details
+
+        mNumOfRooms =findViewById(R.id.roomsNumText);
+        mOccupants =findViewById(R.id.occupantsText);
+        mPhone =findViewById(R.id.phoneNumberText);
+        mStreet =findViewById(R.id.streetText);
+        mPrice =findViewById(R.id.priceText);
+
 
         mButtonChooseImage.setOnClickListener(new View.OnClickListener() {
             @Override
