@@ -157,7 +157,6 @@ public class apartment_details extends AppCompatActivity {
         mStreet =findViewById(R.id.streetText);
         mPrice =findViewById(R.id.priceText);
 
-
         mButtonChooseImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

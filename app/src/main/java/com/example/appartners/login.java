@@ -32,6 +32,7 @@ public class login extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+
         mEmail = findViewById(R.id.Email);
         mPassword = findViewById(R.id.password);
         progressBar = findViewById(R.id.progressBar);
@@ -39,6 +40,7 @@ public class login extends AppCompatActivity {
         mLoginBtn = findViewById(R.id.loginBtn);
         mCreateBtn = findViewById(R.id.createText);
 //        progressBar.setVisibility(View.INVISIBLE);
+       // Toast.makeText(this, ""+fAuth.getCurrentUser().getUid(), Toast.LENGTH_LONG).show();
 
         mLoginBtn.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -86,9 +88,10 @@ public class login extends AppCompatActivity {
         mCreateBtn.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
-               // startActivity(new Intent(getApplicationContext(), register.class));
 
-                startActivity(new Intent(getApplicationContext(), personal_details.class));
+                startActivity(new Intent(getApplicationContext(), register.class));
+
+               // startActivity(new Intent(getApplicationContext(), personal_details.class));
             }
         });
     }

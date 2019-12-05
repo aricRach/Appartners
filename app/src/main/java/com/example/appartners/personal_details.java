@@ -146,23 +146,25 @@ public class personal_details extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                if (mUploadTask != null && mUploadTask.isInProgress()) { // if not null and not already uploaded
-                    Toast.makeText(personal_details.this, "upload in progress", Toast.LENGTH_SHORT).show();
-                } else {
+//                if (mUploadTask != null && mUploadTask.isInProgress()) { // if not null and not already uploaded
+//                    Toast.makeText(personal_details.this, "upload in progress", Toast.LENGTH_SHORT).show();
+//                } else {
+//
+//                    if(uploadFrom==1){
+//
+//                        uploadFileFromGallery();
+//
+//                    }else if (uploadFrom==2){
+//
+//                        uploadFromCapturedImage();
+//                    } else{
+//
+//                        Toast.makeText(personal_details.this, "please upload image", Toast.LENGTH_SHORT).show();
+//
+//                    }
+//                }
 
-                    if(uploadFrom==1){
 
-                        uploadFileFromGallery();
-
-                    }else if (uploadFrom==2){
-
-                        uploadFromCapturedImage();
-                    } else{
-
-                        Toast.makeText(personal_details.this, "please upload image", Toast.LENGTH_SHORT).show();
-
-                    }
-                }
 
             }
         });

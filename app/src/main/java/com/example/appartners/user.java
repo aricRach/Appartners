@@ -6,43 +6,92 @@ import android.widget.RadioGroup;
 import android.widget.Spinner;
 
 public class user {
-    private String UserId;
-    private String UserName;
-    private String UserGender;
-    private String UserCity;
-    private int UserBirthday;
+    private String userId;
+    private String userName;
+    private String userGender;
+    private String userCity;
+    private int userBirthday;
+    private String uId;
+    private String email;
 
-    public user(){
+    public user(){}
 
-    }
-
-    public user(String userId, String userName, String userGender, String userCity, int userBirthday) {
-        UserId = userId;
-        UserName = userName;
-        UserGender = userGender;
-        UserCity = userCity;
-        UserBirthday = userBirthday;
+    public user(String userId,String userName, String userGender, String userCity, int userBirthday,String uid,String email) {
+        this.userId = userId;
+        this.userName = userName;
+        this.userGender = userGender;
+        this.userCity = userCity;
+        this.userBirthday = userBirthday;
+        this.uId=uid;
+        this.email=email;
     }
 
     public String getUserId() {
-        return UserId;
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     public String getUserName() {
-        return UserName;
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public String getUserGender() {
-        return UserGender;
+        return userGender;
+    }
+
+    public void setUserGender(String userGender) {
+        this.userGender = userGender;
     }
 
     public String getUserCity() {
-        return UserCity;
+        return userCity;
+    }
+
+    public void setUserCity(String userCity) {
+        this.userCity = userCity;
     }
 
     public int getUserBirthday() {
-        return UserBirthday;
+        return userBirthday;
     }
 
+    public void setUserBirthday(int userBirthday) {
+        this.userBirthday = userBirthday;
+    }
 
+    public String getuId() {
+        return uId;
+    }
+
+    public void setuId(String uId) {
+        this.uId = uId;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    @Override
+    public String toString() {
+        return "user{" +
+                "userId='" + userId + '\'' +
+                ", userName='" + userName + '\'' +
+                ", userGender='" + userGender + '\'' +
+                ", userCity='" + userCity + '\'' +
+                ", userBirthday=" + userBirthday +
+                ", uId='" + uId + '\'' +
+                ", email='" + email + '\'' +
+                '}';
+    }
 }

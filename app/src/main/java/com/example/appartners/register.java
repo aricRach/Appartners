@@ -27,8 +27,12 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.auth.User;
 
 import java.util.Calendar;
 
@@ -46,16 +50,21 @@ public class register extends AppCompatActivity {
     private RadioButton genderBtn;
     private TextView mBirthday;
     private int age;
+    String name="";
+    String gender="";
+    String password="";
+    String email="";
 
     DatePickerDialog.OnDateSetListener mDataSetListener;
     DatabaseReference databaseRegister;
+    String id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-        databaseRegister = FirebaseDatabase.getInstance().getReference("user");
+        databaseRegister = FirebaseDatabase.getInstance().getReference("Users");
 
         mFullName = findViewById(R.id.fullName);
         mEmail = findViewById(R.id.Email);
@@ -65,6 +74,7 @@ public class register extends AppCompatActivity {
         mCity=findViewById(R.id.city);
         genderGroup=findViewById(R.id.radioGroup);
         mBirthday = findViewById(R.id.Birthday);
+
 
         fAuto = FirebaseAuth.getInstance();
         progressBar = findViewById(R.id.progressBar);
@@ -107,11 +117,11 @@ public class register extends AppCompatActivity {
         mRegisterBtn.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
-                String name = mFullName.getText().toString().trim();
-                String email = mEmail.getText().toString().trim();
-                String password = mPassword.getText().toString().trim();
-                String gender="";
-                String yourCity = actv.getText().toString().trim();
+                 name = mFullName.getText().toString().trim();
+                 email = mEmail.getText().toString().trim();
+                 password = mPassword.getText().toString().trim();
+                 gender="";
+                final String yourCity = actv.getText().toString().trim();
 
                 int selectedRadioButtonID = genderGroup.getCheckedRadioButtonId();
 
@@ -146,9 +156,12 @@ public class register extends AppCompatActivity {
                     return;
                 }
 
-                String id = databaseRegister.push().getKey();
-                user user = new user(id,name,gender,yourCity,age);
-                databaseRegister.child(id).setValue(user);
+             //   uid= fAuto.getCurrentUser().getUid();// error
+                 id = databaseRegister.push().getKey();
+                // user user = new user(id,name,gender,yourCity,age,"","");
+              //  databaseRegister.child(id).setValue(user);
+
+
 
                 progressBar.setVisibility(View.VISIBLE);
 
@@ -159,8 +172,13 @@ public class register extends AppCompatActivity {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {
-                                Toast.makeText(register.this, "User Created.", Toast.LENGTH_SHORT).show();
+
+                                String uid=fAuto.getCurrentUser().getUid();
+                                databaseRegister.child(id).setValue(new user(id,name,gender,yourCity,age,uid,email));
+                                Toast.makeText(register.this, "User Created "+email+"unique id: "+uid, Toast.LENGTH_SHORT).show();
+
                                 startActivity(new Intent(getApplicationContext(), personal_details.class));
+
 
                             } else {
                                 Toast.makeText(register.this, "Error ! " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
