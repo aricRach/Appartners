@@ -13,10 +13,11 @@ public class user {
     private int userBirthday;
     private String uId;
     private String email;
+    private String aprPrt;
 
     public user(){}
 
-    public user(String userId,String userName, String userGender, String userCity, int userBirthday,String uid,String email) {
+    public user(String userId,String userName, String userGender, String userCity, int userBirthday,String uid,String email,String aprPrt) {
         this.userId = userId;
         this.userName = userName;
         this.userGender = userGender;
@@ -24,6 +25,8 @@ public class user {
         this.userBirthday = userBirthday;
         this.uId=uid;
         this.email=email;
+        this.aprPrt = aprPrt;
+
     }
 
     public String getUserId() {
@@ -80,6 +83,14 @@ public class user {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getAprPrt() {
+        return aprPrt;
+    }
+
+    public void setAprPrt(String aprPrt) {
+        this.aprPrt = aprPrt;
     }
 
     @Override

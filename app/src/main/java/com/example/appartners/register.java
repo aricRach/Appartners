@@ -43,15 +43,19 @@ public class register extends AppCompatActivity {
     private TextView mLoginBtn;
     private FirebaseAuth fAuto;
     private ProgressBar progressBar;
-    private EditText mCity;
     private boolean chosenCity;
     private boolean chosenGender;
     private RadioGroup genderGroup;
     private RadioButton genderBtn;
+    private boolean chosenAprPrt;
+    private boolean choosenApartment, choosenPartner;
+    private RadioGroup aprPrtGroup;
+    private RadioButton aprPrtBtn;
     private TextView mBirthday;
     private int age;
     String name="";
     String gender="";
+    String aprPrt="";
     String password="";
     String email="";
 
@@ -71,8 +75,8 @@ public class register extends AppCompatActivity {
         mPassword = findViewById(R.id.password);
         mRegisterBtn = findViewById(R.id.registerBtn);
         mLoginBtn = findViewById(R.id.createText);
-        mCity=findViewById(R.id.city);
         genderGroup=findViewById(R.id.radioGroup);
+        aprPrtGroup=findViewById(R.id.radioGroup2);
         mBirthday = findViewById(R.id.Birthday);
 
 
@@ -125,6 +129,20 @@ public class register extends AppCompatActivity {
 
                 int selectedRadioButtonID = genderGroup.getCheckedRadioButtonId();
 
+                int selectedRadioButtonID2 = aprPrtGroup.getCheckedRadioButtonId();
+
+                if (selectedRadioButtonID2 != -1) {
+                    aprPrtBtn = findViewById(selectedRadioButtonID2);
+                    aprPrt = aprPrtBtn.getText().toString().trim();
+                    chosenAprPrt=true;
+                    if(aprPrt.equals("Searching partner"))
+                        choosenPartner=true;
+                    else if(aprPrt.equals("Searching apartment"))
+                        choosenApartment=true;
+                }
+                else{
+                    chosenAprPrt=false;
+                }
                 // If nothing is selected from Radio Group, then it return -1
                 if (selectedRadioButtonID != -1) {
                     genderBtn = findViewById(selectedRadioButtonID);
@@ -166,7 +184,7 @@ public class register extends AppCompatActivity {
                 progressBar.setVisibility(View.VISIBLE);
 
                 //register the user in firebase
-                if (chosenCity && chosenGender && age!=0) {
+                if (chosenCity && chosenGender && age!=0 && chosenAprPrt) {
                     fAuto.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                         @RequiresApi(api = Build.VERSION_CODES.O)
                         @Override
@@ -174,12 +192,12 @@ public class register extends AppCompatActivity {
                             if (task.isSuccessful()) {
 
                                 String uid=fAuto.getCurrentUser().getUid();
-                                databaseRegister.child(id).setValue(new user(id,name,gender,yourCity,age,uid,email));
+                                databaseRegister.child(id).setValue(new user(id,name,gender,yourCity,age,uid,email,aprPrt));
                                 Toast.makeText(register.this, "User Created "+email+"unique id: "+uid, Toast.LENGTH_SHORT).show();
-
-                                startActivity(new Intent(getApplicationContext(), personal_details.class));
-
-
+                                if(choosenPartner)
+                                    startActivity(new Intent(getApplicationContext(), personal_details.class));
+                                else if(choosenApartment)
+                                    startActivity(new Intent(getApplicationContext(), apartment_details.class));
                             } else {
                                 Toast.makeText(register.this, "Error ! " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                                 progressBar.setVisibility(View.GONE);
