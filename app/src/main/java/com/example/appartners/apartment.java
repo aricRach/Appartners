@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 public class apartment {
 
-    private user u;
     private double price;
     private int occupants;
     private String street;
@@ -15,14 +14,17 @@ public class apartment {
 
     public apartment(){
 
-
-
+        this.price=0;
+        this.occupants=0;
+        this.street="";
+        this.phone="";
+        this.numOfRooms=0;
+        this.imagesUri=new ArrayList<String>();
     }
 
-    public apartment(user u,double price,int occupants,String street,String phone,int numOfRooms)
+    public apartment(double price,int occupants,String street,String phone,int numOfRooms)
     {
 
-        this.u=u;
         this.price=price;
         this.occupants=occupants;
         this.street=street;
@@ -31,14 +33,14 @@ public class apartment {
         this.imagesUri=new ArrayList<String>();
     }
 
-    public apartment(user u){
+    public apartment(apartment other){
 
-        this.u=u;
-    }
-
-
-    public user getU() {
-        return u;
+        this.price=other.price;
+        this.occupants=other.occupants;
+        this.street=other.street;
+        this.phone=other.phone;
+        this.numOfRooms=other.numOfRooms;
+        this.imagesUri=other.imagesUri;
     }
 
     public double getPrice() {
@@ -63,10 +65,6 @@ public class apartment {
 
     public ArrayList<String> getImagesUri() {
         return imagesUri;
-    }
-
-    public void setU(user u) {
-        this.u = u;
     }
 
     public void setPrice(double price) {

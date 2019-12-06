@@ -6,6 +6,8 @@ import android.widget.RadioGroup;
 import android.widget.Spinner;
 
 public class user {
+
+    private apartment room;
     private String userId;
     private String userName;
     private String userGender;
@@ -46,6 +48,11 @@ public class user {
         this.email=other.email;
 
     }
+
+    public apartment getRoom() {
+        return room;
+    }
+
     public String getUserId() {
         return userId;
     }
@@ -134,7 +141,9 @@ public class user {
         this.aprPrt = aprPrt;
     }
 
-
+    public void setRoom(apartment room) {
+        this.room = room;
+    }
 
     @Override
     public String toString() {

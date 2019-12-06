@@ -41,12 +41,12 @@ public class apartments_scan extends AppCompatActivity {
         Intent intent;
         switch (item.getItemId()) {
             case R.id.personal_details_item:
-                intent=new Intent(this,personal_details.class);
+                intent = new Intent(this, personal_details.class);
                 startActivity(intent);
                 return true;
 
             case R.id.apartment_details_Item:
-                intent=new Intent(this, apartment_details.class);
+                intent = new Intent(this, apartment_details.class);
                 startActivity(intent);
                 return true;
 
@@ -71,37 +71,6 @@ public class apartments_scan extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_apartments_scan);
 
-        fAuto = FirebaseAuth.getInstance();
-
-        text=findViewById(R.id.textView);
-
-        mDatabaseRef = FirebaseDatabase.getInstance().getReference("Users");
-
-        Query query=mDatabaseRef.orderByChild("/u").orderByChild("email").equalTo("dira12@gmail.com");
-
-        query.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-
-                for (DataSnapshot data : dataSnapshot.getChildren()) {
-
-//                    user currentUser = data.getValue(user.class);
-//                    String city = currentUser.getUserCity();
-//                    String name = currentUser.getUserName();
-//                    int age = currentUser.getUserBirthday();
-//                    if (currentUser != null) {
-//
-//                        text.setText(name + " is living in " + city + " his age is: " + age );
-//                    }
-                    text.setText("good");
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-
     }
+
 }

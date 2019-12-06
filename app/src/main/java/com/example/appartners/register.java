@@ -44,7 +44,7 @@ public class register extends AppCompatActivity {
     private RadioGroup genderGroup;
     private RadioButton genderBtn;
     private boolean chosenAprPrt;
-    private boolean choosenApartment, choosenPartner;
+    private boolean searchPartners, searchRoom;
     private RadioGroup aprPrtGroup;
     private RadioButton aprPrtBtn;
     private TextView mBirthday;
@@ -58,9 +58,6 @@ public class register extends AppCompatActivity {
     DatePickerDialog.OnDateSetListener mDataSetListener;
     DatabaseReference databaseRegisterUser;
 
-    DatabaseReference getDatabaseRegisterApart;
-
-
     String id;
 
     @Override
@@ -69,7 +66,6 @@ public class register extends AppCompatActivity {
         setContentView(R.layout.activity_register);
 
         databaseRegisterUser = FirebaseDatabase.getInstance().getReference("Users");
-        getDatabaseRegisterApart = FirebaseDatabase.getInstance().getReference("Apartments");
 
 
         mFullName = findViewById(R.id.fullName);
@@ -138,9 +134,9 @@ public class register extends AppCompatActivity {
                     aprPrt = aprPrtBtn.getText().toString().trim();
                     chosenAprPrt=true;
                     if(aprPrt.equals("Searching partner"))
-                        choosenApartment=true;
+                        searchPartners =true;
                     else if(aprPrt.equals("Searching apartment"))
-                        choosenPartner=true;
+                        searchRoom =true;
                 }
                 else{
                     chosenAprPrt=false;
@@ -188,19 +184,21 @@ public class register extends AppCompatActivity {
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {
 
-                                if(choosenPartner){
-                                    String uid=fAuto.getCurrentUser().getUid();
-                                    databaseRegisterUser.child(id).setValue(new user(id,name,gender,yourCity,age,uid,email,aprPrt));
+                                String uid=fAuto.getCurrentUser().getUid();
+                                user temp=new user(id,name,gender,yourCity,age,uid,email,aprPrt);
+                                if(searchRoom){
+
+                                    databaseRegisterUser.child(id).setValue(temp);
                                     Toast.makeText(register.this, "User Created "+email+"unique id: "+uid, Toast.LENGTH_SHORT).show();
 
                                     startActivity(new Intent(getApplicationContext(), personal_details.class));
                                 }
 
-                                else if(choosenApartment) {
+                                else if(searchPartners) {
 
-                                    String uid=fAuto.getCurrentUser().getUid();
-                                    user temp=new user(id,name,gender,yourCity,age,uid,email,aprPrt);
-                                    getDatabaseRegisterApart.child(id).setValue(new apartment(temp));
+                                    apartment room=new apartment();
+                                    temp.setRoom(room);
+                                    databaseRegisterUser.child(id).setValue(temp);
                                     Toast.makeText(register.this, "apartment Created "+email+"unique id: "+uid, Toast.LENGTH_SHORT).show();
                                     startActivity(new Intent(getApplicationContext(), apartment_details.class));
 
