@@ -27,12 +27,8 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.firestore.auth.User;
 
 import java.util.Calendar;
 
@@ -43,20 +39,28 @@ public class register extends AppCompatActivity {
     private TextView mLoginBtn;
     private FirebaseAuth fAuto;
     private ProgressBar progressBar;
-    private EditText mCity;
     private boolean chosenCity;
     private boolean chosenGender;
     private RadioGroup genderGroup;
     private RadioButton genderBtn;
+    private boolean chosenAprPrt;
+    private boolean choosenApartment, choosenPartner;
+    private RadioGroup aprPrtGroup;
+    private RadioButton aprPrtBtn;
     private TextView mBirthday;
     private int age;
     String name="";
     String gender="";
+    String aprPrt="";
     String password="";
     String email="";
 
     DatePickerDialog.OnDateSetListener mDataSetListener;
-    DatabaseReference databaseRegister;
+    DatabaseReference databaseRegisterUser;
+
+    DatabaseReference getDatabaseRegisterApart;
+
+
     String id;
 
     @Override
@@ -64,15 +68,17 @@ public class register extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-        databaseRegister = FirebaseDatabase.getInstance().getReference("Users");
+        databaseRegisterUser = FirebaseDatabase.getInstance().getReference("Users");
+        getDatabaseRegisterApart = FirebaseDatabase.getInstance().getReference("Apartments");
+
 
         mFullName = findViewById(R.id.fullName);
         mEmail = findViewById(R.id.Email);
         mPassword = findViewById(R.id.password);
         mRegisterBtn = findViewById(R.id.registerBtn);
         mLoginBtn = findViewById(R.id.createText);
-        mCity=findViewById(R.id.city);
         genderGroup=findViewById(R.id.radioGroup);
+        aprPrtGroup=findViewById(R.id.radioGroup2);
         mBirthday = findViewById(R.id.Birthday);
 
 
@@ -117,14 +123,28 @@ public class register extends AppCompatActivity {
         mRegisterBtn.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
-                 name = mFullName.getText().toString().trim();
-                 email = mEmail.getText().toString().trim();
-                 password = mPassword.getText().toString().trim();
-                 gender="";
+                name = mFullName.getText().toString().trim();
+                email = mEmail.getText().toString().trim();
+                password = mPassword.getText().toString().trim();
+                gender="";
                 final String yourCity = actv.getText().toString().trim();
 
                 int selectedRadioButtonID = genderGroup.getCheckedRadioButtonId();
 
+                int selectedRadioButtonID2 = aprPrtGroup.getCheckedRadioButtonId();
+
+                if (selectedRadioButtonID2 != -1) {
+                    aprPrtBtn = findViewById(selectedRadioButtonID2);
+                    aprPrt = aprPrtBtn.getText().toString().trim();
+                    chosenAprPrt=true;
+                    if(aprPrt.equals("Searching partner"))
+                        choosenApartment=true;
+                    else if(aprPrt.equals("Searching apartment"))
+                        choosenPartner=true;
+                }
+                else{
+                    chosenAprPrt=false;
+                }
                 // If nothing is selected from Radio Group, then it return -1
                 if (selectedRadioButtonID != -1) {
                     genderBtn = findViewById(selectedRadioButtonID);
@@ -156,30 +176,35 @@ public class register extends AppCompatActivity {
                     return;
                 }
 
-             //   uid= fAuto.getCurrentUser().getUid();// error
-                 id = databaseRegister.push().getKey();
-                // user user = new user(id,name,gender,yourCity,age,"","");
-              //  databaseRegister.child(id).setValue(user);
-
-
+                id = databaseRegisterUser.push().getKey();
 
                 progressBar.setVisibility(View.VISIBLE);
 
                 //register the user in firebase
-                if (chosenCity && chosenGender && age!=0) {
+                if (chosenCity && chosenGender && age!=0 && chosenAprPrt) {
                     fAuto.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                         @RequiresApi(api = Build.VERSION_CODES.O)
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {
 
-                                String uid=fAuto.getCurrentUser().getUid();
-                                databaseRegister.child(id).setValue(new user(id,name,gender,yourCity,age,uid,email));
-                                Toast.makeText(register.this, "User Created "+email+"unique id: "+uid, Toast.LENGTH_SHORT).show();
+                                if(choosenPartner){
+                                    String uid=fAuto.getCurrentUser().getUid();
+                                    databaseRegisterUser.child(id).setValue(new user(id,name,gender,yourCity,age,uid,email,aprPrt));
+                                    Toast.makeText(register.this, "User Created "+email+"unique id: "+uid, Toast.LENGTH_SHORT).show();
 
-                                startActivity(new Intent(getApplicationContext(), personal_details.class));
+                                    startActivity(new Intent(getApplicationContext(), personal_details.class));
+                                }
 
+                                else if(choosenApartment) {
 
+                                    String uid=fAuto.getCurrentUser().getUid();
+                                    user temp=new user(id,name,gender,yourCity,age,uid,email,aprPrt);
+                                    getDatabaseRegisterApart.child(id).setValue(new apartment(temp));
+                                    Toast.makeText(register.this, "apartment Created "+email+"unique id: "+uid, Toast.LENGTH_SHORT).show();
+                                    startActivity(new Intent(getApplicationContext(), apartment_details.class));
+
+                                }
                             } else {
                                 Toast.makeText(register.this, "Error ! " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                                 progressBar.setVisibility(View.GONE);

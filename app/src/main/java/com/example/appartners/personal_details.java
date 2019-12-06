@@ -5,24 +5,18 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
-import androidx.core.content.FileProvider;
 
 import android.Manifest;
-import android.content.ClipData;
 import android.content.ContentResolver;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -32,7 +26,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
@@ -48,9 +41,6 @@ import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 public class personal_details extends AppCompatActivity {
 
@@ -146,25 +136,23 @@ public class personal_details extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-//                if (mUploadTask != null && mUploadTask.isInProgress()) { // if not null and not already uploaded
-//                    Toast.makeText(personal_details.this, "upload in progress", Toast.LENGTH_SHORT).show();
-//                } else {
-//
-//                    if(uploadFrom==1){
-//
-//                        uploadFileFromGallery();
-//
-//                    }else if (uploadFrom==2){
-//
-//                        uploadFromCapturedImage();
-//                    } else{
-//
-//                        Toast.makeText(personal_details.this, "please upload image", Toast.LENGTH_SHORT).show();
-//
-//                    }
-//                }
+                if (mUploadTask != null && mUploadTask.isInProgress()) { // if not null and not already uploaded
+                    Toast.makeText(personal_details.this, "upload in progress", Toast.LENGTH_SHORT).show();
+                } else {
 
+                    if(uploadFrom==1){
 
+                        uploadFileFromGallery();
+
+                    }else if (uploadFrom==2){
+
+                        uploadFromCapturedImage();
+                    } else{
+
+                        Toast.makeText(personal_details.this, "please upload image", Toast.LENGTH_SHORT).show();
+
+                    }
+                }
 
             }
         });

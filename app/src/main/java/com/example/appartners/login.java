@@ -17,6 +17,13 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.auth.User;
 
 public class login extends AppCompatActivity {
 
@@ -26,12 +33,12 @@ public class login extends AppCompatActivity {
     TextView mCreateBtn;
     ProgressBar progressBar;
     FirebaseAuth fAuth;
+    DatabaseReference databaseLogin;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
 
         mEmail = findViewById(R.id.Email);
         mPassword = findViewById(R.id.password);
@@ -40,7 +47,8 @@ public class login extends AppCompatActivity {
         mLoginBtn = findViewById(R.id.loginBtn);
         mCreateBtn = findViewById(R.id.createText);
 //        progressBar.setVisibility(View.INVISIBLE);
-       // Toast.makeText(this, ""+fAuth.getCurrentUser().getUid(), Toast.LENGTH_LONG).show();
+
+        databaseLogin = FirebaseDatabase.getInstance().getReference("Users");
 
         mLoginBtn.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -74,8 +82,31 @@ public class login extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(task.isSuccessful()){
                             Toast.makeText(login.this, "Logged in Successfuly", Toast.LENGTH_SHORT).show();
-                            // if( looking for partners/apartments -> send one to partners_scan and second to apartments_scan)
-                            startActivity(new Intent(getApplicationContext(), partners_scan.class));
+
+                            Query query=databaseLogin.orderByChild("email").equalTo(fAuth.getCurrentUser().getEmail());
+
+                            query.addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+
+                                    for (DataSnapshot data : dataSnapshot.getChildren()) {
+
+                                        user currentUser = data.getValue(user.class);
+                                        String searchApartmentOrPartner = currentUser.getAprPrt();
+                                        if(searchApartmentOrPartner.equals("Searching partner")) {
+                                            startActivity(new Intent(getApplicationContext(), partners_scan.class));
+                                        }else if(searchApartmentOrPartner.equals("Searching apartment")){
+                                            startActivity(new Intent(getApplicationContext(), apartments_scan.class));
+                                        }
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+
+                                }
+                            });
+
                         }else{
                             Toast.makeText(login.this, "Error ! " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                             progressBar.setVisibility(View.GONE);
@@ -88,10 +119,7 @@ public class login extends AppCompatActivity {
         mCreateBtn.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
-
                 startActivity(new Intent(getApplicationContext(), register.class));
-
-               // startActivity(new Intent(getApplicationContext(), personal_details.class));
             }
         });
     }

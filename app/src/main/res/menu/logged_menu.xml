@@ -9,6 +9,9 @@
         android:id="@+id/personal_details_item"
         android:title="Personal details" />
 
+    <item
+        android:id="@+id/apartment_scan_item"
+        android:title="apartments scan" />
 
 
     <item
