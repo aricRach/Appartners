@@ -34,8 +34,12 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.auth.User;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
@@ -63,12 +67,18 @@ public class apartment_details extends AppCompatActivity {
     private CardView updateCardView;
 
     private Uri mImageUri;
+    private String urlGallery;
+    private String urlCaptured;
 
     private StorageReference mStorageRef;
     private DatabaseReference mDatabaseRef;
 
+
     StorageReference mountainsRef; // for camera capture
     StorageReference mountainImagesRef; // // for camera capture
+
+    private FirebaseAuth fAuth;
+
 
     Bitmap bitmap; // the image will save as bitmap in order to show it
 
@@ -136,6 +146,8 @@ public class apartment_details extends AppCompatActivity {
         mProgressBar = findViewById(R.id.progress_bar);
         updateCardView=findViewById(R.id.updateCard);
 
+        fAuth = FirebaseAuth.getInstance();
+
         mStorageRef = FirebaseStorage.getInstance().getReference("uploads"); // save in storage
         mDatabaseRef = FirebaseDatabase.getInstance().getReference("uploads");
 
@@ -147,7 +159,6 @@ public class apartment_details extends AppCompatActivity {
         mountainsRef.getName().equals(mountainImagesRef.getName());    // true
         mountainsRef.getPath().equals(mountainImagesRef.getPath());    // false
         mArrayUri = new ArrayList<Uri>();
-
 
         // details
 
@@ -344,11 +355,36 @@ public class apartment_details extends AppCompatActivity {
                                     }
                                 }, 500);
 
+                                urlGallery = taskSnapshot.getMetadata().getReference().getDownloadUrl().toString();
                                // Toast.makeText(personal_details.this, "upload successful", Toast.LENGTH_LONG).show();
                                 upload upload = new upload(mEditTextFileName.getText().toString().trim(), // (name,url)
-                                        taskSnapshot.getMetadata().getReference().getDownloadUrl().toString()); // https://stackoverflow.com/questions/50660975/firebase-storage-getdownloadurl-method-cant-be-resolved
+                                       urlGallery); // https://stackoverflow.com/questions/50660975/firebase-storage-getdownloadurl-method-cant-be-resolved
                                 String uploadId = mDatabaseRef.push().getKey(); // create new entry in our database
                                 mDatabaseRef.child(uploadId).setValue(upload); // then take the unique id and set the data to the upload
+
+                                mDatabaseRef = FirebaseDatabase.getInstance().getReference("Users");
+                                Query query=mDatabaseRef.orderByChild("email").equalTo(fAuth.getCurrentUser().getEmail());
+
+                                query.addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot dataSnapshot) {
+
+                                        for (DataSnapshot data : dataSnapshot.getChildren()) {
+
+                                            user currentUser =data.getValue(user.class);
+                                            apartment currentApart= data.child("room").getValue(apartment.class);
+                                            currentApart.addImg(urlGallery);
+                                            currentUser.setRoom(currentApart);
+                                            mDatabaseRef.child(currentUser.getUserId()).setValue(currentUser);
+
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) {
+
+                                    }
+                                });
 
 
                             }
@@ -388,10 +424,36 @@ public class apartment_details extends AppCompatActivity {
                             }, 500);
 
                            // Toast.makeText(personal_details.this, "upload successful", Toast.LENGTH_LONG).show();
+                            urlGallery = taskSnapshot.getMetadata().getReference().getDownloadUrl().toString();
                             upload upload = new upload(mEditTextFileName.getText().toString().trim(), // (name,url)
-                                    taskSnapshot.getMetadata().getReference().getDownloadUrl().toString()); // https://stackoverflow.com/questions/50660975/firebase-storage-getdownloadurl-method-cant-be-resolved
+                                    urlGallery); // https://stackoverflow.com/questions/50660975/firebase-storage-getdownloadurl-method-cant-be-resolved
                             String uploadId = mDatabaseRef.push().getKey(); // create new entry in our database
                             mDatabaseRef.child(uploadId).setValue(upload); // then take the unique id and set the data to the upload
+
+                            mDatabaseRef = FirebaseDatabase.getInstance().getReference("Users");
+                            Query query=mDatabaseRef.orderByChild("email").equalTo(fAuth.getCurrentUser().getEmail());
+
+                            query.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+
+                                    for (DataSnapshot data : dataSnapshot.getChildren()) {
+
+                                        user currentUser =data.getValue(user.class);
+                                        apartment currentApart= data.child("room").getValue(apartment.class);
+                                        currentApart.addImg(urlGallery);
+                                        currentUser.setRoom(currentApart);
+                                        mDatabaseRef.child(currentUser.getUserId()).setValue(currentUser);
+
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+
+                                }
+                            });
+
 
 
                         }
@@ -446,13 +508,41 @@ public class apartment_details extends AppCompatActivity {
 
                 //Toast.makeText(personal_details.this, "upload successful", Toast.LENGTH_LONG).show();
 
+                urlCaptured=taskSnapshot.getMetadata().getReference().getDownloadUrl().toString();
+
                 upload upload = new upload(mEditTextFileName.getText().toString().trim(), // (name,url)
-                        taskSnapshot.getMetadata().getReference().getDownloadUrl().toString());
+                        urlCaptured);
 
                // Toast.makeText(personal_details.this, taskSnapshot.getMetadata().getReference().getDownloadUrl().toString(), Toast.LENGTH_LONG).show();
 
                 String uploadId = mDatabaseRef.push().getKey(); // create new entry in our database
                 mDatabaseRef.child(uploadId).setValue(upload); // then take the unique id and set the data to the upload
+
+
+                mDatabaseRef = FirebaseDatabase.getInstance().getReference("Users");
+                Query query=mDatabaseRef.orderByChild("email").equalTo(fAuth.getCurrentUser().getEmail());
+
+                query.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+
+                        for (DataSnapshot data : dataSnapshot.getChildren()) {
+
+                            user currentUser =data.getValue(user.class);
+                            apartment currentApart= data.child("room").getValue(apartment.class);
+                            currentApart.addImg(urlCaptured);
+                            currentUser.setRoom(currentApart);
+                            mDatabaseRef.child(currentUser.getUserId()).setValue(currentUser);
+
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+
 
             }
 

@@ -30,9 +30,14 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
@@ -57,14 +62,18 @@ public class personal_details extends AppCompatActivity {
     private CardView updateCardView;
 
     private Uri mImageUri;
+    private String urlGallery;
+    private String urlCaptured;
+
+    private FirebaseAuth fAuth;
 
     private StorageReference mStorageRef;
     private DatabaseReference mDatabaseRef;
 
-    StorageReference mountainsRef; // for camera capture
-    StorageReference mountainImagesRef; // // for camera capture
+    private StorageReference mountainsRef; // for camera capture
+    private StorageReference mountainImagesRef; // // for camera capture
 
-    Bitmap bitmap; // the image will save as bitmap in order to show it
+    private Bitmap bitmap; // the image will save as bitmap in order to show it
 
     private StorageTask mUploadTask;
 
@@ -113,6 +122,8 @@ public class personal_details extends AppCompatActivity {
         mImageView = findViewById(R.id.image_view);
         mProgressBar = findViewById(R.id.progress_bar);
         updateCardView=findViewById(R.id.updateCard);
+
+        fAuth = FirebaseAuth.getInstance();
 
         mStorageRef = FirebaseStorage.getInstance().getReference("uploads"); // save in storage
         mDatabaseRef = FirebaseDatabase.getInstance().getReference("uploads");
@@ -188,8 +199,8 @@ public class personal_details extends AppCompatActivity {
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK // successfully picked image
                 && data != null && data.getData()!=null ) {
 
-                mImageUri = data.getData(); // the ui of the image we picked
-                Picasso.with(this).load(mImageUri).into(mImageView); // load the image to the image view
+            mImageUri = data.getData(); // the ui of the image we picked
+            Picasso.with(this).load(mImageUri).into(mImageView); // load the image to the image view
 
             uploadFrom=1;
         }else{
@@ -250,14 +261,14 @@ public class personal_details extends AppCompatActivity {
 
     private void uploadFileFromGallery() {
 
- if (mImageUri != null) { // only one pic
+        if (mImageUri != null) { // only one pic
             StorageReference fileReference = mStorageRef.child(System.currentTimeMillis() // to get unique id we put current time
                     + "." + getFileExtension(mImageUri));
 
             mUploadTask = fileReference.putFile(mImageUri)
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        public void onSuccess(final UploadTask.TaskSnapshot taskSnapshot) {
                             Handler handler = new Handler(); // to delay the progress bar for 0.5 sec
                             handler.postDelayed(new Runnable() {
                                 @Override
@@ -267,18 +278,43 @@ public class personal_details extends AppCompatActivity {
                             }, 500);
 
                             // Toast.makeText(personal_details.this, "upload successful", Toast.LENGTH_LONG).show();
-                            upload upload = new upload(mEditTextFileName.getText().toString().trim(), // (name,url)
-                                    taskSnapshot.getMetadata().getReference().getDownloadUrl().toString()); // https://stackoverflow.com/questions/50660975/firebase-storage-getdownloadurl-method-cant-be-resolved
+
+                            urlGallery=taskSnapshot.getMetadata().getReference().getDownloadUrl().toString();
+                            upload upload = new upload(mEditTextFileName.getText().toString().trim(),urlGallery // (name,url)
+                            ); // https://stackoverflow.com/questions/50660975/firebase-storage-getdownloadurl-method-cant-be-resolved
                             String uploadId = mDatabaseRef.push().getKey(); // create new entry in our database
                             mDatabaseRef.child(uploadId).setValue(upload); // then take the unique id and set the data to the upload
+                            mDatabaseRef = FirebaseDatabase.getInstance().getReference("Users");
 
+                            Query query=mDatabaseRef.orderByChild("email").equalTo(fAuth.getCurrentUser().getEmail());
+
+                            query.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+
+                                    for (DataSnapshot data : dataSnapshot.getChildren()) {
+
+                                        user currentUser = data.getValue(user.class);
+                                        Toast.makeText(personal_details.this, currentUser.toString(), Toast.LENGTH_SHORT).show();
+                                        currentUser.setImgUri(urlGallery);
+                                        mDatabaseRef.child(currentUser.getUserId()).setValue(currentUser);
+                                    }
+
+                                }
+
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+
+                                }
+                            });
 
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
-                                   Toast.makeText(personal_details.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(personal_details.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     })
                     .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
@@ -288,6 +324,7 @@ public class personal_details extends AppCompatActivity {
                             mProgressBar.setProgress((int) progress);
                         }
                     });
+            urlGallery="";
         } else { // no pictures
 
             Toast.makeText(this, "No file selected", Toast.LENGTH_SHORT).show();
@@ -308,12 +345,12 @@ public class personal_details extends AppCompatActivity {
         uploadTask.addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                   Toast.makeText(personal_details.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(personal_details.this, e.getMessage(), Toast.LENGTH_SHORT).show();
 
             }
         }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+            public void onSuccess(final UploadTask.TaskSnapshot taskSnapshot) {
 
                 Handler handler = new Handler(); // to delay the progress bar for 0.5 sec
                 handler.postDelayed(new Runnable() {
@@ -325,15 +362,40 @@ public class personal_details extends AppCompatActivity {
 
                 Toast.makeText(personal_details.this, "upload successful", Toast.LENGTH_LONG).show();
 
-                upload upload = new upload(mEditTextFileName.getText().toString().trim(), // (name,url)
-                        taskSnapshot.getMetadata().getReference().getDownloadUrl().toString());
 
-                 Toast.makeText(personal_details.this, taskSnapshot.getMetadata().getReference().getDownloadUrl().toString(), Toast.LENGTH_LONG).show();
+                urlCaptured = taskSnapshot.getMetadata().getReference().getDownloadUrl().toString();
+                upload upload = new upload(mEditTextFileName.getText().toString().trim(), // (name,url)
+                        urlCaptured);
+
+                Toast.makeText(personal_details.this, taskSnapshot.getMetadata().getReference().getDownloadUrl().toString(), Toast.LENGTH_LONG).show();
 
                 String uploadId = mDatabaseRef.push().getKey(); // create new entry in our database
                 mDatabaseRef.child(uploadId).setValue(upload); // then take the unique id and set the data to the upload
 
-            }
+
+                // new code aric
+
+                mDatabaseRef = FirebaseDatabase.getInstance().getReference("Users");
+
+                Query query=mDatabaseRef.orderByChild("email").equalTo(fAuth.getCurrentUser().getEmail());
+
+                query.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+
+                        for (DataSnapshot data : dataSnapshot.getChildren()) {
+                            user currentUser= data.getValue(user.class);
+                            currentUser.setImgUri(urlCaptured);
+                            mDatabaseRef.child(currentUser.getUserId()).setValue(currentUser);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+       }
 
         })
                 .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {

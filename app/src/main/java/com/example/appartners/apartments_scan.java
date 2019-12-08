@@ -71,6 +71,35 @@ public class apartments_scan extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_apartments_scan);
 
-    }
+        fAuto = FirebaseAuth.getInstance();
 
+        text=findViewById(R.id.textView);
+
+        mDatabaseRef = FirebaseDatabase.getInstance().getReference("Users");
+
+        Query query=mDatabaseRef.orderByChild("aprPrt").equalTo("Searching partner");
+
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                for (DataSnapshot data : dataSnapshot.getChildren()) {
+                    apartment currentApart= data.child("room").getValue(apartment.class);
+
+                    if (currentApart != null) {
+
+                        text.setText(currentApart.getPhone());
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+
+    }
 }
+
