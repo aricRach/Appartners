@@ -81,7 +81,7 @@ public class login extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(task.isSuccessful()){
-                            Toast.makeText(login.this, fAuth.getCurrentUser().getEmail(), Toast.LENGTH_LONG).show();
+                            Toast.makeText(login.this, "Logged in Successfuly", Toast.LENGTH_LONG).show();
 
                             Query query=databaseLogin.orderByChild("email").equalTo(fAuth.getCurrentUser().getEmail());
                             query.addValueEventListener(new ValueEventListener() {
