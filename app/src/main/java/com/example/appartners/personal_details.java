@@ -30,6 +30,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -247,21 +248,30 @@ public class personal_details extends AppCompatActivity {
             StorageReference fileReference = mStorageRef.child(System.currentTimeMillis() // to get unique id we put current time
                     + "." + getFileExtension(mImageUri));
 
-            mUploadTask = fileReference.putFile(mImageUri)
-                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(final UploadTask.TaskSnapshot taskSnapshot) {
-                            Handler handler = new Handler(); // to delay the progress bar for 0.5 sec
-                            handler.postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    mProgressBar.setProgress(0);
-                                }
-                            }, 500);
+            mUploadTask = fileReference.putFile(mImageUri);
 
-                            urlGallery=taskSnapshot.getMetadata().getReference().getDownloadUrl().toString();
+            mUploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    Handler handler = new Handler(); // to delay the progress bar for 0.5 sec
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            mProgressBar.setProgress(0);
+                        }
+                    }, 500);
+
+                    // urlGallery=taskSnapshot.getMetadata().getReference().getDownloadUrl().toString();
+
+                    Task<Uri> result=taskSnapshot.getStorage().getDownloadUrl();
+                    result.addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            urlGallery=uri.toString();
+                            Toast.makeText(personal_details.this, ""+urlGallery, Toast.LENGTH_LONG).show();
 
                             query.addListenerForSingleValueEvent(new ValueEventListener() {
+
                                 @Override
                                 public void onDataChange(DataSnapshot dataSnapshot) {
 
@@ -277,10 +287,16 @@ public class personal_details extends AppCompatActivity {
                                 @Override
                                 public void onCancelled(DatabaseError databaseError) { }
                             });
-                            Toast.makeText(personal_details.this, "upload successful", Toast.LENGTH_LONG).show();
+
 
                         }
-                    })
+                    });
+
+
+                    // Toast.makeText(personal_details.this, "upload successful", Toast.LENGTH_LONG).show();
+
+                }
+            })
                     .addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
@@ -327,23 +343,36 @@ public class personal_details extends AppCompatActivity {
                     }
                 }, 500);
 
-                urlCaptured = taskSnapshot.getMetadata().getReference().getDownloadUrl().toString();
+                //urlCaptured = taskSnapshot.getMetadata().getReference().getDownloadUrl().toString();
 
-                query.addListenerForSingleValueEvent(new ValueEventListener() {
+                Task<Uri> result=taskSnapshot.getStorage().getDownloadUrl();
+                result.addOnSuccessListener(new OnSuccessListener<Uri>() {
                     @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
+                    public void onSuccess(Uri uri) {
+                        urlCaptured=uri.toString();
+                        Toast.makeText(personal_details.this, ""+urlCaptured, Toast.LENGTH_LONG).show();
 
-                        for (DataSnapshot data : dataSnapshot.getChildren()) {
-                            user currentUser= data.getValue(user.class);
-                            currentUser.setImgUri(urlCaptured);
-                            //call updateField(currentUser) function that set the data from the page into currentUser object
-                            mDatabaseRef.child(currentUser.getUserId()).setValue(currentUser);
-                        }
+                        query.addListenerForSingleValueEvent(new ValueEventListener() {
+
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                                for (DataSnapshot data : dataSnapshot.getChildren()) {
+                                    user currentUser= data.getValue(user.class);
+                                    currentUser.setImgUri(urlCaptured);
+                                    //call updateField(currentUser) function that set the data from the page into currentUser object
+                                    mDatabaseRef.child(currentUser.getUserId()).setValue(currentUser);
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) { }
+                        });
                     }
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) { }
                 });
-                Toast.makeText(personal_details.this, "upload successful", Toast.LENGTH_LONG).show();
+
+                // Toast.makeText(personal_details.this, "upload successful", Toast.LENGTH_LONG).show();
+
             }
         })
                 .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {

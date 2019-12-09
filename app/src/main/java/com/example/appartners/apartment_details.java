@@ -33,6 +33,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -212,7 +213,7 @@ public class apartment_details extends AppCompatActivity {
             String[] filePathColumn = { MediaStore.Images.Media.DATA };
             imagesEncodedList = new ArrayList<String>();
             if(data.getData()!=null) {
-                mImageView.setVisibility(View.VISIBLE);
+               // mImageView.setVisibility(View.VISIBLE);
                 mImageUri = data.getData(); // the ui of the image we picked
                 Picasso.with(this).load(mImageUri).into(mImageView); // load the image to the image view
 
@@ -303,8 +304,8 @@ public class apartment_details extends AppCompatActivity {
                 StorageReference fileReference = mStorageRef.child(System.currentTimeMillis() // to get unique id we put current time
                         + "." + getFileExtension(mImageUri));
 
-                mUploadTask = fileReference.putFile(mImageUri)
-                        .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                mUploadTask = fileReference.putFile(mImageUri);
+                mUploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                             @Override
                             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                                 Handler handler = new Handler(); // to delay the progress bar for 0.5 sec
@@ -315,29 +316,38 @@ public class apartment_details extends AppCompatActivity {
                                     }
                                 }, 500);
 
-                                urlGallery = taskSnapshot.getMetadata().getReference().getDownloadUrl().toString();
-
-                                query.addListenerForSingleValueEvent(new ValueEventListener() {
+                                Task<Uri> result=taskSnapshot.getStorage().getDownloadUrl();
+                                result.addOnSuccessListener(new OnSuccessListener<Uri>() {
                                     @Override
-                                    public void onDataChange(DataSnapshot dataSnapshot) {
+                                    public void onSuccess(Uri uri) {
+                                        urlGallery=uri.toString();
+                                        query.addListenerForSingleValueEvent(new ValueEventListener() {
 
-                                        for (DataSnapshot data : dataSnapshot.getChildren()) {
-                                            user currentUser =data.getValue(user.class);
-                                            apartment currentApart= data.child("room").getValue(apartment.class);
-                                            currentApart.addImg(urlGallery);
-                                            currentUser.setRoom(currentApart);
-                                            mDatabaseRef.child(currentUser.getUserId()).setValue(currentUser);
-                                        }
+                                            @Override
+                                            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                                                for (DataSnapshot data : dataSnapshot.getChildren()) {
+                                                    user currentUser =data.getValue(user.class);
+                                                    apartment currentApart= data.child("room").getValue(apartment.class);
+                                                    currentApart.addImg(urlGallery);
+                                                    //call updateField(currentApart) function that set the data from the page into currentApart object
+                                                    currentUser.setRoom(currentApart);
+                                                    mDatabaseRef.child(currentUser.getUserId()).setValue(currentUser);
+                                                }
+                                            }
+
+                                            @Override
+                                            public void onCancelled(DatabaseError databaseError) { }
+                                        });
                                     }
-                                    @Override
-                                    public void onCancelled(DatabaseError databaseError) { }
                                 });
+
                             }
                         })
                         .addOnFailureListener(new OnFailureListener() {
                             @Override
                             public void onFailure(@NonNull Exception e) {
-                             //   Toast.makeText(personal_details.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                                Toast.makeText(apartment_details.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                             }
                         })
                         .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
@@ -353,26 +363,29 @@ public class apartment_details extends AppCompatActivity {
             StorageReference fileReference = mStorageRef.child(System.currentTimeMillis() // to get unique id we put current time
                     + "." + getFileExtension(mImageUri));
 
-            mUploadTask = fileReference.putFile(mImageUri)
-                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            mUploadTask = fileReference.putFile(mImageUri);
+            mUploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    Handler handler = new Handler(); // to delay the progress bar for 0.5 sec
+                    handler.postDelayed(new Runnable() {
                         @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            Handler handler = new Handler(); // to delay the progress bar for 0.5 sec
-                            handler.postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    mProgressBar.setProgress(0);
-                                }
-                            }, 500);
+                        public void run() {
+                            mProgressBar.setProgress(0);
+                        }
+                    }, 500);
 
-                            urlGallery = taskSnapshot.getMetadata().getReference().getDownloadUrl().toString();
-
+                    Task<Uri> result=taskSnapshot.getStorage().getDownloadUrl();
+                    result.addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            urlGallery=uri.toString();
                             query.addListenerForSingleValueEvent(new ValueEventListener() {
+
                                 @Override
                                 public void onDataChange(DataSnapshot dataSnapshot) {
 
                                     for (DataSnapshot data : dataSnapshot.getChildren()) {
-
                                         user currentUser =data.getValue(user.class);
                                         apartment currentApart= data.child("room").getValue(apartment.class);
                                         currentApart.addImg(urlGallery);
@@ -381,13 +394,15 @@ public class apartment_details extends AppCompatActivity {
                                         mDatabaseRef.child(currentUser.getUserId()).setValue(currentUser);
                                     }
                                 }
+
                                 @Override
                                 public void onCancelled(DatabaseError databaseError) { }
                             });
-
-                             Toast.makeText(apartment_details.this, "upload successful", Toast.LENGTH_LONG).show();
                         }
-                    })
+                    });
+
+                }
+            })
                     .addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
@@ -414,18 +429,18 @@ public class apartment_details extends AppCompatActivity {
         byte[] dataArr = baos.toByteArray();
         UploadTask uploadTask = mountainsRef.putBytes(dataArr);
 
-        mStorageRef.child( ""+System.currentTimeMillis()+".jpg");// gives unique name
+        mStorageRef.child( ""+System.currentTimeMillis()+".jpg"); // gives unique name
         mountainImagesRef = mStorageRef.child(""+System.currentTimeMillis()+".jpg");
 
         uploadTask.addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
                 Toast.makeText(apartment_details.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-
             }
+
         }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+            public void onSuccess(final UploadTask.TaskSnapshot taskSnapshot) {
 
                 Handler handler = new Handler(); // to delay the progress bar for 0.5 sec
                 handler.postDelayed(new Runnable() {
@@ -435,30 +450,37 @@ public class apartment_details extends AppCompatActivity {
                     }
                 }, 500);
 
-                urlCaptured=taskSnapshot.getMetadata().getReference().getDownloadUrl().toString();
-
-                query.addListenerForSingleValueEvent(new ValueEventListener() {
+                Task<Uri> result=taskSnapshot.getStorage().getDownloadUrl();
+                result.addOnSuccessListener(new OnSuccessListener<Uri>() {
                     @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
+                    public void onSuccess(Uri uri) {
+                        urlCaptured=uri.toString();
+                        Toast.makeText(apartment_details.this, ""+urlCaptured, Toast.LENGTH_LONG).show();
 
-                        for (DataSnapshot data : dataSnapshot.getChildren()) {
-                            user currentUser =data.getValue(user.class);
-                            apartment currentApart= data.child("room").getValue(apartment.class);
-                            currentApart.addImg(urlCaptured);
-                            //call updateField(currentApart) function that set the data from the page into currentApart object
-                            currentUser.setRoom(currentApart);
-                            mDatabaseRef.child(currentUser.getUserId()).setValue(currentUser);
-                        }
-                    }
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
+                        query.addListenerForSingleValueEvent(new ValueEventListener() {
 
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                                for (DataSnapshot data : dataSnapshot.getChildren()) {
+                                    user currentUser =data.getValue(user.class);
+                                    apartment currentApart= data.child("room").getValue(apartment.class);
+                                    currentApart.addImg(urlCaptured);
+                                    //call updateField(currentApart) function that set the data from the page into currentApart object
+                                    currentUser.setRoom(currentApart);
+                                    mDatabaseRef.child(currentUser.getUserId()).setValue(currentUser);
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) { }
+                        });
                     }
                 });
-                Toast.makeText(apartment_details.this, "upload successful", Toast.LENGTH_LONG).show();
+
+                 Toast.makeText(apartment_details.this, "upload successful", Toast.LENGTH_LONG).show();
 
             }
-
         })
                 .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
                     @Override
