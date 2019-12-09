@@ -182,6 +182,11 @@ public class apartment_details extends AppCompatActivity {
                 startActivity(intent);
                 return true;
 
+            case R.id.apartment_scan_item:
+                intent=new Intent(this, apartments_scan.class);
+                startActivity(intent);
+                return true;
+
             case R.id.LogOutItem:
                 FirebaseAuth.getInstance().signOut();
                 startActivity(new Intent(getApplicationContext(), login.class));
@@ -214,7 +219,11 @@ public class apartment_details extends AppCompatActivity {
             imagesEncodedList = new ArrayList<String>();
             if(data.getData()!=null) {
                // mImageView.setVisibility(View.VISIBLE);
+
                 mImageUri = data.getData(); // the ui of the image we picked
+
+                mArrayUri.add(mImageUri); // aric
+
                 Picasso.with(this).load(mImageUri).into(mImageView); // load the image to the image view
 
                 Cursor cursor = getContentResolver().query(mImageUri,
@@ -359,64 +368,7 @@ public class apartment_details extends AppCompatActivity {
                         });
             }
         }
-        else if (mImageUri != null) { // only one pic
-            StorageReference fileReference = mStorageRef.child(System.currentTimeMillis() // to get unique id we put current time
-                    + "." + getFileExtension(mImageUri));
-
-            mUploadTask = fileReference.putFile(mImageUri);
-            mUploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    Handler handler = new Handler(); // to delay the progress bar for 0.5 sec
-                    handler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            mProgressBar.setProgress(0);
-                        }
-                    }, 500);
-
-                    Task<Uri> result=taskSnapshot.getStorage().getDownloadUrl();
-                    result.addOnSuccessListener(new OnSuccessListener<Uri>() {
-                        @Override
-                        public void onSuccess(Uri uri) {
-                            urlGallery=uri.toString();
-                            query.addListenerForSingleValueEvent(new ValueEventListener() {
-
-                                @Override
-                                public void onDataChange(DataSnapshot dataSnapshot) {
-
-                                    for (DataSnapshot data : dataSnapshot.getChildren()) {
-                                        user currentUser =data.getValue(user.class);
-                                        apartment currentApart= data.child("room").getValue(apartment.class);
-                                        currentApart.addImg(urlGallery);
-                                        //call updateField(currentApart) function that set the data from the page into currentApart object
-                                        currentUser.setRoom(currentApart);
-                                        mDatabaseRef.child(currentUser.getUserId()).setValue(currentUser);
-                                    }
-                                }
-
-                                @Override
-                                public void onCancelled(DatabaseError databaseError) { }
-                            });
-                        }
-                    });
-
-                }
-            })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Toast.makeText(apartment_details.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
-                    })
-                    .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-                            double progress = (100.0 * taskSnapshot.getBytesTransferred() / taskSnapshot.getTotalByteCount());
-                            mProgressBar.setProgress((int) progress);
-                        }
-                    });
-        } else { // no pictures
+           else { // no pictures
 
             Toast.makeText(this, "No file selected", Toast.LENGTH_SHORT).show();
         }
