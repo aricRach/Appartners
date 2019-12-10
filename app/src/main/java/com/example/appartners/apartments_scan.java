@@ -6,10 +6,14 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -20,77 +24,63 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class apartments_scan extends AppCompatActivity {
 
-
-    // menu code
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.logged_menu, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-        Intent intent;
-        switch (item.getItemId()) {
-            case R.id.personal_details_item:
-                intent = new Intent(this, personal_details.class);
-                startActivity(intent);
-                return true;
-
-            case R.id.apartment_details_Item:
-                intent = new Intent(this, apartment_details.class);
-                startActivity(intent);
-                return true;
-
-            case R.id.LogOutItem:
-                FirebaseAuth.getInstance().signOut();
-                startActivity(new Intent(getApplicationContext(), login.class));
-                finish();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-
-
     private DatabaseReference mDatabaseRef;
     private FirebaseAuth fAuto;
 
-    private TextView text;
+    private String myPhoto;
+
+    private ImageView imgView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_apartments_scan);
 
+        imgView = findViewById(R.id.image_view);
         fAuto = FirebaseAuth.getInstance();
-
-        text=findViewById(R.id.textView);
-
         mDatabaseRef = FirebaseDatabase.getInstance().getReference("Users");
 
-        Query query=mDatabaseRef.orderByChild("aprPrt").equalTo("Searching partner");
+        Query query=mDatabaseRef.orderByChild("email").equalTo(fAuto.getCurrentUser().getEmail());
 
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
                 for (DataSnapshot data : dataSnapshot.getChildren()) {
-                    apartment currentApart= data.child("room").getValue(apartment.class);
 
-                    if (currentApart != null) {
+                    user currentUser = data.getValue(user.class);
 
-                        text.setText(currentApart.getPhone());
-                    }
+                    myPhoto = currentUser.getImgUri();
+
+                    Toast.makeText(apartments_scan.this, "" + myPhoto, Toast.LENGTH_SHORT).show();
+                    Log.i("the photo", myPhoto);
+
+                    Picasso.with(apartments_scan.this)
+                            .load(myPhoto)
+                            .into(imgView);
+
+                    imgView.setOnClickListener(new View.OnClickListener() {
+                        //@Override
+                        public void onClick(View v) {
+                            Toast.makeText(apartments_scan.this, "img clicked", Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(apartments_scan.this, picsApartInfo.class);
+
+                           // intent.putExtra("userImg", currentUser.getEmail());
+                            //startActivity(intent);
+
+                        }
+                    });
                 }
+
             }
 
             @Override
@@ -98,6 +88,11 @@ public class apartments_scan extends AppCompatActivity {
 
             }
         });
+
+
+
+
+
 
 
     }

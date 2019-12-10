@@ -172,6 +172,7 @@ public class apartment_details extends AppCompatActivity {
 
         Intent intent;
         switch (item.getItemId()) {
+
             case R.id.personal_details_item:
                 intent=new Intent(this,personal_details.class);
                 startActivity(intent);
@@ -186,6 +187,7 @@ public class apartment_details extends AppCompatActivity {
                 intent=new Intent(this, apartments_scan.class);
                 startActivity(intent);
                 return true;
+
 
             case R.id.LogOutItem:
                 FirebaseAuth.getInstance().signOut();
