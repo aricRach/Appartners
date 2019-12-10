@@ -64,6 +64,8 @@ public class personal_details extends AppCompatActivity {
     private String urlGallery;
     private String urlCaptured;
 
+    private String searchingFor;
+
     private FirebaseAuth fAuth;
     Query query;
 
@@ -115,13 +117,37 @@ public class personal_details extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
+                Query query=mDatabaseRef.orderByChild("email").equalTo(fAuth.getCurrentUser().getEmail());
+
+                query.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+
+                        for (DataSnapshot data : dataSnapshot.getChildren()) {
+
+                            user currentUser=data.getValue(user.class);
+                            searchingFor=currentUser.getAprPrt();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+
+
+
+
                 if (mUploadTask != null && mUploadTask.isInProgress()) { // if not null and not already uploaded
                     Toast.makeText(personal_details.this, "upload in progress", Toast.LENGTH_SHORT).show();
                 } else {
                     if(uploadFrom==1){
                         uploadFileFromGallery();
+                        goTo();
                     }else if (uploadFrom==2){
                         uploadFromCapturedImage();
+                        goTo();
                     } else{
                         Toast.makeText(personal_details.this, "please upload image", Toast.LENGTH_SHORT).show();
                     }
@@ -137,39 +163,6 @@ public class personal_details extends AppCompatActivity {
                 startActivityForResult(intent,TakedPicture);
             }
         });
-    }
-
-    // menu code
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.logged_menu, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-        Intent intent;
-        switch (item.getItemId()) {
-            case R.id.personal_details_item:
-                intent=new Intent(this,personal_details.class);
-                startActivity(intent);
-                return true;
-
-            case R.id.apartment_details_Item:
-                intent=new Intent(this, apartment_details.class);
-                startActivity(intent);
-                return true;
-
-            case R.id.LogOutItem:
-                FirebaseAuth.getInstance().signOut();
-                startActivity(new Intent(getApplicationContext(), login.class));
-                finish();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
     }
 
     private void openFileChooser() {
@@ -382,5 +375,21 @@ public class personal_details extends AppCompatActivity {
                         mProgressBar.setProgress((int) progress);
                     }
                 });
+    }
+
+    public void goTo(){
+
+
+        if (searchingFor=="Searching apartment"){
+
+            startActivity(new Intent(getApplicationContext(), apartments_scan.class));
+        }else{
+
+            if(searchingFor=="Searching partner"){
+
+                startActivity(new Intent(getApplicationContext(), partners_scan.class));
+
+            }
+        }
     }
 }

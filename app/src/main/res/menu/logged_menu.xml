@@ -15,6 +15,10 @@
 
 
     <item
+        android:id="@+id/partners_scan_item"
+        android:title="partners scan" />
+
+    <item
         android:id="@+id/filterItem"
         android:title="Results filter" />
 
