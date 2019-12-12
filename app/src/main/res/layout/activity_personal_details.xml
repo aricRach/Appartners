@@ -55,7 +55,7 @@
         app:srcCompat="@drawable/partners" />
 
     <EditText
-        android:id="@+id/userNameText"
+        android:id="@+id/tellAboutText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="96dp"
@@ -71,7 +71,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:id="@+id/editText"
+        android:id="@+id/phoneNumerText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="96dp"
@@ -80,11 +80,11 @@
         android:layout_marginEnd="102dp"
         android:layout_marginRight="102dp"
         android:ems="10"
-        android:hint="phone number"
-        android:inputType="phone"
+        android:hint="roomType number"
+        android:inputType="text"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/userNameText" />
+        app:layout_constraintTop_toBottomOf="@+id/tellAboutText" />
 
 
     <ImageView
@@ -99,7 +99,7 @@
         android:layout_marginRight="36dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/button_choose_image"
-        app:layout_constraintTop_toBottomOf="@+id/editText" />
+        app:layout_constraintTop_toBottomOf="@+id/phoneNumerText" />
 
 
     <ProgressBar
@@ -145,7 +145,7 @@
         android:layout_marginTop="44dp"
         android:text="Take picture"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editText" />
+        app:layout_constraintTop_toBottomOf="@+id/phoneNumerText" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

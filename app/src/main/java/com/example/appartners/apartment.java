@@ -7,7 +7,7 @@ public class apartment {
     private double price;
     private int occupants;
     private String street;
-    private String phone;
+    private String roomType;
     private int numOfRooms;
 
     private ArrayList<String> imagesUri;
@@ -17,18 +17,18 @@ public class apartment {
         this.price=0;
         this.occupants=0;
         this.street="";
-        this.phone="";
+        this.roomType ="";
         this.numOfRooms=0;
         this.imagesUri=new ArrayList<String>();
     }
 
-    public apartment(double price,int occupants,String street,String phone,int numOfRooms)
+    public apartment(double price, int occupants, String street, String roomType, int numOfRooms)
     {
 
         this.price=price;
         this.occupants=occupants;
         this.street=street;
-        this.phone=phone;
+        this.roomType = roomType;
         this.numOfRooms=numOfRooms;
         this.imagesUri=new ArrayList<String>();
     }
@@ -38,7 +38,7 @@ public class apartment {
         this.price=other.price;
         this.occupants=other.occupants;
         this.street=other.street;
-        this.phone=other.phone;
+        this.roomType =other.roomType;
         this.numOfRooms=other.numOfRooms;
         this.imagesUri=other.imagesUri;
     }
@@ -55,8 +55,8 @@ public class apartment {
         return street;
     }
 
-    public String getPhone() {
-        return phone;
+    public String getRoomType() {
+        return roomType;
     }
 
     public int getNumOfRooms() {
@@ -79,8 +79,8 @@ public class apartment {
         this.street = street;
     }
 
-    public void setPhone(String phone) {
-        this.phone = phone;
+    public void setRoomType(String roomType) {
+        this.roomType = roomType;
     }
 
     public void setNumOfRooms(int numOfRooms) {

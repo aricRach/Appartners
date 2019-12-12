@@ -19,10 +19,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
+import android.text.TextUtils;
 import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.Button;
@@ -41,7 +38,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.firestore.auth.User;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
@@ -75,6 +71,11 @@ public class apartment_details extends AppCompatActivity {
     private StorageReference mountainsRef; // for camera capture
     private StorageReference mountainImagesRef; // for camera capture
 
+
+    private apartment currentApart;
+    private user currentUser;
+
+
     private FirebaseAuth fAuth;
     private Query query;
     private Bitmap bitmap; // the image will save as bitmap in order to show it
@@ -86,9 +87,15 @@ public class apartment_details extends AppCompatActivity {
     // details
     private EditText mNumOfRooms;
     private EditText mOccupants;
-    private EditText mPhone;
+    private EditText mRoomType;
     private EditText mStreet;
     private EditText mPrice;
+
+    private String numOfRooms;
+    private String numOfOccupants;
+    private String roomType;
+    private String street;
+    private String Price;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,9 +127,10 @@ public class apartment_details extends AppCompatActivity {
         // details
         mNumOfRooms =findViewById(R.id.roomsNumText);
         mOccupants =findViewById(R.id.occupantsText);
-        mPhone =findViewById(R.id.phoneNumberText);
+        mRoomType =findViewById(R.id.typeOfRoomText);
         mStreet =findViewById(R.id.streetText);
         mPrice =findViewById(R.id.priceText);
+
 
         mButtonChooseImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -131,6 +139,36 @@ public class apartment_details extends AppCompatActivity {
             }
         });
 
+
+        Query query=mDatabaseRef.orderByChild("email").equalTo(fAuth.getCurrentUser().getEmail());
+
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                for (DataSnapshot data : dataSnapshot.getChildren()) {
+
+                    currentUser=data.getValue(user.class);
+                    currentApart= data.child("room").getValue(apartment.class);
+
+                    // get the details from db
+
+                    mNumOfRooms.setText(""+currentApart.getNumOfRooms());
+                    mOccupants.setText(""+currentApart.getOccupants());
+                    mRoomType.setText(currentApart.getRoomType());
+                    mStreet.setText(currentApart.getStreet());
+                    mPrice.setText(""+currentApart.getPrice());
+
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+
         updateCardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -138,15 +176,44 @@ public class apartment_details extends AppCompatActivity {
                 if (mUploadTask != null && mUploadTask.isInProgress()) { // if not null and not already uploaded
                     Toast.makeText(apartment_details.this, "upload in progress", Toast.LENGTH_SHORT).show();
                 } else {
+
+                     numOfRooms=mNumOfRooms.getText().toString();
+                     numOfOccupants=mOccupants.getText().toString();
+                     roomType = mRoomType.getText().toString();
+                     street=mStreet.getText().toString();
+                     Price = mPrice.getText().toString();
+
+                    if(checkFields()) {
+
+
+
+                        currentApart.setNumOfRooms(Integer.parseInt(numOfRooms));
+                        currentApart.setOccupants(Integer.parseInt(numOfOccupants));
+                        currentApart.setRoomType(roomType);
+                        currentApart.setStreet(street);
+                        currentApart.setPrice(Double.parseDouble(Price));
+
+                        currentUser.setRoom(currentApart);
+
+                        mDatabaseRef.child(currentUser.getUserId()).setValue(currentUser);
+
+
+                    }
                     if(uploadFrom==1){
                         uploadFileFromGallery();
                         moveToPartnersScan();
                     }else if (uploadFrom==2){
                         uploadFromCapturedImage();
                         moveToPartnersScan();
-                    } else{
+                    } else {
 
-                        Toast.makeText(apartment_details.this, "please upload image", Toast.LENGTH_SHORT).show();
+                        if (currentApart.getImagesUri().size() == 0) {
+
+                            Toast.makeText(apartment_details.this, "please upload image", Toast.LENGTH_SHORT).show();
+                        } else {
+
+                            moveToPartnersScan();
+                        }
                     }
                 }
             }
@@ -414,5 +481,34 @@ public class apartment_details extends AppCompatActivity {
 
     }
 
+    public boolean checkFields(){
 
+        boolean isValid=true;
+
+        if(TextUtils.isEmpty(numOfRooms)) {
+            mNumOfRooms.setError("no details");
+            isValid=false;
+        }
+
+        if(TextUtils.isEmpty(numOfOccupants)) {
+            mOccupants.setError("no details");
+            isValid=false;
+        }
+
+        if(TextUtils.isEmpty(roomType)) {
+            mRoomType.setError("no details");
+            isValid=false;
+        }
+
+        if(TextUtils.isEmpty(street)) {
+            mStreet.setError("no details");
+            isValid=false;
+        }
+
+        if(TextUtils.isEmpty(Price)) {
+            mPrice.setError("no details");
+            isValid=false;
+        }
+        return isValid;
+    }
 }

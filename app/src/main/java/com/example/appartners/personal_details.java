@@ -17,9 +17,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
+import android.text.TextUtils;
 import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.Button;
@@ -54,6 +52,8 @@ public class personal_details extends AppCompatActivity {
     private static final int TakedPicture = 2;
     private int uploadFrom = 0; // 0 image not Choosed yet / 1 is gallery / 2 is camera
 
+    private EditText mTellAbout;
+    private EditText mPhone;
     private Button mButtonChooseImage;
     private Button mButtonTakePic;
     private ImageView mImageView;
@@ -63,6 +63,8 @@ public class personal_details extends AppCompatActivity {
     private Uri mImageUri;
     private String urlGallery;
     private String urlCaptured;
+
+    private user currentUser;
 
     private String searchingFor;
 
@@ -85,6 +87,8 @@ public class personal_details extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_personal_details);
 
+        mTellAbout = findViewById(R.id.tellAboutText);
+        mPhone = findViewById(R.id.phoneNumerText);
         mButtonChooseImage = findViewById(R.id.button_choose_image);
         mButtonTakePic = findViewById(R.id.takePicButton);
         mImageView = findViewById(R.id.image_view);
@@ -123,9 +127,12 @@ public class personal_details extends AppCompatActivity {
 
                 for (DataSnapshot data : dataSnapshot.getChildren()) {
 
-                    user currentUser=data.getValue(user.class);
+                    currentUser=data.getValue(user.class);
                     searchingFor=currentUser.getAprPrt();
-                    Toast.makeText(personal_details.this, ""+searchingFor, Toast.LENGTH_SHORT).show();
+                        // get the details from db
+                    mTellAbout.setText(currentUser.getTellAbout());
+                    mPhone.setText(currentUser.getPhone());
+
                 }
             }
 
@@ -144,17 +151,33 @@ public class personal_details extends AppCompatActivity {
                 if (mUploadTask != null && mUploadTask.isInProgress()) { // if not null and not already uploaded
                     Toast.makeText(personal_details.this, "upload in progress", Toast.LENGTH_SHORT).show();
                 } else {
-                    if(uploadFrom==1){
-                        uploadFileFromGallery();
-                  //      Toast.makeText(personal_details.this, ""+searchingFor, Toast.LENGTH_LONG).show();
-                       goTo();
-                    }else if (uploadFrom==2){
-                        uploadFromCapturedImage();
-                  //      Toast.makeText(personal_details.this, ""+searchingFor, Toast.LENGTH_LONG).show();
-                        goTo();
-                    } else{
-                        Toast.makeText(personal_details.this, "please upload image", Toast.LENGTH_SHORT).show();
-                    }
+
+                   if(checkFields()) {
+
+                       currentUser.setTellAbout(mTellAbout.getText().toString());
+                       currentUser.setPhone(mPhone.getText().toString());
+                       mDatabaseRef.child(currentUser.getUserId()).setValue(currentUser);
+
+                       if(uploadFrom==1){
+                           uploadFileFromGallery();
+                           goTo();
+                       }else if (uploadFrom==2){
+
+                           uploadFromCapturedImage();
+                           goTo();
+                       } else{
+
+                           if(currentUser.getImgUri()==""){ // if the user doesn't have  img
+
+                               Toast.makeText(personal_details.this, "please upload image", Toast.LENGTH_SHORT).show();
+
+                           }else{ // if the user already has img and pressed upload
+
+                               goTo();
+
+                           }
+                       }
+                   }
                 }
             }
         });
@@ -202,6 +225,7 @@ public class personal_details extends AppCompatActivity {
                         requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, TakedPicture);
                     }
                 }
+
                 uploadFrom=2;
             }else{
                 Toast.makeText(this, "Result canceled", Toast.LENGTH_LONG).show();
@@ -396,6 +420,26 @@ public class personal_details extends AppCompatActivity {
 
 
         }
+
+    }
+
+    public boolean checkFields(){
+
+        boolean isValid=true;
+        String tellAbout=mTellAbout.getText().toString();
+        String phoneNum=mPhone.getText().toString();
+
+        if(TextUtils.isEmpty(tellAbout)) {
+            mTellAbout.setError("no details");
+            isValid=false;
+        }
+
+        if(TextUtils.isEmpty(phoneNum)){
+            mPhone.setError("no number");
+            isValid=false;
+        }
+
+        return isValid;
 
     }
 
