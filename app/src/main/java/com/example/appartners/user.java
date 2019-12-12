@@ -35,6 +35,7 @@ public class user {
         this.tellAbout="";
         this.phone="";
         this.imgUri="";
+        this.room=new apartment();
     }
 
     public user(user other){

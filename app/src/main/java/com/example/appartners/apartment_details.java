@@ -303,7 +303,7 @@ public class apartment_details extends AppCompatActivity {
                                                 for (DataSnapshot data : dataSnapshot.getChildren()) {
                                                     user currentUser =data.getValue(user.class);
                                                     apartment currentApart= data.child("room").getValue(apartment.class);
-                                                    currentApart.addImg(urlGallery);
+                                                    currentApart.addImg(urlGallery); // null
                                                     //call updateField(currentApart) function that set the data from the page into currentApart object
                                                     currentUser.setRoom(currentApart);
                                                     mDatabaseRef.child(currentUser.getUserId()).setValue(currentUser);

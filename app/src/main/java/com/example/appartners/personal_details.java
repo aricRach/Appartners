@@ -114,29 +114,31 @@ public class personal_details extends AppCompatActivity {
             }
         });
 
+
+        Query query=mDatabaseRef.orderByChild("email").equalTo(fAuth.getCurrentUser().getEmail());
+
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                for (DataSnapshot data : dataSnapshot.getChildren()) {
+
+                    user currentUser=data.getValue(user.class);
+                    searchingFor=currentUser.getAprPrt();
+                    Toast.makeText(personal_details.this, ""+searchingFor, Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+
         updateCardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-
-                Query query=mDatabaseRef.orderByChild("email").equalTo(fAuth.getCurrentUser().getEmail());
-
-                query.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-
-                        for (DataSnapshot data : dataSnapshot.getChildren()) {
-
-                            user currentUser=data.getValue(user.class);
-                            searchingFor=currentUser.getAprPrt();
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });
 
 
                 if (mUploadTask != null && mUploadTask.isInProgress()) { // if not null and not already uploaded
@@ -145,7 +147,7 @@ public class personal_details extends AppCompatActivity {
                     if(uploadFrom==1){
                         uploadFileFromGallery();
                   //      Toast.makeText(personal_details.this, ""+searchingFor, Toast.LENGTH_LONG).show();
-                        goTo();
+                       goTo();
                     }else if (uploadFrom==2){
                         uploadFromCapturedImage();
                   //      Toast.makeText(personal_details.this, ""+searchingFor, Toast.LENGTH_LONG).show();
@@ -381,7 +383,7 @@ public class personal_details extends AppCompatActivity {
 
     public void goTo(){
 
-
+        Toast.makeText(this, ""+searchingFor, Toast.LENGTH_SHORT).show();
         if (searchingFor.equals("Searching apartment")){
 
             startActivity(new Intent(getApplicationContext(), apartments_scan.class));
