@@ -10,6 +10,9 @@
         android:id="@+id/apartment_scan_item"
         android:title="Apartment scan" />
 
+    <item
+        android:id="@+id/my_fav_item"
+        android:title="My favorites" />
 
     <item
         android:id="@+id/LogOutItem"

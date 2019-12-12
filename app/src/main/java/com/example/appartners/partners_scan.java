@@ -9,6 +9,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -28,12 +29,15 @@ public class partners_scan extends AppCompatActivity {
     private DatabaseReference mDatabaseRef;
     private FirebaseAuth fAuto;
 
+    private user currentUser;
+
     private String myPhoto;
     private ImageView imgView;
     private Button mRightButton;
     private Button mLeftButton;
+    private ImageButton mStar;
 
-    private user currentUser;
+    private user currentPartner;
     private ArrayList<user> allPartners;
     private int index;
 
@@ -46,6 +50,7 @@ public class partners_scan extends AppCompatActivity {
         imgView = findViewById(R.id.image_view);
         mRightButton = findViewById(R.id.rightButton);
         mLeftButton = findViewById((R.id.leftButton));
+        mStar = findViewById(R.id.imageButton);
 
 
         fAuto = FirebaseAuth.getInstance();
@@ -69,7 +74,7 @@ public class partners_scan extends AppCompatActivity {
                 Picasso.with(partners_scan.this) // show first user img
                         .load(allPartners.get(0).getImgUri())
                         .into(imgView);
-                currentUser=allPartners.get(0);
+                currentPartner =allPartners.get(0);
             }
 
             @Override
@@ -77,6 +82,38 @@ public class partners_scan extends AppCompatActivity {
 
             }
         });
+
+
+        Query currentUserQuery=mDatabaseRef.orderByChild("email").equalTo(fAuto.getCurrentUser().getEmail());
+
+        currentUserQuery.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+
+                for (DataSnapshot data : dataSnapshot.getChildren()) {
+
+                   currentUser = data.getValue(user.class);
+
+                }
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        mStar.setOnClickListener((new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+
+                currentUser.addFav(currentPartner.getEmail());
+                mDatabaseRef.child(currentUser.getUserId()).setValue(currentUser);
+            }
+        }));
 
 
         // listener for right and left button if clicked right index++ and show the image of the allPartners.get(index)
@@ -93,8 +130,8 @@ public class partners_scan extends AppCompatActivity {
 
                 }
 
-                currentUser= allPartners.get(index);
-                String imgUrl=currentUser.getImgUri();
+                currentPartner = allPartners.get(index);
+                String imgUrl= currentPartner.getImgUri();
                 Picasso.with(partners_scan.this)
                         .load(imgUrl)
                         .into(imgView);
@@ -114,8 +151,8 @@ public class partners_scan extends AppCompatActivity {
 
                 }
 
-                currentUser= allPartners.get(index);
-                String imgUrl=currentUser.getImgUri();
+                currentPartner = allPartners.get(index);
+                String imgUrl= currentPartner.getImgUri();
                 Picasso.with(partners_scan.this)
                         .load(imgUrl)
                         .into(imgView);
@@ -128,7 +165,7 @@ public class partners_scan extends AppCompatActivity {
                 Toast.makeText(partners_scan.this, "img clicked", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(partners_scan.this, picsUserInfo.class);
 
-                intent.putExtra("userEmail", currentUser.getEmail());
+                intent.putExtra("userEmail", currentPartner.getEmail());
                 startActivity(intent);
             }
         });
@@ -157,6 +194,11 @@ public class partners_scan extends AppCompatActivity {
 
             case R.id.personal_details_item:
                 intent=new Intent(this,personal_details.class);
+                startActivity(intent);
+                return true;
+
+            case R.id.my_fav_item:
+                intent=new Intent(this,favorites.class);
                 startActivity(intent);
                 return true;
 

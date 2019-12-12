@@ -2,21 +2,15 @@ package com.example.appartners;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.DatePickerDialog;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
-import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -26,14 +20,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.StorageTask;
-import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
 
 public class apartments_scan extends AppCompatActivity {
 
@@ -44,8 +33,10 @@ public class apartments_scan extends AppCompatActivity {
     private ImageView imgView;
     private Button mRightButton;
     private Button mLeftButton;
+    private ImageButton mStar;
 
     private user currentUser;
+    private user currentHolder;
     private ArrayList<user> allRoomsHolders;
     private int index;
 
@@ -57,6 +48,7 @@ public class apartments_scan extends AppCompatActivity {
         imgView = findViewById(R.id.image_view);
         mRightButton=findViewById(R.id.rightButton);
         mLeftButton=findViewById((R.id.leftButton));
+        mStar = findViewById(R.id.imageButton);
 
 
         fAuto = FirebaseAuth.getInstance();
@@ -80,7 +72,7 @@ public class apartments_scan extends AppCompatActivity {
                 Picasso.with(apartments_scan.this)
                         .load(allRoomsHolders.get(0).getRoom().getImg(0))
                         .into(imgView);
-                currentUser=allRoomsHolders.get(0);
+                currentHolder =allRoomsHolders.get(0);
             }
 
             @Override
@@ -88,6 +80,37 @@ public class apartments_scan extends AppCompatActivity {
 
             }
         });
+
+        Query currentUserQuery=mDatabaseRef.orderByChild("email").equalTo(fAuto.getCurrentUser().getEmail());
+
+        currentUserQuery.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+
+                for (DataSnapshot data : dataSnapshot.getChildren()) {
+
+                    currentUser = data.getValue(user.class);
+
+                }
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        mStar.setOnClickListener((new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+
+                currentUser.addFav(currentHolder.getEmail());
+                mDatabaseRef.child(currentUser.getUserId()).setValue(currentUser);
+            }
+        }));
 
 
         mRightButton.setOnClickListener((new View.OnClickListener() {
@@ -101,8 +124,8 @@ public class apartments_scan extends AppCompatActivity {
 
                 }
 
-                currentUser=allRoomsHolders.get(index);
-                String imgUrl=currentUser.getRoom().getImg(0);
+                currentHolder =allRoomsHolders.get(index);
+                String imgUrl= currentHolder.getRoom().getImg(0);
                 Picasso.with(apartments_scan.this)
                         .load(imgUrl)
                         .into(imgView);
@@ -122,8 +145,8 @@ public class apartments_scan extends AppCompatActivity {
 
                 }
 
-                currentUser=allRoomsHolders.get(index);
-                String imgUrl=currentUser.getRoom().getImg(0);
+                currentHolder =allRoomsHolders.get(index);
+                String imgUrl= currentHolder.getRoom().getImg(0);
                 Picasso.with(apartments_scan.this)
                         .load(imgUrl)
                         .into(imgView);
@@ -138,7 +161,7 @@ public class apartments_scan extends AppCompatActivity {
                 Toast.makeText(apartments_scan.this, "img clicked", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(apartments_scan.this, picsApartInfo.class);
 
-                 intent.putExtra("userEmail", currentUser.getEmail());
+                 intent.putExtra("userEmail", currentHolder.getEmail());
                  startActivity(intent);
 
             }
@@ -168,6 +191,11 @@ public class apartments_scan extends AppCompatActivity {
 
             case R.id.personal_details_item:
                 intent=new Intent(this,personal_details.class);
+                startActivity(intent);
+                return true;
+
+            case R.id.my_fav_item:
+                intent=new Intent(this,favorites.class);
                 startActivity(intent);
                 return true;
 

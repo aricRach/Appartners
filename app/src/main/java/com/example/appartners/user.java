@@ -5,6 +5,8 @@ import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 
+import java.util.ArrayList;
+
 public class user {
 
     private apartment room;
@@ -20,8 +22,12 @@ public class user {
     private String tellAbout;
     private String phone;
     private String imgUri;
+    private ArrayList<String> myFav;
 
-    public user(){}
+    public user(){
+
+        myFav=new ArrayList<String>();
+    }
 
     public user(String userId,String userName, String userGender, String userCity, int userBirthday,String uid,String email,String aprPrt) {
         this.userId = userId;
@@ -36,6 +42,8 @@ public class user {
         this.phone="";
         this.imgUri="";
         this.room=new apartment();
+        this.myFav=new ArrayList<String>();
+       // this.addFav("a");
     }
 
     public user(user other){
@@ -47,7 +55,27 @@ public class user {
         this.userBirthday=other.userBirthday;
         this.uId=other.uId;
         this.email=other.email;
+        this.myFav=other.myFav;
 
+
+    }
+
+    public ArrayList<String> getMyFav() {
+        return myFav;
+    }
+
+    public void setMyFav(ArrayList<String> myFav) {
+        this.myFav = myFav;
+    }
+
+    public void addFav(String email){
+
+        myFav.add(email);
+    }
+
+    public String getFav(int i){
+
+        return myFav.get(i);
     }
 
     public apartment getRoom() {
