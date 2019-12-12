@@ -106,6 +106,7 @@ public class personal_details extends AppCompatActivity {
         mountainsRef.getName().equals(mountainImagesRef.getName()); // true
         mountainsRef.getPath().equals(mountainImagesRef.getPath()); // false
 
+
         mButtonChooseImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -116,6 +117,7 @@ public class personal_details extends AppCompatActivity {
         updateCardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
 
                 Query query=mDatabaseRef.orderByChild("email").equalTo(fAuth.getCurrentUser().getEmail());
 
@@ -137,16 +139,16 @@ public class personal_details extends AppCompatActivity {
                 });
 
 
-
-
                 if (mUploadTask != null && mUploadTask.isInProgress()) { // if not null and not already uploaded
                     Toast.makeText(personal_details.this, "upload in progress", Toast.LENGTH_SHORT).show();
                 } else {
                     if(uploadFrom==1){
                         uploadFileFromGallery();
+                  //      Toast.makeText(personal_details.this, ""+searchingFor, Toast.LENGTH_LONG).show();
                         goTo();
                     }else if (uploadFrom==2){
                         uploadFromCapturedImage();
+                  //      Toast.makeText(personal_details.this, ""+searchingFor, Toast.LENGTH_LONG).show();
                         goTo();
                     } else{
                         Toast.makeText(personal_details.this, "please upload image", Toast.LENGTH_SHORT).show();
@@ -380,16 +382,19 @@ public class personal_details extends AppCompatActivity {
     public void goTo(){
 
 
-        if (searchingFor=="Searching apartment"){
+        if (searchingFor.equals("Searching apartment")){
 
             startActivity(new Intent(getApplicationContext(), apartments_scan.class));
-        }else{
 
-            if(searchingFor=="Searching partner"){
-
-                startActivity(new Intent(getApplicationContext(), partners_scan.class));
-
-            }
         }
+
+        if (searchingFor.equals("Searching partner")) {
+
+            startActivity(new Intent(getApplicationContext(), partners_scan.class));
+
+
+        }
+
     }
-}
+
+    }
