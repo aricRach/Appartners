@@ -84,7 +84,7 @@ public class login extends AppCompatActivity {
                             Toast.makeText(login.this, "Logged in Successfuly", Toast.LENGTH_LONG).show();
 
                             Query query=databaseLogin.orderByChild("email").equalTo(fAuth.getCurrentUser().getEmail());
-                            query.addValueEventListener(new ValueEventListener() {
+                            query.addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(DataSnapshot dataSnapshot) {
 

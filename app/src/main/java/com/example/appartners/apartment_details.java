@@ -142,7 +142,7 @@ public class apartment_details extends AppCompatActivity {
 
         Query query=mDatabaseRef.orderByChild("email").equalTo(fAuth.getCurrentUser().getEmail());
 
-        query.addValueEventListener(new ValueEventListener() {
+        query.addListenerForSingleValueEvent (new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 

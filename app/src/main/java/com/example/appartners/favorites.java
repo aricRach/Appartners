@@ -56,7 +56,7 @@ public class favorites extends AppCompatActivity {
 
         Query query=mDatabaseRef.orderByChild("email").equalTo(fAuto.getCurrentUser().getEmail());
 
-        query.addValueEventListener(new ValueEventListener() {
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
@@ -70,11 +70,11 @@ public class favorites extends AppCompatActivity {
                 if(allFav.size()>0){
 
                   //  Toast.makeText(favorites.this, ""+allFav.get(0).getEmail(), Toast.LENGTH_SHORT).show();
-                   //String a= allFav.get(0).getImgUri();
+                   //String a= allFav.get(0).getImgUrl();
                   //  Toast.makeText(favorites.this, ""+allFav.get(0).getEmail(), Toast.LENGTH_SHORT).show();
 
                     Picasso.with(favorites.this) // show first user img
-                            .load(allFav.get(0).getImgUri())
+                            .load(allFav.get(0).getImgUrl())
                             .into(imgView);
                     currentPartApart=allFav.get(0);
                 }
@@ -98,7 +98,7 @@ public class favorites extends AppCompatActivity {
                 }
 
                 currentPartApart =allFav.get(index);
-                String imgUrl= currentPartApart.getImgUri();
+                String imgUrl= currentPartApart.getImgUrl();
                 Picasso.with(favorites.this)
                         .load(imgUrl)
                         .into(imgView);
@@ -119,7 +119,7 @@ public class favorites extends AppCompatActivity {
                 }
 
                 currentPartApart =allFav.get(index);
-                String imgUrl= currentPartApart.getImgUri();
+                String imgUrl= currentPartApart.getImgUrl();
                 Picasso.with(favorites.this)
                         .load(imgUrl)
                         .into(imgView);
@@ -144,24 +144,35 @@ public class favorites extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                int i = allFav.indexOf(currentPartApart);
-                Toast.makeText(favorites.this, ""+i+" deleted from favorites", Toast.LENGTH_SHORT).show();
                 currentUser.getMyFav().remove(currentPartApart);
-                //mDatabaseRef.child(currentUser.getUserId()).setValue(currentUser);
                 ArrayList<user> updatedFav=currentUser.getMyFav();
                 mDatabaseRef.child(currentUser.getUserId()).child("myFav").setValue(updatedFav);
 
                 index=0;
                 currentPartApart =allFav.get(index);
-                String imgUrl= currentPartApart.getImgUri();
+                String imgUrl= currentPartApart.getImgUrl();
                 Picasso.with(favorites.this)
                         .load(imgUrl)
                         .into(imgView);
 
-                //currentUser.getMyFav().remove(i);
             }
         }));
 
 
     }
+
+
+    @Override
+    public void onBackPressed() {
+
+
+        if(currentUser.getAprPrt().equals("Searching apartment")){
+            startActivity(new Intent(this,apartments_scan.class));
+
+        }else{
+            startActivity(new Intent(this,partners_scan.class));
+        }
+        return;
+    }
+
 }

@@ -9,7 +9,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -60,7 +59,7 @@ public class partners_scan extends AppCompatActivity {
 
         Query query=mDatabaseRef.orderByChild("aprPrt").equalTo("Searching apartment");
 
-        query.addValueEventListener(new ValueEventListener() {
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
@@ -72,7 +71,7 @@ public class partners_scan extends AppCompatActivity {
 
                 }
                 Picasso.with(partners_scan.this) // show first user img
-                        .load(allPartners.get(0).getImgUri())
+                        .load(allPartners.get(0).getImgUrl())
                         .into(imgView);
                 currentPartner =allPartners.get(0);
             }
@@ -86,7 +85,7 @@ public class partners_scan extends AppCompatActivity {
 
         Query currentUserQuery=mDatabaseRef.orderByChild("email").equalTo(fAuto.getCurrentUser().getEmail());
 
-        currentUserQuery.addValueEventListener(new ValueEventListener() {
+        currentUserQuery.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
@@ -112,7 +111,7 @@ public class partners_scan extends AppCompatActivity {
 
                 if(!currentUser.getMyFav().contains(currentPartner)){
 
-                    Toast.makeText(partners_scan.this, ""+currentPartner.getUserName()+" added to your favorites", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(partners_scan.this, currentPartner.getUserName()+" added to your favorites", Toast.LENGTH_SHORT).show();
                     currentUser.addFav(currentPartner);
                     ArrayList<user> updatedFav=currentUser.getMyFav();
                     mDatabaseRef.child(currentUser.getUserId()).child("myFav").setValue(updatedFav);
@@ -139,7 +138,7 @@ public class partners_scan extends AppCompatActivity {
                 }
 
                 currentPartner = allPartners.get(index);
-                String imgUrl= currentPartner.getImgUri();
+                String imgUrl= currentPartner.getImgUrl();
                 Picasso.with(partners_scan.this)
                         .load(imgUrl)
                         .into(imgView);
@@ -160,7 +159,7 @@ public class partners_scan extends AppCompatActivity {
                 }
 
                 currentPartner = allPartners.get(index);
-                String imgUrl= currentPartner.getImgUri();
+                String imgUrl= currentPartner.getImgUrl();
                 Picasso.with(partners_scan.this)
                         .load(imgUrl)
                         .into(imgView);

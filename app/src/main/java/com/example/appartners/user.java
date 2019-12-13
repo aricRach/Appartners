@@ -1,14 +1,6 @@
 package com.example.appartners;
 
-import android.widget.DatePicker;
-import android.widget.EditText;
-import android.widget.RadioGroup;
-import android.widget.Spinner;
-
 import java.util.ArrayList;
-import java.util.Objects;
-
-import androidx.annotation.Nullable;
 
 public class user implements Comparable<user> {
 
@@ -24,7 +16,7 @@ public class user implements Comparable<user> {
     // not need to be in constructor because this is the elements that in personal details.
     private String tellAbout;
     private String phone;
-    private String imgUri;
+    private String imgUrl;
     private ArrayList<user> myFav;
 
     public user(){
@@ -43,10 +35,9 @@ public class user implements Comparable<user> {
         this.aprPrt=aprPrt;
         this.tellAbout="";
         this.phone="";
-        this.imgUri="";
+        this.imgUrl ="";
         this.room=new apartment();
         this.myFav=new ArrayList<user>();
-       // this.addFav("a");
     }
 
     public user(user other){
@@ -113,14 +104,14 @@ public class user implements Comparable<user> {
         return phone;
     }
 
-    public String getImgUri() {
+    public String getImgUrl() {
 
         if(aprPrt.equals("Searching partner")){
 
             return getRoom().getImg(0);
         }
 
-        return imgUri;
+        return imgUrl;
     }
 
     public void setUserGender(String userGender) {
@@ -171,8 +162,8 @@ public class user implements Comparable<user> {
         this.phone = phone;
     }
 
-    public void setImgUri(String imgUri) {
-        this.imgUri = imgUri;
+    public void setImgUrl(String imgUrl) {
+        this.imgUrl = imgUrl;
     }
 
     public void setAprPrt(String aprPrt) {

@@ -39,7 +39,7 @@ public class picsApartInfo extends AppCompatActivity {
 
         Query query=mDatabaseRef.orderByChild("email").equalTo(apartmentEmail);
 
-        query.addValueEventListener(new ValueEventListener() {
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 

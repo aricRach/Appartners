@@ -59,7 +59,7 @@ public class apartments_scan extends AppCompatActivity {
         // because he searching for partners he has room
         Query query=mDatabaseRef.orderByChild("aprPrt").equalTo("Searching partner");
 
-        query.addValueEventListener(new ValueEventListener() {
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
@@ -83,7 +83,7 @@ public class apartments_scan extends AppCompatActivity {
 
         Query currentUserQuery=mDatabaseRef.orderByChild("email").equalTo(fAuto.getCurrentUser().getEmail());
 
-        currentUserQuery.addValueEventListener(new ValueEventListener() {
+        currentUserQuery.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
@@ -109,6 +109,7 @@ public class apartments_scan extends AppCompatActivity {
 
                 if(!currentUser.getMyFav().contains(currentHolder)){
 
+                    Toast.makeText(apartments_scan.this, currentHolder.getUserName()+" added to your favorites", Toast.LENGTH_SHORT).show();
                     currentUser.addFav(currentHolder);
                     ArrayList<user> updatedFav=currentUser.getMyFav();
                     mDatabaseRef.child(currentUser.getUserId()).child("myFav").setValue(updatedFav);

@@ -36,7 +36,7 @@ public class picsUserInfo extends AppCompatActivity {
 
         Query query=mDatabaseRef.orderByChild("email").equalTo(userEmail);
 
-        query.addValueEventListener(new ValueEventListener() {
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 

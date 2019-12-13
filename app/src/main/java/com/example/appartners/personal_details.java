@@ -121,7 +121,7 @@ public class personal_details extends AppCompatActivity {
 
         Query query=mDatabaseRef.orderByChild("email").equalTo(fAuth.getCurrentUser().getEmail());
 
-        query.addValueEventListener(new ValueEventListener() {
+        query.addListenerForSingleValueEvent (new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
@@ -167,7 +167,7 @@ public class personal_details extends AppCompatActivity {
                            goTo();
                        } else{
 
-                           if(currentUser.getImgUri()==""){ // if the user doesn't have  img
+                           if(currentUser.getImgUrl()==""){ // if the user doesn't have  img
 
                 Toast.makeText(personal_details.this, "please upload image", Toast.LENGTH_SHORT).show();
 
@@ -299,7 +299,7 @@ public class personal_details extends AppCompatActivity {
                                     for (DataSnapshot data : dataSnapshot.getChildren()) {
                                         user currentUser = data.getValue(user.class);
                                         Toast.makeText(personal_details.this, currentUser.toString(), Toast.LENGTH_SHORT).show();
-                                        currentUser.setImgUri(urlGallery);
+                                        currentUser.setImgUrl(urlGallery);
                                         //call updateField(currentUser) function that set the data from the page into currentUser object
                                         mDatabaseRef.child(currentUser.getUserId()).setValue(currentUser);
                                     }
@@ -380,7 +380,7 @@ public class personal_details extends AppCompatActivity {
 
                                 for (DataSnapshot data : dataSnapshot.getChildren()) {
                                     user currentUser= data.getValue(user.class);
-                                    currentUser.setImgUri(urlCaptured);
+                                    currentUser.setImgUrl(urlCaptured);
                                     //call updateField(currentUser) function that set the data from the page into currentUser object
                                     mDatabaseRef.child(currentUser.getUserId()).setValue(currentUser);
                                 }
