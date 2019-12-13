@@ -30,7 +30,7 @@ public class login extends AppCompatActivity {
 
     EditText mEmail, mPassword;
     Button mLoginBtn;
-    TextView mCreateBtn;
+    TextView mCreateBtn, mforgotPass;
     ProgressBar progressBar;
     FirebaseAuth fAuth;
     DatabaseReference databaseLogin;
@@ -46,6 +46,7 @@ public class login extends AppCompatActivity {
         fAuth = FirebaseAuth.getInstance();
         mLoginBtn = findViewById(R.id.loginBtn);
         mCreateBtn = findViewById(R.id.createText);
+        mforgotPass = findViewById( R.id.forgotPass );
 //        progressBar.setVisibility(View.INVISIBLE);
 
         databaseLogin = FirebaseDatabase.getInstance().getReference("Users");
@@ -121,5 +122,12 @@ public class login extends AppCompatActivity {
                 startActivity(new Intent(getApplicationContext(), register.class));
             }
         });
+
+        mforgotPass.setOnClickListener( new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity( new Intent( login.this, resetPassword.class ) );
+            }
+        } );
     }
 }

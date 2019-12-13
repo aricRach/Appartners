@@ -20,6 +20,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.auth.User;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -213,6 +214,13 @@ public class apartments_scan extends AppCompatActivity {
 
             case R.id.LogOutItem:
                 FirebaseAuth.getInstance().signOut();
+                startActivity(new Intent(getApplicationContext(), login.class));
+                finish();
+                return true;
+
+            case R.id.RemoveItem:
+                FirebaseAuth.getInstance().getCurrentUser().delete();
+                Toast.makeText( this, "User is Deleted", Toast.LENGTH_LONG ).show();
                 startActivity(new Intent(getApplicationContext(), login.class));
                 finish();
                 return true;

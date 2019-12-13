@@ -22,4 +22,12 @@
         android:id="@+id/LogOutItem"
         android:title="Log Out" />
 
+    <item
+        android:icon="@color/colorPrimary"
+        android:title="             OPTIONS" />
+
+    <item
+        android:id="@+id/RemoveItem"
+        android:title="Remove User" />
+
 </menu>

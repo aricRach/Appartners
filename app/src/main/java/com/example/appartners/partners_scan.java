@@ -225,8 +225,17 @@ public class partners_scan extends AppCompatActivity {
                 startActivity(new Intent(getApplicationContext(), login.class));
                 finish();
                 return true;
+
+            case R.id.RemoveItem:
+                FirebaseAuth.getInstance().getCurrentUser().delete();
+                Toast.makeText( this, "User is Deleted", Toast.LENGTH_LONG ).show();
+                startActivity(new Intent(getApplicationContext(), login.class));
+                finish();
+                return true;
+
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
+
 }
