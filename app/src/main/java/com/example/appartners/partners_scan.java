@@ -35,7 +35,7 @@ public class partners_scan extends AppCompatActivity {
     private ImageView imgView;
     private Button mRightButton;
     private Button mLeftButton;
-    private ImageButton mStar;
+    private Button mStar;
 
     private user currentPartner;
     private ArrayList<user> allPartners;
@@ -50,7 +50,7 @@ public class partners_scan extends AppCompatActivity {
         imgView = findViewById(R.id.image_view);
         mRightButton = findViewById(R.id.rightButton);
         mLeftButton = findViewById((R.id.leftButton));
-        mStar = findViewById(R.id.imageButton);
+        mStar = findViewById(R.id.likeButton);
 
 
         fAuto = FirebaseAuth.getInstance();
@@ -95,6 +95,7 @@ public class partners_scan extends AppCompatActivity {
 
                    currentUser = data.getValue(user.class);
 
+
                 }
 
             }
@@ -109,9 +110,16 @@ public class partners_scan extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
+                if(!currentUser.getMyFav().contains(currentPartner)){
 
-                currentUser.addFav(currentPartner.getEmail());
-                mDatabaseRef.child(currentUser.getUserId()).setValue(currentUser);
+                    Toast.makeText(partners_scan.this, ""+currentPartner.getUserName()+" added to your favorites", Toast.LENGTH_SHORT).show();
+                    currentUser.addFav(currentPartner);
+                    ArrayList<user> updatedFav=currentUser.getMyFav();
+                    mDatabaseRef.child(currentUser.getUserId()).child("myFav").setValue(updatedFav);
+
+                }
+
+
             }
         }));
 
@@ -169,11 +177,11 @@ public class partners_scan extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
     }
 
     @Override
     public void onBackPressed() {
+
         startActivity(new Intent(this,login.class));
         return;
     }

@@ -6,8 +6,11 @@ import android.widget.RadioGroup;
 import android.widget.Spinner;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
-public class user {
+import androidx.annotation.Nullable;
+
+public class user implements Comparable<user> {
 
     private apartment room;
     private String userId;
@@ -22,11 +25,11 @@ public class user {
     private String tellAbout;
     private String phone;
     private String imgUri;
-    private ArrayList<String> myFav;
+    private ArrayList<user> myFav;
 
     public user(){
 
-        myFav=new ArrayList<String>();
+        myFav=new ArrayList<user>();
     }
 
     public user(String userId,String userName, String userGender, String userCity, int userBirthday,String uid,String email,String aprPrt) {
@@ -42,7 +45,7 @@ public class user {
         this.phone="";
         this.imgUri="";
         this.room=new apartment();
-        this.myFav=new ArrayList<String>();
+        this.myFav=new ArrayList<user>();
        // this.addFav("a");
     }
 
@@ -60,20 +63,20 @@ public class user {
 
     }
 
-    public ArrayList<String> getMyFav() {
+    public ArrayList<user> getMyFav() {
         return myFav;
     }
 
-    public void setMyFav(ArrayList<String> myFav) {
+    public void setMyFav(ArrayList<user> myFav) {
         this.myFav = myFav;
     }
 
-    public void addFav(String email){
+    public void addFav(user fav){
 
-        myFav.add(email);
+        myFav.add(fav);
     }
 
-    public String getFav(int i){
+    public user getFav(int i){
 
         return myFav.get(i);
     }
@@ -111,6 +114,12 @@ public class user {
     }
 
     public String getImgUri() {
+
+        if(aprPrt.equals("Searching partner")){
+
+            return getRoom().getImg(0);
+        }
+
         return imgUri;
     }
 
@@ -186,4 +195,28 @@ public class user {
                 ", email='" + email + '\'' +
                 '}';
     }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        user user = (user) o;
+        return email.equals(user.email);
+    }
+
+
+    @Override
+    public int compareTo(user other) {
+
+        if (other.getEmail()==this.getEmail()){
+
+            return 0;
+        }else{
+
+            return -1;
+        }
+    }
+
+
 }

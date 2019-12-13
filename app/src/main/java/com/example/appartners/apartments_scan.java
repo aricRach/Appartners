@@ -107,8 +107,13 @@ public class apartments_scan extends AppCompatActivity {
             public void onClick(View view) {
 
 
-                currentUser.addFav(currentHolder.getEmail());
-                mDatabaseRef.child(currentUser.getUserId()).setValue(currentUser);
+                if(!currentUser.getMyFav().contains(currentHolder)){
+
+                    currentUser.addFav(currentHolder);
+                    ArrayList<user> updatedFav=currentUser.getMyFav();
+                    mDatabaseRef.child(currentUser.getUserId()).child("myFav").setValue(updatedFav);
+                }else{}
+
             }
         }));
 

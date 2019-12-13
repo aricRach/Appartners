@@ -169,16 +169,16 @@ public class personal_details extends AppCompatActivity {
 
                            if(currentUser.getImgUri()==""){ // if the user doesn't have  img
 
-                               Toast.makeText(personal_details.this, "please upload image", Toast.LENGTH_SHORT).show();
+                Toast.makeText(personal_details.this, "please upload image", Toast.LENGTH_SHORT).show();
 
-                           }else{ // if the user already has img and pressed upload
+            }else{ // if the user already has img and pressed upload
 
-                               goTo();
+                goTo();
 
-                           }
-                       }
-                   }
-                }
+            }
+        }
+    }
+}
             }
         });
 
