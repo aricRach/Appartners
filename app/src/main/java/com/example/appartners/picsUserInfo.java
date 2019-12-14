@@ -3,6 +3,7 @@ package com.example.appartners;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.firebase.database.DataSnapshot;
@@ -11,6 +12,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
+
+import java.util.ArrayList;
 
 public class picsUserInfo extends AppCompatActivity {
 
@@ -19,8 +23,10 @@ public class picsUserInfo extends AppCompatActivity {
     Bundle bundle;
     String userEmail;
 
-    TextView mNameText;
+    private TextView mNameText, mGenderText, mAgeText, mCityText, mEmailText, mTellAboutText;
+    private ImageView mImage_View;
 
+    private ArrayList<user> allFav;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,7 +35,13 @@ public class picsUserInfo extends AppCompatActivity {
 
         mDatabaseRef = FirebaseDatabase.getInstance().getReference("Users");
 
-        mNameText = findViewById(R.id.nameTextView);
+        mNameText = findViewById( R.id.nameText );
+        mGenderText = findViewById( R.id.genderText );
+        mAgeText = findViewById( R.id.ageText );
+        mCityText = findViewById( R.id.cityText );
+        mEmailText = findViewById( R.id.emailText );
+        mTellAboutText = findViewById( R.id.tellAboutText );
+        mImage_View = findViewById( R.id.image_view );
 
         bundle = getIntent().getExtras();
         userEmail = bundle.getString("userEmail"); //  the email of the user
@@ -43,13 +55,25 @@ public class picsUserInfo extends AppCompatActivity {
                 for (DataSnapshot data : dataSnapshot.getChildren()) {
 
                     user currentUser = data.getValue(user.class);
+                    allFav=currentUser.getMyFav();
 
-                    String name = currentUser.getUserName();
-                    String city = currentUser.getUserCity();
-                    mNameText.setText(name+" live in "+city+" he has ");
+                    mNameText.setText( "Name: " + currentUser.getUserName() );
+                    mGenderText.setText( "Gender: " + currentUser.getUserGender() );
+                    mAgeText.setText( "Age: " +currentUser.getUserBirthday() );
+                    mCityText.setText( "City: " +currentUser.getUserCity() );
+                    mEmailText.setText( "Email: " +currentUser.getEmail() );
+                    mTellAboutText.setText( "Tell about your self:\n" +currentUser.getTellAbout() );
+
+                    mDatabaseRef.child(currentUser.getUserId()).setValue(currentUser);
 
                 }
 
+                if(allFav.size()>0){
+
+                    Picasso.with(picsUserInfo.this)
+                            .load(allFav.get(0).getImgUrl())
+                            .into(mImage_View);
+                }
             }
 
             @Override

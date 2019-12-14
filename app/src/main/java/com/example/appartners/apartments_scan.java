@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -33,6 +34,7 @@ public class apartments_scan extends AppCompatActivity {
     private String myPhoto;
     private ImageView imgView;
     private ImageButton mLeft, mRight,mHeart;
+    private TextView mCityText;
 
     private user currentUser;
     private user currentHolder;
@@ -48,7 +50,7 @@ public class apartments_scan extends AppCompatActivity {
         mHeart = findViewById( R.id.heartBtn );
         mLeft = findViewById( R.id.leftBtn );
         mRight = findViewById( R.id.rightBtn );
-
+        mCityText = findViewById( R.id.cityText );
 
         fAuto = FirebaseAuth.getInstance();
         mDatabaseRef = FirebaseDatabase.getInstance().getReference("Users");
@@ -90,6 +92,9 @@ public class apartments_scan extends AppCompatActivity {
                 for (DataSnapshot data : dataSnapshot.getChildren()) {
 
                     currentUser = data.getValue(user.class);
+                    mCityText.setText( "City: " + currentUser.getUserCity() );
+
+                    mDatabaseRef.child(currentUser.getUserId()).setValue(currentUser);
 
                 }
 

@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -34,6 +35,7 @@ public class partners_scan extends AppCompatActivity {
     private String myPhoto;
     private ImageView imgView;
     private ImageButton mHeart, mLeft, mRight;
+    private TextView mNameText, mAgeText;
 
     private user currentPartner;
     private ArrayList<user> allPartners;
@@ -49,6 +51,9 @@ public class partners_scan extends AppCompatActivity {
         mHeart = findViewById(R.id.heartBtn);
         mLeft = findViewById( R.id.leftBtn );
         mRight = findViewById( R.id.rightBtn );
+
+        mNameText = findViewById( R.id.nameText );
+        mAgeText = findViewById( R.id.ageText );
 
 
 
@@ -93,7 +98,10 @@ public class partners_scan extends AppCompatActivity {
                 for (DataSnapshot data : dataSnapshot.getChildren()) {
 
                    currentUser = data.getValue(user.class);
+                   mNameText.setText( currentUser.getUserName() );
+                   mAgeText.setText( "Age: " + currentUser.getUserBirthday() );
 
+                   mDatabaseRef.child(currentUser.getUserId()).setValue(currentUser);
 
                 }
 
