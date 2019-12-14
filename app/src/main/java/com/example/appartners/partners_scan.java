@@ -79,6 +79,8 @@ public class partners_scan extends AppCompatActivity {
                         .load(allPartners.get(0).getImgUrl())
                         .into(imgView);
                 currentPartner =allPartners.get(0);
+                mNameText.setText( currentPartner.getUserName() );
+                mAgeText.setText( "Age: " + currentPartner.getUserBirthday() );
             }
 
             @Override
@@ -98,8 +100,7 @@ public class partners_scan extends AppCompatActivity {
                 for (DataSnapshot data : dataSnapshot.getChildren()) {
 
                    currentUser = data.getValue(user.class);
-                   mNameText.setText( currentUser.getUserName() );
-                   mAgeText.setText( "Age: " + currentUser.getUserBirthday() );
+
 
                    mDatabaseRef.child(currentUser.getUserId()).setValue(currentUser);
 
@@ -151,6 +152,8 @@ public class partners_scan extends AppCompatActivity {
                 Picasso.with(partners_scan.this)
                         .load(imgUrl)
                         .into(imgView);
+                mNameText.setText( currentPartner.getUserName() );
+                mAgeText.setText( "Age: " + currentPartner.getUserBirthday() );
             }
         }));
 
@@ -171,6 +174,8 @@ public class partners_scan extends AppCompatActivity {
                 Picasso.with(partners_scan.this)
                         .load(imgUrl)
                         .into(imgView);
+                mNameText.setText( currentPartner.getUserName() );
+                mAgeText.setText( "Age: " + currentPartner.getUserBirthday() );
             }
         }));
 

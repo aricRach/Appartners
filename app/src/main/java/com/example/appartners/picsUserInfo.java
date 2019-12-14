@@ -22,11 +22,11 @@ public class picsUserInfo extends AppCompatActivity {
     private DatabaseReference mDatabaseRef;
     Bundle bundle;
     String userEmail;
+    user currentUser;
 
     private TextView mNameText, mGenderText, mAgeText, mCityText, mEmailText, mTellAboutText;
     private ImageView mImage_View;
 
-    private ArrayList<user> allFav;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +43,8 @@ public class picsUserInfo extends AppCompatActivity {
         mTellAboutText = findViewById( R.id.tellAboutText );
         mImage_View = findViewById( R.id.image_view );
 
+
+
         bundle = getIntent().getExtras();
         userEmail = bundle.getString("userEmail"); //  the email of the user
 
@@ -54,8 +56,7 @@ public class picsUserInfo extends AppCompatActivity {
 
                 for (DataSnapshot data : dataSnapshot.getChildren()) {
 
-                    user currentUser = data.getValue(user.class);
-                    allFav=currentUser.getMyFav();
+                    currentUser = data.getValue(user.class);
 
                     mNameText.setText( "Name: " + currentUser.getUserName() );
                     mGenderText.setText( "Gender: " + currentUser.getUserGender() );
@@ -68,12 +69,11 @@ public class picsUserInfo extends AppCompatActivity {
 
                 }
 
-                if(allFav.size()>0){
 
                     Picasso.with(picsUserInfo.this)
-                            .load(allFav.get(0).getImgUrl())
+                            .load(currentUser.getImgUrl())
                             .into(mImage_View);
-                }
+
             }
 
             @Override

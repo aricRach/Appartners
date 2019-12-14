@@ -68,12 +68,15 @@ public class apartments_scan extends AppCompatActivity {
                 for (DataSnapshot data : dataSnapshot.getChildren()) {
 
                     roomHolder=data.getValue(user.class);
+
                     allRoomsHolders.add(roomHolder);
                 }
                 Picasso.with(apartments_scan.this)
                         .load(allRoomsHolders.get(0).getRoom().getImg(0))
                         .into(imgView);
                 currentHolder =allRoomsHolders.get(0);
+                mCityText.setText( "City: " + currentHolder.getUserCity() );
+
             }
 
             @Override
@@ -92,7 +95,8 @@ public class apartments_scan extends AppCompatActivity {
                 for (DataSnapshot data : dataSnapshot.getChildren()) {
 
                     currentUser = data.getValue(user.class);
-                    mCityText.setText( "City: " + currentUser.getUserCity() );
+
+
 
                     mDatabaseRef.child(currentUser.getUserId()).setValue(currentUser);
 
@@ -141,6 +145,7 @@ public class apartments_scan extends AppCompatActivity {
                 Picasso.with(apartments_scan.this)
                         .load(imgUrl)
                         .into(imgView);
+                mCityText.setText( "City: " + currentHolder.getUserCity() );
 
 
             }
@@ -163,6 +168,8 @@ public class apartments_scan extends AppCompatActivity {
                 Picasso.with(apartments_scan.this)
                         .load(imgUrl)
                         .into(imgView);
+                mCityText.setText( "City: " + currentHolder.getUserCity() );
+
 
 
             }
