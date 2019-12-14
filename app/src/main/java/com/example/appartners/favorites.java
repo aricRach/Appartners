@@ -31,8 +31,8 @@ public class favorites extends AppCompatActivity {
    private ArrayList<user> allFav;
 
     private ImageView imgView;
-    private Button mRightButton;
-    private Button mLeftButton;
+    private ImageButton mRightButton;
+    private ImageButton mLeftButton;
     private ImageButton mDelButton;
 
     int index;
@@ -44,8 +44,8 @@ public class favorites extends AppCompatActivity {
         setContentView(R.layout.activity_favorites);
 
         imgView = findViewById(R.id.image_view);
-        mRightButton = findViewById(R.id.rightButton);
-        mLeftButton = findViewById((R.id.leftButton));
+        mRightButton = findViewById(R.id.rightBtn);
+        mLeftButton = findViewById((R.id.leftBtn));
         mDelButton= findViewById(R.id.delButton2);
 
         fAuto = FirebaseAuth.getInstance();

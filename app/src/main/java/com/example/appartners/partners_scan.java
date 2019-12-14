@@ -9,6 +9,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -32,9 +33,7 @@ public class partners_scan extends AppCompatActivity {
 
     private String myPhoto;
     private ImageView imgView;
-    private Button mRightButton;
-    private Button mLeftButton;
-    private Button mStar;
+    private ImageButton mHeart, mLeft, mRight;
 
     private user currentPartner;
     private ArrayList<user> allPartners;
@@ -47,9 +46,10 @@ public class partners_scan extends AppCompatActivity {
 
 
         imgView = findViewById(R.id.image_view);
-        mRightButton = findViewById(R.id.rightButton);
-        mLeftButton = findViewById((R.id.leftButton));
-        mStar = findViewById(R.id.likeButton);
+        mHeart = findViewById(R.id.heartBtn);
+        mLeft = findViewById( R.id.leftBtn );
+        mRight = findViewById( R.id.rightBtn );
+
 
 
         fAuto = FirebaseAuth.getInstance();
@@ -105,18 +105,20 @@ public class partners_scan extends AppCompatActivity {
             }
         });
 
-        mStar.setOnClickListener((new View.OnClickListener() {
+        mHeart.setOnClickListener((new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                if(!currentUser.getMyFav().contains(currentPartner)){
+            //    if(!currentUser.getMyFav().contains(currentPartner)){
 
                     Toast.makeText(partners_scan.this, currentPartner.getUserName()+" added to your favorites", Toast.LENGTH_SHORT).show();
                     currentUser.addFav(currentPartner);
                     ArrayList<user> updatedFav=currentUser.getMyFav();
                     mDatabaseRef.child(currentUser.getUserId()).child("myFav").setValue(updatedFav);
 
-                }
+
+
+          //      }
 
 
             }
@@ -125,8 +127,7 @@ public class partners_scan extends AppCompatActivity {
 
         // listener for right and left button if clicked right index++ and show the image of the allPartners.get(index)
 
-
-        mRightButton.setOnClickListener((new View.OnClickListener() {
+        mRight.setOnClickListener((new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
@@ -142,19 +143,18 @@ public class partners_scan extends AppCompatActivity {
                 Picasso.with(partners_scan.this)
                         .load(imgUrl)
                         .into(imgView);
-
-
             }
         }));
 
-        mLeftButton.setOnClickListener((new View.OnClickListener() {
+
+        mLeft.setOnClickListener((new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
                 index--;
                 if(index<0){
 
-                    index= allPartners.size()-1;
+                    index=allPartners.size()-1;
 
                 }
 

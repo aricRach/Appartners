@@ -32,9 +32,7 @@ public class apartments_scan extends AppCompatActivity {
 
     private String myPhoto;
     private ImageView imgView;
-    private Button mRightButton;
-    private Button mLeftButton;
-    private ImageButton mStar;
+    private ImageButton mLeft, mRight,mHeart;
 
     private user currentUser;
     private user currentHolder;
@@ -47,9 +45,9 @@ public class apartments_scan extends AppCompatActivity {
         setContentView(R.layout.activity_apartments_scan);
 
         imgView = findViewById(R.id.image_view);
-        mRightButton=findViewById(R.id.rightButton);
-        mLeftButton=findViewById((R.id.leftButton));
-        mStar = findViewById(R.id.imageButton);
+        mHeart = findViewById( R.id.heartBtn );
+        mLeft = findViewById( R.id.leftBtn );
+        mRight = findViewById( R.id.rightBtn );
 
 
         fAuto = FirebaseAuth.getInstance();
@@ -103,24 +101,26 @@ public class apartments_scan extends AppCompatActivity {
             }
         });
 
-        mStar.setOnClickListener((new View.OnClickListener() {
+        mHeart.setOnClickListener((new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
 
-                if(!currentUser.getMyFav().contains(currentHolder)){
+              //  if(!currentUser.getMyFav().contains(currentHolder)){
 
                     Toast.makeText(apartments_scan.this, currentHolder.getUserName()+" added to your favorites", Toast.LENGTH_SHORT).show();
                     currentUser.addFav(currentHolder);
                     ArrayList<user> updatedFav=currentUser.getMyFav();
                     mDatabaseRef.child(currentUser.getUserId()).child("myFav").setValue(updatedFav);
-                }else{}
+
+
+
+              //  }else{}
 
             }
         }));
 
-
-        mRightButton.setOnClickListener((new View.OnClickListener() {
+        mRight.setOnClickListener((new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
@@ -141,7 +141,8 @@ public class apartments_scan extends AppCompatActivity {
             }
         }));
 
-        mLeftButton.setOnClickListener((new View.OnClickListener() {
+
+        mLeft.setOnClickListener((new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
