@@ -49,14 +49,14 @@ public class register extends AppCompatActivity {
     private RadioButton aprPrtBtn;
     private TextView mBirthday;
     private int age;
-    String name="";
-    String gender="";
-    String aprPrt="";
-    String password="";
-    String email="";
+    private String name="";
+    private String gender="";
+    private String aprPrt="";
+    private String password="";
+    private String email="";
 
-    DatePickerDialog.OnDateSetListener mDataSetListener;
-    DatabaseReference databaseRegisterUser;
+     DatePickerDialog.OnDateSetListener mDataSetListener;
+     DatabaseReference databaseRegisterUser;
 
     String id;
 
@@ -196,8 +196,6 @@ public class register extends AppCompatActivity {
 
                                 else if(searchPartners) {
 
-                                    apartment room=new apartment();
-                                    temp.setRoom(room);
                                     databaseRegisterUser.child(id).setValue(temp);
                                     Toast.makeText(register.this, "apartment Created "+email+"unique id: "+uid, Toast.LENGTH_SHORT).show();
                                     startActivity(new Intent(getApplicationContext(), apartment_details.class));

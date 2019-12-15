@@ -153,11 +153,18 @@ public class apartment_details extends AppCompatActivity {
 
                     // get the details from db
 
-                    mNumOfRooms.setText(""+currentApart.getNumOfRooms());
-                    mOccupants.setText(""+currentApart.getOccupants());
+                    if(currentApart.getNumOfRooms()!=0){
+                        mNumOfRooms.setText(""+currentApart.getNumOfRooms());
+                    }
+                    if(currentApart.getOccupants()!=0){
+                        mOccupants.setText(""+currentApart.getOccupants());
+                    }
+                    if(currentApart.getPrice()!=0){
+                        mPrice.setText(""+currentApart.getPrice());
+                    }
                     mRoomType.setText(currentApart.getRoomType());
                     mStreet.setText(currentApart.getStreet());
-                    mPrice.setText(""+currentApart.getPrice());
+
 
                 }
             }
@@ -185,36 +192,35 @@ public class apartment_details extends AppCompatActivity {
 
                     if(checkFields()) {
 
-
-
                         currentApart.setNumOfRooms(Integer.parseInt(numOfRooms));
                         currentApart.setOccupants(Integer.parseInt(numOfOccupants));
                         currentApart.setRoomType(roomType);
                         currentApart.setStreet(street);
                         currentApart.setPrice(Double.parseDouble(Price));
-
                         currentUser.setRoom(currentApart);
 
                         mDatabaseRef.child(currentUser.getUserId()).setValue(currentUser);
 
-
-                    }
-                    if(uploadFrom==1){
-                        uploadFileFromGallery();
-                        moveToPartnersScan();
-                    }else if (uploadFrom==2){
-                        uploadFromCapturedImage();
-                        moveToPartnersScan();
-                    } else {
-
-                        if (currentApart.getImagesUri().size() == 0) {
-
-                            Toast.makeText(apartment_details.this, "please upload image", Toast.LENGTH_SHORT).show();
+                        if(uploadFrom==1){
+                            uploadFileFromGallery();
+                            moveToPartnersScan();
+                        }else if (uploadFrom==2){
+                            uploadFromCapturedImage();
+                            moveToPartnersScan();
                         } else {
 
-                            moveToPartnersScan();
+                            if (currentApart.getImagesUri().size() == 0) {
+
+                                Toast.makeText(apartment_details.this, "please upload image", Toast.LENGTH_SHORT).show();
+                            } else {
+
+                                moveToPartnersScan();
+                            }
                         }
+
+
                     }
+
                 }
             }
         });

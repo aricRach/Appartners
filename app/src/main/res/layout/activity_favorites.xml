@@ -67,5 +67,21 @@
         app:layout_constraintTop_toBottomOf="@+id/image_view"
         app:srcCompat="@android:drawable/ic_delete" />
 
+    <TextView
+        android:id="@+id/zeroItemsText"
+        android:layout_width="93dp"
+        android:layout_height="20dp"
+        android:layout_marginStart="176dp"
+        android:layout_marginLeft="176dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="176dp"
+        android:layout_marginRight="176dp"
+        android:layout_marginBottom="16dp"
+        android:text="TextView"
+        app:layout_constraintBottom_toTopOf="@+id/image_view"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

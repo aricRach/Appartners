@@ -1,9 +1,13 @@
 package com.example.appartners;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -14,6 +18,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -22,6 +28,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.auth.User;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -35,6 +43,7 @@ public class apartments_scan extends AppCompatActivity {
     private ImageView imgView;
     private ImageButton mLeft, mRight,mHeart;
     private TextView mCityText;
+    private TextView mZeroItemsText;
 
     private user currentUser;
     private user currentHolder;
@@ -51,6 +60,8 @@ public class apartments_scan extends AppCompatActivity {
         mLeft = findViewById( R.id.leftBtn );
         mRight = findViewById( R.id.rightBtn );
         mCityText = findViewById( R.id.cityText );
+        mZeroItemsText=findViewById(R.id.zeroItemsText);
+        mZeroItemsText.setVisibility(View.INVISIBLE);
 
         fAuto = FirebaseAuth.getInstance();
         mDatabaseRef = FirebaseDatabase.getInstance().getReference("Users");
@@ -71,11 +82,28 @@ public class apartments_scan extends AppCompatActivity {
 
                     allRoomsHolders.add(roomHolder);
                 }
-                Picasso.with(apartments_scan.this)
-                        .load(allRoomsHolders.get(0).getRoom().getImg(0))
-                        .into(imgView);
-                currentHolder =allRoomsHolders.get(0);
-                mCityText.setText( "City: " + currentHolder.getUserCity() );
+
+                if(allRoomsHolders.size()>0){
+
+                    Picasso.with(apartments_scan.this)
+                            .load(allRoomsHolders.get(0).getRoom().getImg(0))
+                            .into(imgView);
+                    currentHolder =allRoomsHolders.get(0);
+                    mCityText.setText( "City: " + currentHolder.getUserCity() );
+                }else{
+
+                    mHeart.setVisibility(View.INVISIBLE);
+                    mLeft.setVisibility(View.INVISIBLE);
+                    mRight.setVisibility(View.INVISIBLE);
+                    mCityText.setVisibility(View.INVISIBLE);
+                    mZeroItemsText.setVisibility(View.VISIBLE);
+                    mZeroItemsText.setText(" no apartments to show");
+
+                    Picasso.with(apartments_scan.this)
+                            .load("https://firebasestorage.googleapis.com/v0/b/appartners-2735b.appspot.com/o/uploads%2FnoMore.jpg?alt=media&token=1a4d7a69-d6c7-43a0-b888-1e810925ca0c")
+                            .into(imgView);
+
+                }
 
             }
 
@@ -95,8 +123,6 @@ public class apartments_scan extends AppCompatActivity {
                 for (DataSnapshot data : dataSnapshot.getChildren()) {
 
                     currentUser = data.getValue(user.class);
-
-
 
                     mDatabaseRef.child(currentUser.getUserId()).setValue(currentUser);
 
@@ -232,10 +258,46 @@ public class apartments_scan extends AppCompatActivity {
                 return true;
 
             case R.id.RemoveItem:
-                FirebaseAuth.getInstance().getCurrentUser().delete();
-                Toast.makeText( this, "User is Deleted", Toast.LENGTH_LONG ).show();
-                startActivity(new Intent(getApplicationContext(), login.class));
-                finish();
+
+
+                new AlertDialog.Builder(this)
+                        .setTitle("Delete entry")
+                        .setMessage("Are you sure you want to delete this entry?")
+
+                        // Specifying a listener allows you to take an action before dismissing the dialog.
+                        // The dialog is automatically dismissed when a dialog button is clicked.
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                // Continue with delete operation
+                                FirebaseAuth.getInstance().getCurrentUser().delete(); // remove from Authentication
+                                StorageReference photoRef = FirebaseStorage.getInstance().getReferenceFromUrl(currentUser.getImgUrl());
+                                photoRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        // File deleted successfully
+                                        Log.i("delete files","file deleted");
+                                    }
+                                }).addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception exception) {
+                                        // Uh-oh, an error occurred!
+                                    }
+                                });
+
+                                mDatabaseRef.child(currentUser.getUserId()).setValue(null); // remove from Database
+                                Toast.makeText( apartments_scan.this, "User is Deleted", Toast.LENGTH_LONG ).show();
+                                startActivity(new Intent(getApplicationContext(), login.class));
+                                finish();
+                            }
+                        })
+
+                        // A null listener allows the button to dismiss the dialog and take no further action.
+                        .setNegativeButton(android.R.string.no, null)
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .show();
+
+
+
                 return true;
 
             default:

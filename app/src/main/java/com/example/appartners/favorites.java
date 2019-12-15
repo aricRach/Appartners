@@ -4,10 +4,12 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -29,11 +31,13 @@ public class favorites extends AppCompatActivity {
    private user currentUser;
    private user currentPartApart;
    private ArrayList<user> allFav;
+   private String searchingFor;
 
     private ImageView imgView;
     private ImageButton mRightButton;
     private ImageButton mLeftButton;
     private ImageButton mDelButton;
+    private TextView mZeroItemsText;
 
     int index;
 
@@ -47,6 +51,8 @@ public class favorites extends AppCompatActivity {
         mRightButton = findViewById(R.id.rightBtn);
         mLeftButton = findViewById((R.id.leftBtn));
         mDelButton= findViewById(R.id.delButton2);
+        mZeroItemsText=findViewById(R.id.zeroItemsText);
+        mZeroItemsText.setVisibility(View.INVISIBLE);
 
         fAuto = FirebaseAuth.getInstance();
         mDatabaseRef = FirebaseDatabase.getInstance().getReference("Users");
@@ -65,18 +71,26 @@ public class favorites extends AppCompatActivity {
 
                     currentUser=data.getValue(user.class);
                     allFav=currentUser.getMyFav();
+                    searchingFor=currentUser.getAprPrt();
 
                 }
                 if(allFav.size()>0){
-
-                  //  Toast.makeText(favorites.this, ""+allFav.get(0).getEmail(), Toast.LENGTH_SHORT).show();
-                   //String a= allFav.get(0).getImgUrl();
-                  //  Toast.makeText(favorites.this, ""+allFav.get(0).getEmail(), Toast.LENGTH_SHORT).show();
 
                     Picasso.with(favorites.this) // show first user img
                             .load(allFav.get(0).getImgUrl())
                             .into(imgView);
                     currentPartApart=allFav.get(0);
+                }else{
+
+                    mRightButton.setVisibility(View.INVISIBLE);
+                    mLeftButton.setVisibility(View.INVISIBLE);
+                   // imgView.setVisibility(View.INVISIBLE);
+                    mDelButton.setVisibility(View.INVISIBLE);
+                    mZeroItemsText.setVisibility(View.VISIBLE);
+                    mZeroItemsText.setText("no favorites for you");
+                    Picasso.with(favorites.this) // show first user img
+                            .load("https://aworshipersjournal.files.wordpress.com/2018/11/no-favorites.jpg?w=300&h=300")
+                            .into(imgView);
                 }
             }
 
@@ -131,11 +145,20 @@ public class favorites extends AppCompatActivity {
         imgView.setOnClickListener(new View.OnClickListener() {
             //@Override
             public void onClick(View v) {
-                Toast.makeText(favorites.this, "img clicked", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(favorites.this, picsApartInfo.class);
 
-                intent.putExtra("userEmail", currentPartApart.getEmail());
-                startActivity(intent);
+                Toast.makeText(favorites.this, "img clicked", Toast.LENGTH_SHORT).show();
+
+                if(searchingFor.equals("Searching partner")){
+
+                    Intent intent = new Intent(favorites.this, picsUserInfo.class);
+                    intent.putExtra("userEmail", currentPartApart.getEmail());
+                    startActivity(intent);
+                } else{
+
+                    Intent intent = new Intent(favorites.this, picsApartInfo.class);
+                    intent.putExtra("userEmail", currentPartApart.getEmail());
+                    startActivity(intent);
+                }
 
             }
         });
@@ -145,16 +168,29 @@ public class favorites extends AppCompatActivity {
             public void onClick(View view) {
 
                 currentUser.getMyFav().remove(currentPartApart);
-                ArrayList<user> updatedFav=currentUser.getMyFav();
-                mDatabaseRef.child(currentUser.getUserId()).child("myFav").setValue(updatedFav);
+                allFav.remove(currentPartApart);
+                mDatabaseRef.child(currentUser.getUserId()).child("myFav").setValue(currentUser.getMyFav());
 
-                index=0;
-                currentPartApart =allFav.get(index);
-                String imgUrl= currentPartApart.getImgUrl();
-                Picasso.with(favorites.this)
-                        .load(imgUrl)
-                        .into(imgView);
+                if(allFav.size()==0){
 
+                    if(searchingFor.equals("Searching partner")){
+
+                        startActivity(new Intent(getApplicationContext(), partners_scan.class));
+
+                    }else{
+
+                        startActivity(new Intent(getApplicationContext(), apartments_scan.class));
+                    }
+                }else{
+
+                    index=0;
+                    currentPartApart =allFav.get(index);
+                    String imgUrl= currentPartApart.getImgUrl();
+                    Picasso.with(favorites.this)
+                            .load(imgUrl)
+                            .into(imgView);
+
+                }
             }
         }));
 

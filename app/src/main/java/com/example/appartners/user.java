@@ -49,8 +49,8 @@ public class user implements Comparable<user> {
         this.userBirthday=other.userBirthday;
         this.uId=other.uId;
         this.email=other.email;
+        this.room=other.room;
         this.myFav=other.myFav;
-
 
     }
 
@@ -106,11 +106,17 @@ public class user implements Comparable<user> {
 
     public String getImgUrl() {
 
-        if(aprPrt.equals("Searching partner")){
+        if(aprPrt!=null){
 
-            return getRoom().getImg(0);
+            if(aprPrt.equals("Searching partner")){
+
+                if(getRoom().getImagesUri().size()>0){
+
+                    return getRoom().getImg(0);
+
+                }
+            }
         }
-
         return imgUrl;
     }
 

@@ -1,9 +1,13 @@
 package com.example.appartners;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -14,6 +18,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -21,11 +27,17 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
 public class partners_scan extends AppCompatActivity {
+
+
+    String currImg;
+
 
     private DatabaseReference mDatabaseRef;
     private FirebaseAuth fAuto;
@@ -36,6 +48,8 @@ public class partners_scan extends AppCompatActivity {
     private ImageView imgView;
     private ImageButton mHeart, mLeft, mRight;
     private TextView mNameText, mAgeText;
+    private TextView mZeroItemsText;
+
 
     private user currentPartner;
     private ArrayList<user> allPartners;
@@ -51,6 +65,8 @@ public class partners_scan extends AppCompatActivity {
         mHeart = findViewById(R.id.heartBtn);
         mLeft = findViewById( R.id.leftBtn );
         mRight = findViewById( R.id.rightBtn );
+        mZeroItemsText=findViewById(R.id.zeroItemsText);
+        mZeroItemsText.setVisibility(View.INVISIBLE);
 
         mNameText = findViewById( R.id.nameText );
         mAgeText = findViewById( R.id.ageText );
@@ -75,12 +91,31 @@ public class partners_scan extends AppCompatActivity {
                     allPartners.add(partnerUser);
 
                 }
-                Picasso.with(partners_scan.this) // show first user img
-                        .load(allPartners.get(0).getImgUrl())
-                        .into(imgView);
-                currentPartner =allPartners.get(0);
-                mNameText.setText( currentPartner.getUserName() );
-                mAgeText.setText( "Age: " + currentPartner.getUserBirthday() );
+                if(allPartners.size()>0){
+
+                    Picasso.with(partners_scan.this) // show first user img
+                            .load(allPartners.get(0).getImgUrl())
+                            .into(imgView);
+                    currentPartner =allPartners.get(0);
+                    mNameText.setText( currentPartner.getUserName() );
+                    mAgeText.setText( "Age: " + currentPartner.getUserBirthday() );
+
+                }else{
+
+                    mHeart.setVisibility(View.INVISIBLE);
+                    mLeft.setVisibility(View.INVISIBLE);
+                    mRight.setVisibility(View.INVISIBLE);
+                    mAgeText.setVisibility(View.INVISIBLE);
+                    mNameText.setVisibility(View.INVISIBLE);
+                    mZeroItemsText.setVisibility(View.VISIBLE);
+                    mZeroItemsText.setText(" no apartments to show");
+
+                    Picasso.with(partners_scan.this)
+                            .load("https://firebasestorage.googleapis.com/v0/b/appartners-2735b.appspot.com/o/uploads%2FnoMore.jpg?alt=media&token=1a4d7a69-d6c7-43a0-b888-1e810925ca0c")
+                            .into(imgView);
+
+                }
+
             }
 
             @Override
@@ -210,6 +245,7 @@ public class partners_scan extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
 
         Intent intent;
+
         switch (item.getItemId()) {
 
             case R.id.personal_details_item:
@@ -240,10 +276,45 @@ public class partners_scan extends AppCompatActivity {
                 return true;
 
             case R.id.RemoveItem:
-                FirebaseAuth.getInstance().getCurrentUser().delete();
-                Toast.makeText( this, "User is Deleted", Toast.LENGTH_LONG ).show();
-                startActivity(new Intent(getApplicationContext(), login.class));
-                finish();
+
+                new AlertDialog.Builder(this)
+                        .setTitle("Delete user")
+                        .setMessage("Are you sure you want to delete this user?")
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                Log.i("want to delete","want to delete");
+                                // Continue with delete operation
+                                FirebaseAuth.getInstance().getCurrentUser().delete(); // remove from Authentication
+                                int size=currentUser.getRoom().getImagesUri().size();
+                                for(int i=0; i<size; i++){ // remove all images from storage
+                                    currImg = currentUser.getRoom().getImg(i);
+                                    StorageReference photoRef = FirebaseStorage.getInstance().getReferenceFromUrl(currImg);
+                                    photoRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                            Log.i("delete files",""+currImg);
+                                        }
+                                    }).addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception exception) {
+                                            Log.i(" cant delete ",""+currImg);
+                                        }
+                                    });
+                                }
+
+                                Toast.makeText( partners_scan.this, "User is Deleted", Toast.LENGTH_LONG ).show();
+                                mDatabaseRef.child(currentUser.getUserId()).setValue(null); // remove from Database
+                                startActivity(new Intent(getApplicationContext(), login.class));
+                                finish();
+
+                            }
+                        })
+
+                        // A null listener allows the button to dismiss the dialog and take no further action.
+                        .setNegativeButton(android.R.string.no, null)
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .show();
+
                 return true;
 
             default:

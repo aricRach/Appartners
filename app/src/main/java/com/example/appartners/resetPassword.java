@@ -53,7 +53,6 @@ public class resetPassword extends AppCompatActivity {
                                 String message = task.getException().getMessage();
                                 Toast.makeText( resetPassword.this, "Error Occured: " + message, Toast.LENGTH_SHORT ).show();
                             }
-
                         }
                     } );
                 }

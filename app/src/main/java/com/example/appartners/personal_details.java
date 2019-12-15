@@ -160,7 +160,7 @@ public class personal_details extends AppCompatActivity {
 
                        if(uploadFrom==1){
                            uploadFileFromGallery();
-                           goTo();
+                          goTo();
                        }else if (uploadFrom==2){
 
                            uploadFromCapturedImage();
