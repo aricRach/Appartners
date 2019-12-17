@@ -131,7 +131,6 @@
         android:singleLine="true"/>
 
 
-
     <TextView
         android:id="@+id/Birthday"
         android:layout_width="0dp"
@@ -139,12 +138,12 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
-        android:ems="10"
-        android:hint="Birthday"
-        android:gravity="center"
         android:calendarViewShown="false"
         android:datePickerMode="spinner"
+        android:ems="10"
+        android:gravity="center"
         android:headerBackground="@color/cardview_light_background"
+        android:hint="Date Of Birth"
         android:padding="10dp"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"

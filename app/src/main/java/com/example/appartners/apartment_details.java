@@ -66,15 +66,12 @@ public class apartment_details extends AppCompatActivity {
     private String urlCaptured;
 
     private StorageReference mStorageRef;
-    private DatabaseReference mDatabaseRef;
+    private DatabaseReference mDatabaseApartment;
 
     private StorageReference mountainsRef; // for camera capture
     private StorageReference mountainImagesRef; // for camera capture
 
-
-    private apartment currentApart;
-    private user currentUser;
-
+    private Apartment currentUser;
 
     private FirebaseAuth fAuth;
     private Query query;
@@ -111,9 +108,9 @@ public class apartment_details extends AppCompatActivity {
         fAuth = FirebaseAuth.getInstance();
 
         mStorageRef = FirebaseStorage.getInstance().getReference("uploads"); // save in storage
-        mDatabaseRef = FirebaseDatabase.getInstance().getReference("Users");
+        mDatabaseApartment = FirebaseDatabase.getInstance().getReference("Apartment");
 
-        query=mDatabaseRef.orderByChild("email").equalTo(fAuth.getCurrentUser().getEmail());
+        query= mDatabaseApartment.orderByChild("email").equalTo(fAuth.getCurrentUser().getEmail());
 
         mountainsRef = mStorageRef.child(""+System.currentTimeMillis()+".jpg"); // dell
         // Create a reference to 'images/mountains.jpg'
@@ -140,30 +137,27 @@ public class apartment_details extends AppCompatActivity {
         });
 
 
-        Query query=mDatabaseRef.orderByChild("email").equalTo(fAuth.getCurrentUser().getEmail());
-
         query.addListenerForSingleValueEvent (new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
                 for (DataSnapshot data : dataSnapshot.getChildren()) {
 
-                    currentUser=data.getValue(user.class);
-                    currentApart= data.child("room").getValue(apartment.class);
+                    currentUser=data.getValue(Apartment.class);
 
                     // get the details from db
 
-                    if(currentApart.getNumOfRooms()!=0){
-                        mNumOfRooms.setText(""+currentApart.getNumOfRooms());
+                    if(currentUser.getNumOfRooms()!=0){
+                        mNumOfRooms.setText(""+currentUser.getNumOfRooms());
                     }
-                    if(currentApart.getOccupants()!=0){
-                        mOccupants.setText(""+currentApart.getOccupants());
+                    if(currentUser.getOccupants()!=0){
+                        mOccupants.setText(""+currentUser.getOccupants());
                     }
-                    if(currentApart.getPrice()!=0){
-                        mPrice.setText(""+currentApart.getPrice());
+                    if(currentUser.getPrice()!=0){
+                        mPrice.setText(""+currentUser.getPrice());
                     }
-                    mRoomType.setText(currentApart.getRoomType());
-                    mStreet.setText(currentApart.getStreet());
+                    mRoomType.setText(currentUser.getRoomType());
+                    mStreet.setText(currentUser.getStreet());
 
 
                 }
@@ -192,14 +186,13 @@ public class apartment_details extends AppCompatActivity {
 
                     if(checkFields()) {
 
-                        currentApart.setNumOfRooms(Integer.parseInt(numOfRooms));
-                        currentApart.setOccupants(Integer.parseInt(numOfOccupants));
-                        currentApart.setRoomType(roomType);
-                        currentApart.setStreet(street);
-                        currentApart.setPrice(Double.parseDouble(Price));
-                        currentUser.setRoom(currentApart);
+                        currentUser.setNumOfRooms(Integer.parseInt(numOfRooms));
+                        currentUser.setOccupants(Integer.parseInt(numOfOccupants));
+                        currentUser.setRoomType(roomType);
+                        currentUser.setStreet(street);
+                        currentUser.setPrice(Double.parseDouble(Price));
 
-                        mDatabaseRef.child(currentUser.getUserId()).setValue(currentUser);
+                        mDatabaseApartment.child(currentUser.getId()).setValue(currentUser);
 
                         if(uploadFrom==1){
                             uploadFileFromGallery();
@@ -209,7 +202,7 @@ public class apartment_details extends AppCompatActivity {
                             moveToPartnersScan();
                         } else {
 
-                            if (currentApart.getImagesUri().size() == 0) {
+                            if (currentUser.getImagesUri().size() == 0) {
 
                                 Toast.makeText(apartment_details.this, "please upload image", Toast.LENGTH_SHORT).show();
                             } else {
@@ -368,24 +361,11 @@ public class apartment_details extends AppCompatActivity {
                                     @Override
                                     public void onSuccess(Uri uri) {
                                         urlGallery=uri.toString();
-                                        query.addListenerForSingleValueEvent(new ValueEventListener() {
 
-                                            @Override
-                                            public void onDataChange(DataSnapshot dataSnapshot) {
 
-                                                for (DataSnapshot data : dataSnapshot.getChildren()) {
-                                                    user currentUser =data.getValue(user.class);
-                                                    apartment currentApart= data.child("room").getValue(apartment.class);
-                                                    currentApart.addImg(urlGallery); // null
-                                                    //call updateField(currentApart) function that set the data from the page into currentApart object
-                                                    currentUser.setRoom(currentApart);
-                                                    mDatabaseRef.child(currentUser.getUserId()).setValue(currentUser);
-                                                }
-                                            }
-
-                                            @Override
-                                            public void onCancelled(DatabaseError databaseError) { }
-                                        });
+                                        currentUser.addImg(urlGallery);
+                                        //call updateField(currentApart) function that set the data from the page into currentApart object
+                                        mDatabaseApartment.child(currentUser.getId()).setValue(currentUser);
                                     }
                                 });
 
@@ -447,24 +427,9 @@ public class apartment_details extends AppCompatActivity {
                         urlCaptured=uri.toString();
                         Toast.makeText(apartment_details.this, ""+urlCaptured, Toast.LENGTH_LONG).show();
 
-                        query.addListenerForSingleValueEvent(new ValueEventListener() {
+                        currentUser.addImg(urlCaptured);
+                        mDatabaseApartment.child(currentUser.getId()).setValue(currentUser);
 
-                            @Override
-                            public void onDataChange(DataSnapshot dataSnapshot) {
-
-                                for (DataSnapshot data : dataSnapshot.getChildren()) {
-                                    user currentUser =data.getValue(user.class);
-                                    apartment currentApart= data.child("room").getValue(apartment.class);
-                                    currentApart.addImg(urlCaptured);
-                                    //call updateField(currentApart) function that set the data from the page into currentApart object
-                                    currentUser.setRoom(currentApart);
-                                    mDatabaseRef.child(currentUser.getUserId()).setValue(currentUser);
-                                }
-                            }
-
-                            @Override
-                            public void onCancelled(DatabaseError databaseError) { }
-                        });
                     }
                 });
 

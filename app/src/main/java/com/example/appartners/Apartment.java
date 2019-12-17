@@ -2,18 +2,18 @@ package com.example.appartners;
 
 import java.util.ArrayList;
 
-public class apartment {
+public class Apartment extends User {
 
     private double price;
     private int occupants;
     private String street;
     private String roomType;
     private int numOfRooms;
-
     private ArrayList<String> imagesUri;
 
-    public apartment(){
+    public Apartment(){
 
+        super();
         this.price=0;
         this.occupants=0;
         this.street="";
@@ -22,18 +22,20 @@ public class apartment {
         this.imagesUri=new ArrayList<String>();
     }
 
-    public apartment(double price, int occupants, String street, String roomType, int numOfRooms)
-    {
 
-        this.price=price;
-        this.occupants=occupants;
-        this.street=street;
-        this.roomType = roomType;
-        this.numOfRooms=numOfRooms;
+    public Apartment(String id,String name, String gender, String city, int age, String email){
+
+        super(id,name,gender,city,age,email);
+        this.price=0;
+        this.occupants=0;
+        this.street="";
+        this.roomType = "";
+        this.numOfRooms=0;
         this.imagesUri=new ArrayList<String>();
     }
 
-    public apartment(apartment other){
+
+    public Apartment(Apartment other){
 
         this.price=other.price;
         this.occupants=other.occupants;

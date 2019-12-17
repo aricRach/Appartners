@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -23,7 +24,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.firestore.auth.User;
 
 public class login extends AppCompatActivity {
 
@@ -33,7 +33,7 @@ public class login extends AppCompatActivity {
     TextView mCreateBtn, mforgotPass;
     ProgressBar progressBar;
     FirebaseAuth fAuth;
-    DatabaseReference databaseLogin;
+    DatabaseReference databaseLoginForPartner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +49,7 @@ public class login extends AppCompatActivity {
         mforgotPass = findViewById( R.id.forgotPass );
 //        progressBar.setVisibility(View.INVISIBLE);
 
-        databaseLogin = FirebaseDatabase.getInstance().getReference("Users");
+        databaseLoginForPartner = FirebaseDatabase.getInstance().getReference("Partner");
 
         mLoginBtn.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -76,7 +76,7 @@ public class login extends AppCompatActivity {
                 progressBar.setVisibility(View.VISIBLE);
 
 
-                //authenticate the user
+                //authenticate the User
 
                 fAuth.signInWithEmailAndPassword(email,password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
@@ -84,28 +84,44 @@ public class login extends AppCompatActivity {
                         if(task.isSuccessful()){
                             Toast.makeText(login.this, "Logged in Successfuly", Toast.LENGTH_LONG).show();
 
-                            Query query=databaseLogin.orderByChild("email").equalTo(fAuth.getCurrentUser().getEmail());
+                            Query query= databaseLoginForPartner.orderByChild("email").equalTo(fAuth.getCurrentUser().getEmail());
+
                             query.addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
-                                public void onDataChange(DataSnapshot dataSnapshot) {
-
-                                    for (DataSnapshot data : dataSnapshot.getChildren()) {
-
-                                        user currentUser = data.getValue(user.class);
-                                        String searchApartmentOrPartner = currentUser.getAprPrt();
-                                        if(searchApartmentOrPartner.equals("Searching partner")) {
-                                            startActivity(new Intent(getApplicationContext(), partners_scan.class));
-                                        }else if(searchApartmentOrPartner.equals("Searching apartment")){
-                                            startActivity(new Intent(getApplicationContext(), apartments_scan.class));
-                                        }
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    if(dataSnapshot.hasChildren()){
+                                        startActivity(new Intent(getApplicationContext(), apartments_scan.class));
+                                    }else{
+                                        startActivity(new Intent(getApplicationContext(), partners_scan.class));
                                     }
                                 }
 
                                 @Override
-                                public void onCancelled(DatabaseError databaseError) {
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
 
                                 }
                             });
+//                            query.addListenerForSingleValueEvent(new ValueEventListener() {
+//                                @Override
+//                                public void onDataChange(DataSnapshot dataSnapshot) {
+//
+//                                    for (DataSnapshot data : dataSnapshot.getChildren()) {
+//
+//                                        User currentUser = data.getValue(User.class);
+//                                        String searchApartmentOrPartner = currentUser.getAprPrt();
+//                                        if(searchApartmentOrPartner.equals("Searching Partner")) {
+//                                            startActivity(new Intent(getApplicationContext(), partners_scan.class));
+//                                        }else if(searchApartmentOrPartner.equals("Searching Apartment")){
+//                                            startActivity(new Intent(getApplicationContext(), apartments_scan.class));
+//                                        }
+//                                    }
+//                                }
+//
+//                                @Override
+//                                public void onCancelled(DatabaseError databaseError) {
+//
+//                                }
+//                            });
 
                         }else{
                             Toast.makeText(login.this, "Error ! " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();

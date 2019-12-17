@@ -11,6 +11,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -45,9 +46,9 @@ public class register extends AppCompatActivity {
     private RadioButton genderBtn;
     private boolean chosenAprPrt;
     private boolean searchPartners, searchRoom;
-    private RadioGroup aprPrtGroup;
+    private RadioGroup searchingFor;
     private RadioButton aprPrtBtn;
-    private TextView mBirthday;
+    private TextView mDateOfBirth;
     private int age;
     private String name="";
     private String gender="";
@@ -56,7 +57,9 @@ public class register extends AppCompatActivity {
     private String email="";
 
      DatePickerDialog.OnDateSetListener mDataSetListener;
-     DatabaseReference databaseRegisterUser;
+     DatabaseReference databaseRegisterPartner;
+    DatabaseReference databaseRegisterApartment;
+
 
     String id;
 
@@ -65,7 +68,8 @@ public class register extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-        databaseRegisterUser = FirebaseDatabase.getInstance().getReference("Users");
+        databaseRegisterPartner = FirebaseDatabase.getInstance().getReference("Partner");
+        databaseRegisterApartment = FirebaseDatabase.getInstance().getReference("Apartment");
 
 
         mFullName = findViewById(R.id.fullName);
@@ -74,8 +78,8 @@ public class register extends AppCompatActivity {
         mRegisterBtn = findViewById(R.id.registerBtn);
         mLoginBtn = findViewById(R.id.createText);
         genderGroup=findViewById(R.id.radioGroup);
-        aprPrtGroup=findViewById(R.id.radioGroup2);
-        mBirthday = findViewById(R.id.Birthday);
+        searchingFor =findViewById(R.id.radioGroup2);
+        mDateOfBirth = findViewById(R.id.Birthday);
 
 
         fAuto = FirebaseAuth.getInstance();
@@ -92,7 +96,7 @@ public class register extends AppCompatActivity {
             FirebaseAuth.getInstance().signOut();
         }
 
-        mBirthday.setOnClickListener((new View.OnClickListener() {
+        mDateOfBirth.setOnClickListener((new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Calendar cal = Calendar.getInstance();
@@ -112,7 +116,7 @@ public class register extends AppCompatActivity {
                 month++;
                 age = 2020-year;
                 String birthday =  day + "/" + month + "/" + year;
-                mBirthday.setText(birthday);
+                mDateOfBirth.setText(birthday);
             }
         };
 
@@ -127,7 +131,7 @@ public class register extends AppCompatActivity {
 
                 int selectedRadioButtonID = genderGroup.getCheckedRadioButtonId();
 
-                int selectedRadioButtonID2 = aprPrtGroup.getCheckedRadioButtonId();
+                int selectedRadioButtonID2 = searchingFor.getCheckedRadioButtonId();
 
                 if (selectedRadioButtonID2 != -1) {
                     aprPrtBtn = findViewById(selectedRadioButtonID2);
@@ -172,11 +176,19 @@ public class register extends AppCompatActivity {
                     return;
                 }
 
-                id = databaseRegisterUser.push().getKey();
+
+                if(searchingFor.equals("Searching partner")){
+
+                    id = databaseRegisterApartment.push().getKey();
+                }else{
+
+                    id=databaseRegisterPartner.push().getKey();
+                }
+
 
                 progressBar.setVisibility(View.VISIBLE);
 
-                //register the user in firebase
+                //register the User in firebase
                 if (chosenCity && chosenGender && age!=0 && chosenAprPrt) {
                     fAuto.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                         @RequiresApi(api = Build.VERSION_CODES.O)
@@ -184,21 +196,28 @@ public class register extends AppCompatActivity {
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {
 
-                                String uid=fAuto.getCurrentUser().getUid();
-                                user temp=new user(id,name,gender,yourCity,age,uid,email,aprPrt);
                                 if(searchRoom){
 
-                                    databaseRegisterUser.child(id).setValue(temp);
-                                    Toast.makeText(register.this, "User Created "+email+"unique id: "+uid, Toast.LENGTH_SHORT).show();
+                                    Partner p = new Partner(id,name,gender,yourCity,age,email);
+                                    databaseRegisterPartner.child(id).setValue(p);
+                                    Toast.makeText(register.this, "User Created "+email, Toast.LENGTH_SHORT).show();
+                                    // intent put Extra
+                                    Intent intent = new Intent(register.this, personal_details.class);
+                                    intent.putExtra("searchingFor", "Searching apartment");
+                                    startActivity(intent);
 
-                                    startActivity(new Intent(getApplicationContext(), personal_details.class));
                                 }
 
                                 else if(searchPartners) {
 
-                                    databaseRegisterUser.child(id).setValue(temp);
-                                    Toast.makeText(register.this, "apartment Created "+email+"unique id: "+uid, Toast.LENGTH_SHORT).show();
-                                    startActivity(new Intent(getApplicationContext(), apartment_details.class));
+                                    Apartment a=new Apartment(id,name,gender,yourCity,age,email);
+                                    databaseRegisterApartment.child(id).setValue(a);
+                                    Toast.makeText(register.this, "User Created "+email, Toast.LENGTH_SHORT).show();
+
+                                    // intent put Extra
+                                    Intent intent = new Intent(register.this, personal_details.class);
+                                    intent.putExtra("searchingFor", "Searching partner");
+                                    startActivity(intent);
 
                                 }
                             } else {

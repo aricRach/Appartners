@@ -18,6 +18,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.Button;
@@ -64,15 +65,21 @@ public class personal_details extends AppCompatActivity {
     private String urlGallery;
     private String urlCaptured;
 
-    private user currentUser;
+    private boolean isPartenr;
+    private DataSnapshot myData;
 
+    private User currentUser;
+
+    private Bundle bundle;
     private String searchingFor;
 
     private FirebaseAuth fAuth;
     Query query;
 
     private StorageReference mStorageRef;
-    private DatabaseReference mDatabaseRef;
+    private DatabaseReference mDatabaseRefPartner;
+    private DatabaseReference mDatabaseRefApartment;
+
 
     private StorageReference mountainsRef; // for camera capture
     private StorageReference mountainImagesRef; //  for camera capture
@@ -95,12 +102,26 @@ public class personal_details extends AppCompatActivity {
         mProgressBar = findViewById(R.id.progress_bar);
         updateCardView=findViewById(R.id.updateCard);
 
+        bundle = getIntent().getExtras();
+        searchingFor = bundle.getString("searchingFor");
+
         fAuth = FirebaseAuth.getInstance();
 
         mStorageRef = FirebaseStorage.getInstance().getReference("uploads"); // save in storage
-        mDatabaseRef = FirebaseDatabase.getInstance().getReference("Users");
+        mDatabaseRefPartner = FirebaseDatabase.getInstance().getReference("Partner");
+        mDatabaseRefApartment=FirebaseDatabase.getInstance().getReference("Apartment");
 
-        query=mDatabaseRef.orderByChild("email").equalTo(fAuth.getCurrentUser().getEmail());
+
+        if(searchingFor.equals("Searching partner")){
+
+            isPartenr=false;
+            mButtonTakePic.setVisibility(View.INVISIBLE);
+            mButtonChooseImage.setVisibility(View.INVISIBLE);
+            mImageView.setVisibility(View.INVISIBLE);
+        }else{
+
+            isPartenr=true;
+        }
 
         mountainsRef = mStorageRef.child(""+System.currentTimeMillis()+".jpg");
         // Create a reference to 'images/mountains.jpg'
@@ -119,7 +140,13 @@ public class personal_details extends AppCompatActivity {
         });
 
 
-        Query query=mDatabaseRef.orderByChild("email").equalTo(fAuth.getCurrentUser().getEmail());
+        if(isPartenr){
+
+            query= mDatabaseRefPartner.orderByChild("email").equalTo(fAuth.getCurrentUser().getEmail());
+        }else{
+
+            query= mDatabaseRefApartment.orderByChild("email").equalTo(fAuth.getCurrentUser().getEmail());
+        }
 
         query.addListenerForSingleValueEvent (new ValueEventListener() {
             @Override
@@ -127,9 +154,9 @@ public class personal_details extends AppCompatActivity {
 
                 for (DataSnapshot data : dataSnapshot.getChildren()) {
 
-                    currentUser=data.getValue(user.class);
-                    searchingFor=currentUser.getAprPrt();
-                        // get the details from db
+                    myData=data;
+                    currentUser=data.getValue(User.class);
+                    // get the details from db
                     mTellAbout.setText(currentUser.getTellAbout());
                     mPhone.setText(currentUser.getPhone());
 
@@ -147,38 +174,49 @@ public class personal_details extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-
                 if (mUploadTask != null && mUploadTask.isInProgress()) { // if not null and not already uploaded
                     Toast.makeText(personal_details.this, "upload in progress", Toast.LENGTH_SHORT).show();
                 } else {
 
-                   if(checkFields()) {
+                    if(checkFields()) {
 
-                       currentUser.setTellAbout(mTellAbout.getText().toString());
-                       currentUser.setPhone(mPhone.getText().toString());
-                       mDatabaseRef.child(currentUser.getUserId()).setValue(currentUser);
+                        if(isPartenr){
 
-                       if(uploadFrom==1){
-                           uploadFileFromGallery();
-                          goTo();
-                       }else if (uploadFrom==2){
+                            mDatabaseRefPartner.child(currentUser.getId()).child("tellAbout").setValue(mTellAbout.getText().toString());
+                            mDatabaseRefPartner.child(currentUser.getId()).child("phone").setValue(mPhone.getText().toString());
 
-                           uploadFromCapturedImage();
-                           goTo();
-                       } else{
+                        }else{
 
-                           if(currentUser.getImgUrl()==""){ // if the user doesn't have  img
+                            mDatabaseRefApartment.child(currentUser.getId()).child("tellAbout").setValue(mTellAbout.getText().toString());
+                            mDatabaseRefApartment.child(currentUser.getId()).child("phone").setValue(mPhone.getText().toString());
+                            goTo();
+                        }
 
-                Toast.makeText(personal_details.this, "please upload image", Toast.LENGTH_SHORT).show();
+                        if(uploadFrom==1 && isPartenr){
+                            uploadFileFromGallery();
+                            goTo();
+                        }else if (uploadFrom==2 && isPartenr){
 
-            }else{ // if the user already has img and pressed upload
+                            uploadFromCapturedImage();
+                            goTo();
+                        } else{
 
-                goTo();
+                            if(isPartenr){ // if the User (partner) doesn't have img
 
-            }
-        }
-    }
-}
+                                Partner p =myData.getValue(Partner.class);
+                                if(p.getImgUrl().equals("")){
+
+                                    Toast.makeText(personal_details.this, "please upload image", Toast.LENGTH_SHORT).show();
+
+                                }else{// if the User already has img and pressed upload
+
+                                    goTo();
+
+                                }
+                            }
+                        }
+                    }
+                }
             }
         });
 
@@ -291,17 +329,20 @@ public class personal_details extends AppCompatActivity {
                             urlGallery=uri.toString();
                             Toast.makeText(personal_details.this, ""+urlGallery, Toast.LENGTH_LONG).show();
 
+
+                            query=mDatabaseRefPartner.orderByChild("email").equalTo(fAuth.getCurrentUser().getEmail());
                             query.addListenerForSingleValueEvent(new ValueEventListener() {
 
                                 @Override
                                 public void onDataChange(DataSnapshot dataSnapshot) {
 
                                     for (DataSnapshot data : dataSnapshot.getChildren()) {
-                                        user currentUser = data.getValue(user.class);
-                                        Toast.makeText(personal_details.this, currentUser.toString(), Toast.LENGTH_SHORT).show();
-                                        currentUser.setImgUrl(urlGallery);
+
+                                        Partner currentPartner = data.getValue(Partner.class);
+                                        Toast.makeText(personal_details.this, currentPartner.toString(), Toast.LENGTH_SHORT).show();
+                                        currentPartner.setImgUrl(urlGallery);
                                         //call updateField(currentUser) function that set the data from the page into currentUser object
-                                        mDatabaseRef.child(currentUser.getUserId()).setValue(currentUser);
+                                        mDatabaseRefPartner.child(currentPartner.getId()).setValue(currentPartner);
                                     }
                                 }
 
@@ -373,16 +414,17 @@ public class personal_details extends AppCompatActivity {
                         urlCaptured=uri.toString();
                         Toast.makeText(personal_details.this, ""+urlCaptured, Toast.LENGTH_LONG).show();
 
+                        query=mDatabaseRefPartner.orderByChild("email").equalTo(fAuth.getCurrentUser().getEmail());
                         query.addListenerForSingleValueEvent(new ValueEventListener() {
 
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
 
                                 for (DataSnapshot data : dataSnapshot.getChildren()) {
-                                    user currentUser= data.getValue(user.class);
-                                    currentUser.setImgUrl(urlCaptured);
+                                    Partner currentPartner= data.getValue(Partner.class);
+                                    currentPartner.setImgUrl(urlCaptured);
                                     //call updateField(currentUser) function that set the data from the page into currentUser object
-                                    mDatabaseRef.child(currentUser.getUserId()).setValue(currentUser);
+                                    mDatabaseRefPartner.child(currentPartner.getId()).setValue(currentPartner);
                                 }
                             }
 
@@ -408,18 +450,16 @@ public class personal_details extends AppCompatActivity {
     public void goTo(){
 
         Toast.makeText(this, ""+searchingFor, Toast.LENGTH_SHORT).show();
-        if (searchingFor.equals("Searching apartment")){
+        if (isPartenr){
 
             startActivity(new Intent(getApplicationContext(), apartments_scan.class));
 
-        }
+        }else{
 
-        if (searchingFor.equals("Searching partner")) {
-
-            startActivity(new Intent(getApplicationContext(), partners_scan.class));
-
+            startActivity(new Intent(getApplicationContext(), apartment_details.class));
 
         }
+
 
     }
 
@@ -443,4 +483,4 @@ public class personal_details extends AppCompatActivity {
 
     }
 
-    }
+}

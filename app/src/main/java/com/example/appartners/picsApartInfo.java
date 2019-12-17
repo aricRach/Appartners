@@ -2,13 +2,8 @@ package com.example.appartners;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -16,19 +11,15 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-import com.squareup.picasso.Picasso;
-
-import java.util.ArrayList;
 
 public class picsApartInfo extends AppCompatActivity {
 
     private DatabaseReference mDatabaseRef;
-    Bundle bundle;
-    String apartmentEmail;
+    private Bundle bundle;
+    private String apartmentEmail;
+    private Apartment currentApartment;
 
     private TextView mPrice, mOccupants, mStreet, mRoomNums, mTypeOfRoom;
-
-
 
 
     @Override
@@ -42,13 +33,10 @@ public class picsApartInfo extends AppCompatActivity {
         mRoomNums = findViewById( R.id.roomsNumText );
         mTypeOfRoom = findViewById( R.id.typeOfRoomText );
 
-        mDatabaseRef = FirebaseDatabase.getInstance().getReference("Users");
-
-
-
+        mDatabaseRef = FirebaseDatabase.getInstance().getReference("Apartment");
 
          bundle = getIntent().getExtras();
-         apartmentEmail = bundle.getString("userEmail"); //  the email of the apartment's user
+         apartmentEmail = bundle.getString("userEmail"); //  the email of the Apartment's User
 
         Query query=mDatabaseRef.orderByChild("email").equalTo(apartmentEmail);
 
@@ -58,17 +46,15 @@ public class picsApartInfo extends AppCompatActivity {
 
                 for (DataSnapshot data : dataSnapshot.getChildren()) {
 
-                    user currentUser = data.getValue(user.class);
+                     currentApartment = data.getValue(Apartment.class);
 
-                    apartment currentRoom=currentUser.getRoom();
+                    mPrice.setText( "Price: " + currentApartment.getPrice() );
+                    mOccupants.setText( "Occupants: " + currentApartment.getOccupants() );
+                    mStreet.setText( "Street: " + currentApartment.getStreet() );
+                    mRoomNums.setText( "Number Rooms: " + currentApartment.getNumOfRooms() );
+                    mTypeOfRoom.setText( "Type Of Room: " + currentApartment.getRoomType() );
 
-                    mPrice.setText( "Price: " + currentRoom.getPrice() );
-                    mOccupants.setText( "Occupants: " + currentRoom.getOccupants() );
-                    mStreet.setText( "Street: " + currentRoom.getStreet() );
-                    mRoomNums.setText( "Number Rooms: " + currentRoom.getNumOfRooms() );
-                    mTypeOfRoom.setText( "Type Of Room: " + currentRoom.getRoomType() );
-
-                    mDatabaseRef.child(currentUser.getUserId()).setValue(currentUser);
+                    mDatabaseRef.child(currentApartment.getId()).setValue(currentApartment);
 
                 }
 

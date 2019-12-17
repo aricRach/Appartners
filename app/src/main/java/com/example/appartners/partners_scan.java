@@ -12,7 +12,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -38,11 +37,12 @@ public class partners_scan extends AppCompatActivity {
 
     String currImg;
 
+    private DatabaseReference mDatabaseApartment;
+    private DatabaseReference mDatabasePartner;
 
-    private DatabaseReference mDatabaseRef;
     private FirebaseAuth fAuto;
 
-    private user currentUser;
+    private Apartment currentUser;
 
     private String myPhoto;
     private ImageView imgView;
@@ -51,14 +51,15 @@ public class partners_scan extends AppCompatActivity {
     private TextView mZeroItemsText;
 
 
-    private user currentPartner;
-    private ArrayList<user> allPartners;
+    private Partner currentPartner;
+    private ArrayList<Partner> allPartners;
     private int index;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_partners_scan);
+
 
 
         imgView = findViewById(R.id.image_view);
@@ -74,31 +75,32 @@ public class partners_scan extends AppCompatActivity {
 
 
         fAuto = FirebaseAuth.getInstance();
-        mDatabaseRef = FirebaseDatabase.getInstance().getReference("Users");
-        allPartners = new ArrayList<user>();
+        mDatabaseApartment = FirebaseDatabase.getInstance().getReference("Apartment");
+        mDatabasePartner = FirebaseDatabase.getInstance().getReference("Partner");
+        allPartners = new ArrayList<Partner>();
 
-
-        Query query=mDatabaseRef.orderByChild("aprPrt").equalTo("Searching apartment");
-
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
+//
+//        Query query=mDatabaseRef.orderByChild("aprPrt").equalTo("Searching Apartment");
+//
+        mDatabasePartner.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
-               user partnerUser=null;
+               Partner partnerUser=null;
                 for (DataSnapshot data : dataSnapshot.getChildren()) {
 
-                    partnerUser=data.getValue(user.class);
+                    partnerUser=data.getValue(Partner.class);
                     allPartners.add(partnerUser);
 
                 }
                 if(allPartners.size()>0){
 
-                    Picasso.with(partners_scan.this) // show first user img
+                    Picasso.with(partners_scan.this) // show first User img
                             .load(allPartners.get(0).getImgUrl())
                             .into(imgView);
                     currentPartner =allPartners.get(0);
-                    mNameText.setText( currentPartner.getUserName() );
-                    mAgeText.setText( "Age: " + currentPartner.getUserBirthday() );
+                    mNameText.setText( currentPartner.getName() );
+                    mAgeText.setText( "Age: " + currentPartner.getAge() );
 
                 }else{
 
@@ -125,7 +127,7 @@ public class partners_scan extends AppCompatActivity {
         });
 
 
-        Query currentUserQuery=mDatabaseRef.orderByChild("email").equalTo(fAuto.getCurrentUser().getEmail());
+        Query currentUserQuery=mDatabaseApartment.orderByChild("email").equalTo(fAuto.getCurrentUser().getEmail());
 
         currentUserQuery.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -134,10 +136,7 @@ public class partners_scan extends AppCompatActivity {
 
                 for (DataSnapshot data : dataSnapshot.getChildren()) {
 
-                   currentUser = data.getValue(user.class);
-
-
-                   mDatabaseRef.child(currentUser.getUserId()).setValue(currentUser);
+                   currentUser = data.getValue(Apartment.class);
 
                 }
 
@@ -149,28 +148,28 @@ public class partners_scan extends AppCompatActivity {
             }
         });
 
-        mHeart.setOnClickListener((new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-            //    if(!currentUser.getMyFav().contains(currentPartner)){
-
-                    Toast.makeText(partners_scan.this, currentPartner.getUserName()+" added to your favorites", Toast.LENGTH_SHORT).show();
-                    currentUser.addFav(currentPartner);
-                    ArrayList<user> updatedFav=currentUser.getMyFav();
-                    mDatabaseRef.child(currentUser.getUserId()).child("myFav").setValue(updatedFav);
-
-
-
-          //      }
-
-
-            }
-        }));
-
-
-        // listener for right and left button if clicked right index++ and show the image of the allPartners.get(index)
-
+//        mHeart.setOnClickListener((new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//
+//            //    if(!currentUser.getMyFav().contains(currentPartner)){
+//
+//                    Toast.makeText(partners_scan.this, currentPartner.getName()+" added to your favorites", Toast.LENGTH_SHORT).show();
+//                    currentUser.addFav(currentPartner);
+//                    ArrayList<User> updatedFav=currentUser.getMyFav();
+//                    mDatabaseRef.child(currentUser.getUserId()).child("myFav").setValue(updatedFav);
+//
+//
+//
+//          //      }
+//
+//
+//            }
+//        }));
+//
+//
+//        // listener for right and left button if clicked right index++ and show the image of the allPartners.get(index)
+//
         mRight.setOnClickListener((new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -187,8 +186,8 @@ public class partners_scan extends AppCompatActivity {
                 Picasso.with(partners_scan.this)
                         .load(imgUrl)
                         .into(imgView);
-                mNameText.setText( currentPartner.getUserName() );
-                mAgeText.setText( "Age: " + currentPartner.getUserBirthday() );
+                mNameText.setText( currentPartner.getName() );
+                mAgeText.setText( "Age: " + currentPartner.getAge() );
             }
         }));
 
@@ -209,8 +208,8 @@ public class partners_scan extends AppCompatActivity {
                 Picasso.with(partners_scan.this)
                         .load(imgUrl)
                         .into(imgView);
-                mNameText.setText( currentPartner.getUserName() );
-                mAgeText.setText( "Age: " + currentPartner.getUserBirthday() );
+                mNameText.setText( currentPartner.getName() );
+                mAgeText.setText( "Age: " + currentPartner.getAge() );
             }
         }));
 
@@ -233,93 +232,93 @@ public class partners_scan extends AppCompatActivity {
         return;
     }
 
-    // menu code
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.partners_scan_menu, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-        Intent intent;
-
-        switch (item.getItemId()) {
-
-            case R.id.personal_details_item:
-                intent=new Intent(this,personal_details.class);
-                startActivity(intent);
-                return true;
-
-            case R.id.my_fav_item:
-                intent=new Intent(this,favorites.class);
-                startActivity(intent);
-                return true;
-
-            case R.id.apartment_details_Item:
-                intent=new Intent(this, apartment_details.class);
-                startActivity(intent);
-                return true;
-
-            case R.id.partners_scan_item:
-                intent=new Intent(this, partners_scan.class);
-                startActivity(intent);
-                return true;
-
-
-            case R.id.LogOutItem:
-                FirebaseAuth.getInstance().signOut();
-                startActivity(new Intent(getApplicationContext(), login.class));
-                finish();
-                return true;
-
-            case R.id.RemoveItem:
-
-                new AlertDialog.Builder(this)
-                        .setTitle("Delete user")
-                        .setMessage("Are you sure you want to delete this user?")
-                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                Log.i("want to delete","want to delete");
-                                // Continue with delete operation
-                                FirebaseAuth.getInstance().getCurrentUser().delete(); // remove from Authentication
-                                int size=currentUser.getRoom().getImagesUri().size();
-                                for(int i=0; i<size; i++){ // remove all images from storage
-                                    currImg = currentUser.getRoom().getImg(i);
-                                    StorageReference photoRef = FirebaseStorage.getInstance().getReferenceFromUrl(currImg);
-                                    photoRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
-                                        @Override
-                                        public void onSuccess(Void aVoid) {
-                                            Log.i("delete files",""+currImg);
-                                        }
-                                    }).addOnFailureListener(new OnFailureListener() {
-                                        @Override
-                                        public void onFailure(@NonNull Exception exception) {
-                                            Log.i(" cant delete ",""+currImg);
-                                        }
-                                    });
-                                }
-
-                                Toast.makeText( partners_scan.this, "User is Deleted", Toast.LENGTH_LONG ).show();
-                                mDatabaseRef.child(currentUser.getUserId()).setValue(null); // remove from Database
-                                startActivity(new Intent(getApplicationContext(), login.class));
-                                finish();
-
-                            }
-                        })
-
-                        // A null listener allows the button to dismiss the dialog and take no further action.
-                        .setNegativeButton(android.R.string.no, null)
-                        .setIcon(android.R.drawable.ic_dialog_alert)
-                        .show();
-
-                return true;
-
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
+//    // menu code
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        MenuInflater inflater = getMenuInflater();
+//        inflater.inflate(R.menu.partners_scan_menu, menu);
+//        return true;
+//    }
+//
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//
+//        Intent intent;
+//
+//        switch (item.getItemId()) {
+//
+//            case R.id.personal_details_item:
+//                intent=new Intent(this,personal_details.class);
+//                startActivity(intent);
+//                return true;
+//
+//            case R.id.my_fav_item:
+//                intent=new Intent(this,favorites.class);
+//                startActivity(intent);
+//                return true;
+//
+//            case R.id.apartment_details_Item:
+//                intent=new Intent(this, apartment_details.class);
+//                startActivity(intent);
+//                return true;
+//
+//            case R.id.partners_scan_item:
+//                intent=new Intent(this, partners_scan.class);
+//                startActivity(intent);
+//                return true;
+//
+//
+//            case R.id.LogOutItem:
+//                FirebaseAuth.getInstance().signOut();
+//                startActivity(new Intent(getApplicationContext(), login.class));
+//                finish();
+//                return true;
+//
+//            case R.id.RemoveItem:
+//
+//                new AlertDialog.Builder(this)
+//                        .setTitle("Delete User")
+//                        .setMessage("Are you sure you want to delete this User?")
+//                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+//                            public void onClick(DialogInterface dialog, int which) {
+//                                Log.i("want to delete","want to delete");
+//                                // Continue with delete operation
+//                                FirebaseAuth.getInstance().getCurrentUser().delete(); // remove from Authentication
+//                                int size=currentUser.getRoom().getImagesUri().size();
+//                                for(int i=0; i<size; i++){ // remove all images from storage
+//                                    currImg = currentUser.getRoom().getImg(i);
+//                                    StorageReference photoRef = FirebaseStorage.getInstance().getReferenceFromUrl(currImg);
+//                                    photoRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+//                                        @Override
+//                                        public void onSuccess(Void aVoid) {
+//                                            Log.i("delete files",""+currImg);
+//                                        }
+//                                    }).addOnFailureListener(new OnFailureListener() {
+//                                        @Override
+//                                        public void onFailure(@NonNull Exception exception) {
+//                                            Log.i(" cant delete ",""+currImg);
+//                                        }
+//                                    });
+//                                }
+//
+//                                Toast.makeText( partners_scan.this, "User is Deleted", Toast.LENGTH_LONG ).show();
+//                                mDatabaseRef.child(currentUser.getUserId()).setValue(null); // remove from Database
+//                                startActivity(new Intent(getApplicationContext(), login.class));
+//                                finish();
+//
+//                            }
+//                        })
+//
+//                        // A null listener allows the button to dismiss the dialog and take no further action.
+//                        .setNegativeButton(android.R.string.no, null)
+//                        .setIcon(android.R.drawable.ic_dialog_alert)
+//                        .show();
+//
+//                return true;
+//
+//            default:
+//                return super.onOptionsItemSelected(item);
+//        }
+//    }
 
 }

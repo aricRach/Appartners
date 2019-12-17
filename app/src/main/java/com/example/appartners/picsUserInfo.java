@@ -14,15 +14,13 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
-
 public class picsUserInfo extends AppCompatActivity {
 
 
     private DatabaseReference mDatabaseRef;
-    Bundle bundle;
-    String userEmail;
-    user currentUser;
+    private Bundle bundle;
+    private String userEmail;
+    private Partner currentPartner;
 
     private TextView mNameText, mGenderText, mAgeText, mCityText, mEmailText, mTellAboutText;
     private ImageView mImage_View;
@@ -33,7 +31,7 @@ public class picsUserInfo extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pics_user_info);
 
-        mDatabaseRef = FirebaseDatabase.getInstance().getReference("Users");
+        mDatabaseRef = FirebaseDatabase.getInstance().getReference("Partner");
 
         mNameText = findViewById( R.id.nameText );
         mGenderText = findViewById( R.id.genderText );
@@ -43,10 +41,8 @@ public class picsUserInfo extends AppCompatActivity {
         mTellAboutText = findViewById( R.id.tellAboutText );
         mImage_View = findViewById( R.id.image_view );
 
-
-
         bundle = getIntent().getExtras();
-        userEmail = bundle.getString("userEmail"); //  the email of the user
+        userEmail = bundle.getString("userEmail"); //  the email of the User
 
         Query query=mDatabaseRef.orderByChild("email").equalTo(userEmail);
 
@@ -56,22 +52,22 @@ public class picsUserInfo extends AppCompatActivity {
 
                 for (DataSnapshot data : dataSnapshot.getChildren()) {
 
-                    currentUser = data.getValue(user.class);
+                    currentPartner = data.getValue(Partner.class);
 
-                    mNameText.setText( "Name: " + currentUser.getUserName() );
-                    mGenderText.setText( "Gender: " + currentUser.getUserGender() );
-                    mAgeText.setText( "Age: " +currentUser.getUserBirthday() );
-                    mCityText.setText( "City: " +currentUser.getUserCity() );
-                    mEmailText.setText( "Email: " +currentUser.getEmail() );
-                    mTellAboutText.setText( "Tell about your self:\n" +currentUser.getTellAbout() );
+                    mNameText.setText( "Name: " + currentPartner.getName() );
+                    mGenderText.setText( "Gender: " + currentPartner.getGender() );
+                    mAgeText.setText( "Age: " +currentPartner.getAge() );
+                    mCityText.setText( "City: " +currentPartner.getCity() );
+                    mEmailText.setText( "Email: " +currentPartner.getEmail() );
+                    mTellAboutText.setText( "Tell about your self:\n" +currentPartner.getTellAbout() );
 
-                    mDatabaseRef.child(currentUser.getUserId()).setValue(currentUser);
+                    mDatabaseRef.child(currentPartner.getId()).setValue(currentPartner);
 
                 }
 
 
                     Picasso.with(picsUserInfo.this)
-                            .load(currentUser.getImgUrl())
+                            .load(currentPartner.getImgUrl())
                             .into(mImage_View);
 
             }
