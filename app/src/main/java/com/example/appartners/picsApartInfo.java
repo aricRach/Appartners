@@ -14,9 +14,10 @@ import com.google.firebase.database.ValueEventListener;
 
 public class picsApartInfo extends AppCompatActivity {
 
-    private DatabaseReference mDatabaseRef;
+    private DatabaseReference mDatabaseApartment;
     private Bundle bundle;
     private String apartmentEmail;
+    private String imgUrl;
     private Apartment currentApartment;
 
     private TextView mPrice, mOccupants, mStreet, mRoomNums, mTypeOfRoom;
@@ -33,12 +34,12 @@ public class picsApartInfo extends AppCompatActivity {
         mRoomNums = findViewById( R.id.roomsNumText );
         mTypeOfRoom = findViewById( R.id.typeOfRoomText );
 
-        mDatabaseRef = FirebaseDatabase.getInstance().getReference("Apartment");
+        mDatabaseApartment = FirebaseDatabase.getInstance().getReference("Apartment");
 
          bundle = getIntent().getExtras();
          apartmentEmail = bundle.getString("userEmail"); //  the email of the Apartment's User
 
-        Query query=mDatabaseRef.orderByChild("email").equalTo(apartmentEmail);
+        Query query= mDatabaseApartment.orderByChild("email").equalTo(apartmentEmail);
 
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -54,7 +55,7 @@ public class picsApartInfo extends AppCompatActivity {
                     mRoomNums.setText( "Number Rooms: " + currentApartment.getNumOfRooms() );
                     mTypeOfRoom.setText( "Type Of Room: " + currentApartment.getRoomType() );
 
-                    mDatabaseRef.child(currentApartment.getId()).setValue(currentApartment);
+                    mDatabaseApartment.child(currentApartment.getId()).setValue(currentApartment);
 
                 }
 

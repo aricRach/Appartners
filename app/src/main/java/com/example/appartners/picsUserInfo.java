@@ -17,10 +17,12 @@ import com.squareup.picasso.Picasso;
 public class picsUserInfo extends AppCompatActivity {
 
 
-    private DatabaseReference mDatabaseRef;
+    private DatabaseReference mDatabasePartner;
     private Bundle bundle;
     private String userEmail;
     private Partner currentPartner;
+
+    private String imgUrl;
 
     private TextView mNameText, mGenderText, mAgeText, mCityText, mEmailText, mTellAboutText;
     private ImageView mImage_View;
@@ -31,7 +33,7 @@ public class picsUserInfo extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pics_user_info);
 
-        mDatabaseRef = FirebaseDatabase.getInstance().getReference("Partner");
+        mDatabasePartner = FirebaseDatabase.getInstance().getReference("Partner");
 
         mNameText = findViewById( R.id.nameText );
         mGenderText = findViewById( R.id.genderText );
@@ -44,7 +46,7 @@ public class picsUserInfo extends AppCompatActivity {
         bundle = getIntent().getExtras();
         userEmail = bundle.getString("userEmail"); //  the email of the User
 
-        Query query=mDatabaseRef.orderByChild("email").equalTo(userEmail);
+        Query query= mDatabasePartner.orderByChild("email").equalTo(userEmail);
 
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -61,13 +63,16 @@ public class picsUserInfo extends AppCompatActivity {
                     mEmailText.setText( "Email: " +currentPartner.getEmail() );
                     mTellAboutText.setText( "Tell about your self:\n" +currentPartner.getTellAbout() );
 
-                    mDatabaseRef.child(currentPartner.getId()).setValue(currentPartner);
+                    mDatabasePartner.child(currentPartner.getId()).setValue(currentPartner);
 
                 }
 
+                imgUrl=currentPartner.getImgUrl();
+                if(imgUrl.equals(""))
+                    imgUrl="https://firebasestorage.googleapis.com/v0/b/appartners-2735b.appspot.com/o/uploads%2FnoPhoto.png?alt=media&token=8fb5f8d9-a80f-4360-843d-7aae13546d13";
 
                     Picasso.with(picsUserInfo.this)
-                            .load(currentPartner.getImgUrl())
+                            .load(imgUrl)
                             .into(mImage_View);
 
             }

@@ -18,7 +18,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.Button;
@@ -65,7 +64,7 @@ public class personal_details extends AppCompatActivity {
     private String urlGallery;
     private String urlCaptured;
 
-    private boolean isPartenr;
+    private boolean isPartner;
     private DataSnapshot myData;
 
     private User currentUser;
@@ -114,13 +113,13 @@ public class personal_details extends AppCompatActivity {
 
         if(searchingFor.equals("Searching partner")){
 
-            isPartenr=false;
+            isPartner =false;
             mButtonTakePic.setVisibility(View.INVISIBLE);
             mButtonChooseImage.setVisibility(View.INVISIBLE);
             mImageView.setVisibility(View.INVISIBLE);
         }else{
 
-            isPartenr=true;
+            isPartner =true;
         }
 
         mountainsRef = mStorageRef.child(""+System.currentTimeMillis()+".jpg");
@@ -140,7 +139,7 @@ public class personal_details extends AppCompatActivity {
         });
 
 
-        if(isPartenr){
+        if(isPartner){
 
             query= mDatabaseRefPartner.orderByChild("email").equalTo(fAuth.getCurrentUser().getEmail());
         }else{
@@ -180,7 +179,7 @@ public class personal_details extends AppCompatActivity {
 
                     if(checkFields()) {
 
-                        if(isPartenr){
+                        if(isPartner){
 
                             mDatabaseRefPartner.child(currentUser.getId()).child("tellAbout").setValue(mTellAbout.getText().toString());
                             mDatabaseRefPartner.child(currentUser.getId()).child("phone").setValue(mPhone.getText().toString());
@@ -192,16 +191,16 @@ public class personal_details extends AppCompatActivity {
                             goTo();
                         }
 
-                        if(uploadFrom==1 && isPartenr){
+                        if(uploadFrom==1 && isPartner){
                             uploadFileFromGallery();
                             goTo();
-                        }else if (uploadFrom==2 && isPartenr){
+                        }else if (uploadFrom==2 && isPartner){
 
                             uploadFromCapturedImage();
                             goTo();
                         } else{
 
-                            if(isPartenr){ // if the User (partner) doesn't have img
+                            if(isPartner){ // if the User (partner) doesn't have img
 
                                 Partner p =myData.getValue(Partner.class);
                                 if(p.getImgUrl().equals("")){
@@ -450,7 +449,7 @@ public class personal_details extends AppCompatActivity {
     public void goTo(){
 
         Toast.makeText(this, ""+searchingFor, Toast.LENGTH_SHORT).show();
-        if (isPartenr){
+        if (isPartner){
 
             startActivity(new Intent(getApplicationContext(), apartments_scan.class));
 

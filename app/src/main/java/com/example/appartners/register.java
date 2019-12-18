@@ -11,7 +11,6 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -57,8 +56,8 @@ public class register extends AppCompatActivity {
     private String email="";
 
      DatePickerDialog.OnDateSetListener mDataSetListener;
-     DatabaseReference databaseRegisterPartner;
-    DatabaseReference databaseRegisterApartment;
+     DatabaseReference mDatabasePartner;
+    DatabaseReference mDatabaseApartment;
 
 
     String id;
@@ -68,8 +67,8 @@ public class register extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-        databaseRegisterPartner = FirebaseDatabase.getInstance().getReference("Partner");
-        databaseRegisterApartment = FirebaseDatabase.getInstance().getReference("Apartment");
+        mDatabasePartner = FirebaseDatabase.getInstance().getReference("Partner");
+        mDatabaseApartment = FirebaseDatabase.getInstance().getReference("Apartment");
 
 
         mFullName = findViewById(R.id.fullName);
@@ -179,10 +178,10 @@ public class register extends AppCompatActivity {
 
                 if(searchingFor.equals("Searching partner")){
 
-                    id = databaseRegisterApartment.push().getKey();
+                    id = mDatabaseApartment.push().getKey();
                 }else{
 
-                    id=databaseRegisterPartner.push().getKey();
+                    id= mDatabasePartner.push().getKey();
                 }
 
 
@@ -199,7 +198,7 @@ public class register extends AppCompatActivity {
                                 if(searchRoom){
 
                                     Partner p = new Partner(id,name,gender,yourCity,age,email);
-                                    databaseRegisterPartner.child(id).setValue(p);
+                                    mDatabasePartner.child(id).setValue(p);
                                     Toast.makeText(register.this, "User Created "+email, Toast.LENGTH_SHORT).show();
                                     // intent put Extra
                                     Intent intent = new Intent(register.this, personal_details.class);
@@ -211,7 +210,7 @@ public class register extends AppCompatActivity {
                                 else if(searchPartners) {
 
                                     Apartment a=new Apartment(id,name,gender,yourCity,age,email);
-                                    databaseRegisterApartment.child(id).setValue(a);
+                                    mDatabaseApartment.child(id).setValue(a);
                                     Toast.makeText(register.this, "User Created "+email, Toast.LENGTH_SHORT).show();
 
                                     // intent put Extra

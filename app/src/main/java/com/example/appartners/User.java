@@ -2,7 +2,7 @@ package com.example.appartners;
 
 import java.util.ArrayList;
 
-public class User implements Comparable<User> {
+public class User {
 
 
     private String id;
@@ -13,7 +13,6 @@ public class User implements Comparable<User> {
     private String email;
     private String tellAbout; // tell about yourself/ your Apartment
     private String phone;
-    private ArrayList<User> myFav;
 
     //private String aprPrt;
   //  private String uId;
@@ -24,7 +23,6 @@ public class User implements Comparable<User> {
 
     public User(){
 
-        myFav=new ArrayList<User>();
     }
 
     // constructor for register page
@@ -38,7 +36,6 @@ public class User implements Comparable<User> {
         this.email=email;
         this.tellAbout="";
         this.phone="";
-        this.myFav=new ArrayList<User>();
     }
 
     public User(User other){
@@ -51,7 +48,6 @@ public class User implements Comparable<User> {
         this.email=other.email;
         this.tellAbout=other.tellAbout;
         this.phone=other.phone;
-        this.myFav=other.myFav;
 
 
     }
@@ -62,24 +58,6 @@ public class User implements Comparable<User> {
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    public ArrayList<User> getMyFav() {
-        return myFav;
-    }
-
-    public void setMyFav(ArrayList<User> myFav) {
-        this.myFav = myFav;
-    }
-
-    public void addFav(User fav){
-
-        myFav.add(fav);
-    }
-
-    public User getFav(int i){
-
-        return myFav.get(i);
     }
 
     public String getName() {
@@ -149,29 +127,7 @@ public class User implements Comparable<User> {
                 ", email='" + email + '\'' +
                 ", tellAbout='" + tellAbout + '\'' +
                 ", phone='" + phone + '\'' +
-                ", myFav=" + myFav +
                 '}';
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        User user = (User) o;
-        return email.equals(user.email);
-    }
-
-
-    @Override
-    public int compareTo(User other) {
-
-        if (other.getEmail()==this.getEmail()){
-
-            return 0;
-        }else{
-
-            return -1;
-        }
     }
 
 
