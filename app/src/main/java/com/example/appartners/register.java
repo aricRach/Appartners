@@ -113,7 +113,7 @@ public class register extends AppCompatActivity {
             @Override
             public void onDateSet(DatePicker datePicker, int year, int month, int day) {
                 month++;
-                age = 2020-year;
+                age = 2021-year;
                 String birthday =  day + "/" + month + "/" + year;
                 mDateOfBirth.setText(birthday);
             }

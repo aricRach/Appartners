@@ -12,6 +12,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -50,19 +52,24 @@ public class partners_scan extends AppCompatActivity {
     private TextView mNameText, mAgeText;
     private TextView mZeroItemsText;
 
+    private EditText mUntilAge,mGender;
+    private Button mSearch;
+    private boolean isFiltered;
+    private DataSnapshot allPartnerList;
+
+
     private String imgUrl;
 
 
     private Partner currentPartner;
     private ArrayList<Partner> allPartners;
+    private ArrayList<Partner> copyAllPartners;
     private int index;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_partners_scan);
-
-
 
         imgView = findViewById(R.id.image_view);
         mHeart = findViewById(R.id.heartBtn);
@@ -74,6 +81,10 @@ public class partners_scan extends AppCompatActivity {
         mNameText = findViewById( R.id.nameText );
         mAgeText = findViewById( R.id.ageText );
 
+        mUntilAge=findViewById(R.id.untilAgeText);
+        mGender=findViewById(R.id.genderText);
+        mSearch=findViewById(R.id.searchButton);
+
 
 
         fAuto = FirebaseAuth.getInstance();
@@ -81,13 +92,11 @@ public class partners_scan extends AppCompatActivity {
         mDatabasePartner = FirebaseDatabase.getInstance().getReference("Partner");
         allPartners = new ArrayList<Partner>();
 
-//
-//        Query query=mDatabaseRef.orderByChild("aprPrt").equalTo("Searching Apartment");
-//
         mDatabasePartner.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
+               allPartnerList=dataSnapshot;
                Partner partnerUser=null;
                 for (DataSnapshot data : dataSnapshot.getChildren()) {
 
@@ -95,18 +104,12 @@ public class partners_scan extends AppCompatActivity {
                     allPartners.add(partnerUser);
 
                 }
+                copyAllPartners = new ArrayList<>(allPartners);
+
                 if(allPartners.size()>0){
 
-                    imgUrl=allPartners.get(0).getImgUrl();
-                    if(imgUrl.equals(""))
-                        imgUrl="https://firebasestorage.googleapis.com/v0/b/appartners-2735b.appspot.com/o/uploads%2FnoPhoto.png?alt=media&token=8fb5f8d9-a80f-4360-843d-7aae13546d13";
-
-                    Picasso.with(partners_scan.this) // show first User img
-                            .load(imgUrl)
-                            .into(imgView);
-                    currentPartner =allPartners.get(0);
-                    mNameText.setText( currentPartner.getName() );
-                    mAgeText.setText( "Age: " + currentPartner.getAge() );
+                    index=0;
+                    show();
 
                 }else{
 
@@ -131,6 +134,59 @@ public class partners_scan extends AppCompatActivity {
 
             }
         });
+
+        mSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                isFiltered=false;
+
+                //int untilAge=Integer.parseInt(mUntilAge.getText().toString().trim());
+                String gender=mGender.getText().toString().trim();
+
+
+                if(!gender.equals("")){
+
+                    allPartners.clear();
+                    for (DataSnapshot data : allPartnerList.getChildren()) {
+
+                        if(data.getValue(Partner.class).getGender().equals(gender)){
+
+                            allPartners.add(data.getValue(Partner.class));
+
+                        }else{
+
+                            isFiltered=true;
+                        }
+
+                    }
+
+                    if(allPartners.size()>0 && isFiltered){
+
+                        index=0;
+                        show();
+
+                    } else { // allPartners.size()==0 or !isFiltered so show original allPartners
+
+                        allPartners.addAll(copyAllPartners);
+                        index=0;
+                        Toast.makeText(partners_scan.this, "There is no result for your search", Toast.LENGTH_LONG).show();
+                        show();
+
+                    }
+
+
+                }else{ // go back to original allPartners
+
+                    allPartners.clear();
+                    allPartners.addAll(copyAllPartners);
+                    index=0;
+                    show();
+                }
+
+            }
+        });
+
 
 
         Query currentUserQuery=mDatabaseApartment.orderByChild("email").equalTo(fAuto.getCurrentUser().getEmail());
@@ -189,16 +245,8 @@ public class partners_scan extends AppCompatActivity {
 
                 }
 
-                currentPartner = allPartners.get(index);
-                 imgUrl= currentPartner.getImgUrl();
-                if(imgUrl.equals(""))
-                    imgUrl="https://firebasestorage.googleapis.com/v0/b/appartners-2735b.appspot.com/o/uploads%2FnoPhoto.png?alt=media&token=8fb5f8d9-a80f-4360-843d-7aae13546d13";
+                show();
 
-                    Picasso.with(partners_scan.this)
-                            .load(imgUrl)
-                            .into(imgView);
-                    mNameText.setText( currentPartner.getName() );
-                    mAgeText.setText( "Age: " + currentPartner.getAge() );
                 }
 
         }));
@@ -215,17 +263,7 @@ public class partners_scan extends AppCompatActivity {
 
                 }
 
-                currentPartner = allPartners.get(index);
-                 imgUrl= currentPartner.getImgUrl();
-
-                if(imgUrl.equals(""))
-                    imgUrl="https://firebasestorage.googleapis.com/v0/b/appartners-2735b.appspot.com/o/uploads%2FnoPhoto.png?alt=media&token=8fb5f8d9-a80f-4360-843d-7aae13546d13";
-
-                Picasso.with(partners_scan.this)
-                        .load(imgUrl)
-                        .into(imgView);
-                mNameText.setText( currentPartner.getName() );
-                mAgeText.setText( "Age: " + currentPartner.getAge() );
+                show();
             }
         }));
 
@@ -354,6 +392,21 @@ public class partners_scan extends AppCompatActivity {
         }
         return false;
 
+    }
+
+    public void show(){
+
+
+        imgUrl=allPartners.get(index).getImgUrl();
+        if(imgUrl.equals(""))
+            imgUrl="https://firebasestorage.googleapis.com/v0/b/appartners-2735b.appspot.com/o/uploads%2FnoPhoto.png?alt=media&token=8fb5f8d9-a80f-4360-843d-7aae13546d13";
+
+        Picasso.with(partners_scan.this) // show first User img
+                .load(imgUrl)
+                .into(imgView);
+        currentPartner =allPartners.get(index);
+        mNameText.setText( currentPartner.getName() );
+        mAgeText.setText( "Age: " + currentPartner.getAge() );
     }
 
 }
