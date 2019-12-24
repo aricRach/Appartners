@@ -303,7 +303,7 @@ public class partners_scan extends AppCompatActivity {
     @Override
     public void onBackPressed() {
 
-        startActivity(new Intent(this,login.class));
+        //startActivity(new Intent(this,login.class));
         return;
     }
 
@@ -414,6 +414,7 @@ public class partners_scan extends AppCompatActivity {
         return false;
 
     }
+
 
     public void show(){
 

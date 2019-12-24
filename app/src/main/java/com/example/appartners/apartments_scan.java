@@ -302,7 +302,7 @@ public class apartments_scan extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        startActivity(new Intent(this,login.class));
+        //startActivity(new Intent(this,login.class));
         return;
     }
 
