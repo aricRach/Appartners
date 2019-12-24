@@ -54,6 +54,9 @@ public class register extends AppCompatActivity {
     private String aprPrt="";
     private String password="";
     private String email="";
+    private String yourCity;
+
+    private   ArrayAdapter<String> cityAdapter;
 
      DatePickerDialog.OnDateSetListener mDataSetListener;
      DatabaseReference mDatabasePartner;
@@ -84,12 +87,12 @@ public class register extends AppCompatActivity {
         fAuto = FirebaseAuth.getInstance();
         progressBar = findViewById(R.id.progressBar);
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<>
+          cityAdapter = new ArrayAdapter<>
                 (this,android.R.layout.select_dialog_item,getResources().getStringArray(R.array.city_Array));
 
-        final AutoCompleteTextView actv =  findViewById(R.id.autoCompleteTextView);
+final AutoCompleteTextView actv =  findViewById(R.id.autoCompleteTextView);
         actv.setThreshold(1); // Will start working from first character
-        actv.setAdapter(adapter); // Setting the adapter data into the AutoCompleteTextView
+        actv.setAdapter(cityAdapter); // Setting the cityAdapter data into the AutoCompleteTextView
 
         if(fAuto.getCurrentUser() != null){ // check If it works *********
             FirebaseAuth.getInstance().signOut();
@@ -126,7 +129,7 @@ public class register extends AppCompatActivity {
                 email = mEmail.getText().toString().trim();
                 password = mPassword.getText().toString().trim();
                 gender="";
-                final String yourCity = actv.getText().toString().trim();
+                  yourCity = actv.getText().toString().trim();
 
                 int selectedRadioButtonID = genderGroup.getCheckedRadioButtonId();
 
@@ -154,11 +157,14 @@ public class register extends AppCompatActivity {
                     chosenGender=false;
                 }
 
-                if (yourCity.equals("")){
-                    chosenCity=false;}
+                if (yourCity.equals("") || !foundCity() ){
+                    actv.setError("City is Required");
+                    chosenCity=false;
+                }
                 else{
                     chosenCity=true;
                 }
+
 
                 if(TextUtils.isEmpty(email)){
                     mEmail.setError("Email is Required.");
@@ -238,5 +244,18 @@ public class register extends AppCompatActivity {
                 startActivity(new Intent(getApplicationContext(), login.class));
             }
         });
+    }
+
+    public boolean foundCity(){
+
+        int size=cityAdapter.getCount();
+        for(int i=0;i<size;i++){
+
+            if(cityAdapter.getItem(i).equals(yourCity)){
+
+                return true;
+            }
+        }
+        return false;
     }
 }

@@ -7,17 +7,34 @@
     tools:context=".apartments_scan">
 
 
+    <!--    <ImageView-->
+<!--        android:id="@+id/image_view"-->
+<!--        android:layout_width="326dp"-->
+<!--        android:layout_height="259dp"-->
+<!--        android:layout_marginStart="43dp"-->
+<!--        android:layout_marginLeft="43dp"-->
+<!--        android:layout_marginTop="56dp"-->
+<!--        android:layout_marginEnd="42dp"-->
+<!--        android:layout_marginRight="42dp"-->
+<!--        android:clickable="true"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toTopOf="parent" />-->
+
     <ImageButton
         android:id="@+id/rightBtn"
         android:layout_width="70dp"
         android:layout_height="70dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="60dp"
-        android:layout_marginRight="60dp"
+        android:layout_marginStart="41dp"
+        android:layout_marginLeft="41dp"
+        android:layout_marginEnd="21dp"
+        android:layout_marginRight="21dp"
+        android:layout_marginBottom="116dp"
         android:foregroundGravity="center"
         android:scaleType="center"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cityText"
+        app:layout_constraintStart_toEndOf="@+id/heartBtn"
         app:srcCompat="@drawable/arrowright2"
         tools:srcCompat="@drawable/arrowright2" />
 
@@ -25,75 +42,122 @@
         android:id="@+id/leftBtn"
         android:layout_width="70dp"
         android:layout_height="70dp"
-        android:layout_marginStart="60dp"
-        android:layout_marginLeft="60dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginStart="21dp"
+        android:layout_marginLeft="21dp"
+        android:layout_marginEnd="41dp"
+        android:layout_marginRight="41dp"
+        android:layout_marginBottom="116dp"
         android:foregroundGravity="center"
         android:scaleType="center"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/heartBtn"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cityText"
         app:srcCompat="@drawable/arrowleft2"
         tools:srcCompat="@drawable/arrowleft2" />
+
 
     <ImageView
         android:id="@+id/image_view"
         android:layout_width="326dp"
         android:layout_height="259dp"
-        android:layout_marginStart="43dp"
-        android:layout_marginLeft="43dp"
-        android:layout_marginTop="56dp"
+        android:layout_marginStart="42dp"
+        android:layout_marginLeft="42dp"
+        android:layout_marginTop="67dp"
         android:layout_marginEnd="42dp"
         android:layout_marginRight="42dp"
+        android:layout_marginBottom="15dp"
         android:clickable="true"
+        app:layout_constraintBottom_toTopOf="@+id/cityText"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
+        app:layout_constraintTop_toBottomOf="@+id/searchButton" />
 
     <ImageButton
         android:id="@+id/heartBtn"
         android:layout_width="70dp"
         android:layout_height="70dp"
-        android:layout_marginStart="50dp"
-        android:layout_marginLeft="50dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="50dp"
-        android:layout_marginRight="50dp"
+        android:layout_marginStart="60dp"
+        android:layout_marginLeft="60dp"
+        android:layout_marginEnd="61dp"
+        android:layout_marginRight="61dp"
+        android:layout_marginBottom="116dp"
         android:foregroundGravity="center"
         android:scaleType="center"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/rightBtn"
-        app:layout_constraintHorizontal_bias="0.526"
         app:layout_constraintStart_toEndOf="@+id/leftBtn"
-        app:layout_constraintTop_toBottomOf="@+id/cityText"
         app:srcCompat="@drawable/heart3" />
 
     <TextView
         android:id="@+id/cityText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
+        android:layout_marginStart="171dp"
+        android:layout_marginLeft="171dp"
+        android:layout_marginEnd="171dp"
+        android:layout_marginRight="171dp"
+        android:layout_marginBottom="14dp"
         android:hint="City"
         android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/heartBtn"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/image_view" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/zeroItemsText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="176dp"
-        android:layout_marginLeft="176dp"
+        android:layout_marginStart="170dp"
+        android:layout_marginLeft="170dp"
         android:layout_marginTop="16dp"
-        android:layout_marginEnd="176dp"
-        android:layout_marginRight="176dp"
-        android:layout_marginBottom="21dp"
+        android:layout_marginEnd="182dp"
+        android:layout_marginRight="182dp"
         android:text="TextView"
-        app:layout_constraintBottom_toTopOf="@+id/image_view"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <AutoCompleteTextView
+        android:id="@+id/autoCompleteFilter"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="109dp"
+        android:layout_marginLeft="109dp"
+        android:layout_marginTop="58dp"
+        android:ems="10"
+        android:hint="Choose city"
+        android:padding="10dp"
+        android:singleLine="true"
+        android:textSize="14sp"
+        app:layout_constraintStart_toEndOf="@+id/maxPriceFilter"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/searchButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="141dp"
+        android:layout_marginLeft="141dp"
+        android:layout_marginTop="26dp"
+        android:layout_marginEnd="141dp"
+        android:layout_marginRight="141dp"
+        android:text="Search"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/autoCompleteFilter" />
+
+    <EditText
+        android:id="@+id/maxPriceFilter"
+        android:layout_width="110dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="25dp"
+        android:layout_marginLeft="25dp"
+        android:layout_marginTop="57dp"
+        android:ems="10"
+        android:hint="Max price"
+        android:inputType="number"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

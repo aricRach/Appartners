@@ -52,9 +52,9 @@ public class partners_scan extends AppCompatActivity {
     private TextView mNameText, mAgeText;
     private TextView mZeroItemsText;
 
-    private EditText mUntilAge,mGender;
+    private EditText mMaxAge,mGender;
     private Button mSearch;
-    private boolean isFiltered;
+    //private boolean isFiltered;
     private DataSnapshot allPartnerList;
 
 
@@ -81,7 +81,7 @@ public class partners_scan extends AppCompatActivity {
         mNameText = findViewById( R.id.nameText );
         mAgeText = findViewById( R.id.ageText );
 
-        mUntilAge=findViewById(R.id.untilAgeText);
+        mMaxAge =findViewById(R.id.maxPriceFilter);
         mGender=findViewById(R.id.genderText);
         mSearch=findViewById(R.id.searchButton);
 
@@ -96,8 +96,8 @@ public class partners_scan extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
-               allPartnerList=dataSnapshot;
-               Partner partnerUser=null;
+                allPartnerList=dataSnapshot;
+                Partner partnerUser=null;
                 for (DataSnapshot data : dataSnapshot.getChildren()) {
 
                     partnerUser=data.getValue(Partner.class);
@@ -119,6 +119,8 @@ public class partners_scan extends AppCompatActivity {
                     mAgeText.setVisibility(View.INVISIBLE);
                     mNameText.setVisibility(View.INVISIBLE);
                     mZeroItemsText.setVisibility(View.VISIBLE);
+                    mGender.setVisibility(View.INVISIBLE);
+                    mMaxAge.setVisibility(View.INVISIBLE);
                     mZeroItemsText.setText(" no apartments to show");
 
                     Picasso.with(partners_scan.this)
@@ -139,51 +141,70 @@ public class partners_scan extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                isFiltered=false;
-
-                //int untilAge=Integer.parseInt(mUntilAge.getText().toString().trim());
+               // isFiltered=false;
+                int maxAgeInt=-1;
                 String gender=mGender.getText().toString().trim();
+                String maxAgeText= mMaxAge.getText().toString().trim();
+                if(!maxAgeText.equals("")){ // only for convert to Integer
 
+                    maxAgeInt=Integer.parseInt(maxAgeText);
+                }
 
-                if(!gender.equals("")){
+                if(!gender.equals("") || maxAgeInt!=-1) { // we need to filter by at least one parameter
 
                     allPartners.clear();
                     for (DataSnapshot data : allPartnerList.getChildren()) {
 
-                        if(data.getValue(Partner.class).getGender().equals(gender)){
+                        Partner temp = data.getValue(Partner.class);
 
-                            allPartners.add(data.getValue(Partner.class));
+                        if (!gender.equals("") && maxAgeInt == -1) { // only gender
 
-                        }else{
+                            if (temp.getGender().equals(gender)) {
 
-                            isFiltered=true;
+                                allPartners.add(temp);
+                            }
+
+                        } else if (gender.equals("") && maxAgeInt != -1) { // only age
+
+                            if (temp.getAge() <= maxAgeInt) {
+
+                                allPartners.add(temp);
+                            }
+
+                        } else if (!gender.equals("") && maxAgeInt != -1) { // filter by age and gender
+
+                            if (temp.getGender().equals(gender) && temp.getAge() <= maxAgeInt) {
+                                allPartners.add(temp);
+                            }
                         }
 
                     }
-
-                    if(allPartners.size()>0 && isFiltered){
+                    if(allPartners.size()>0){
 
                         index=0;
-                        show();
-
-                    } else { // allPartners.size()==0 or !isFiltered so show original allPartners
-
-                        allPartners.addAll(copyAllPartners);
-                        index=0;
-                        Toast.makeText(partners_scan.this, "There is no result for your search", Toast.LENGTH_LONG).show();
                         show();
 
                     }
 
+                }
+                else { // the fields are empty
 
-                }else{ // go back to original allPartners
 
                     allPartners.clear();
                     allPartners.addAll(copyAllPartners);
-                    index=0;
+                    index = 0;
+                    Toast.makeText(partners_scan.this, "show all results", Toast.LENGTH_LONG).show();
                     show();
                 }
 
+                if(allPartners.size()==0) { // if we filtered but there is no any result
+
+                    allPartners.addAll(copyAllPartners);
+                    index=0;
+                    Toast.makeText(partners_scan.this, "There is no result for your search", Toast.LENGTH_LONG).show();
+                    show();
+
+                }
             }
         });
 
@@ -198,7 +219,7 @@ public class partners_scan extends AppCompatActivity {
 
                 for (DataSnapshot data : dataSnapshot.getChildren()) {
 
-                   currentUser = data.getValue(Apartment.class);
+                    currentUser = data.getValue(Apartment.class);
 
                 }
 
@@ -216,17 +237,17 @@ public class partners_scan extends AppCompatActivity {
 
 
 
-               if(!cheackContains(currentPartner.getEmail())){
+                if(!cheackContains(currentPartner.getEmail())){
 
-                   Toast.makeText(partners_scan.this, currentPartner.getName()+" added to your favorites", Toast.LENGTH_SHORT).show();
-                   UserImage ui = new UserImage(currentPartner,currentPartner.getImgUrl());
-                   currentUser.addFav(ui);
-                   mDatabaseApartment.child(currentUser.getId()).setValue(currentUser);
-               }else{
+                    Toast.makeText(partners_scan.this, currentPartner.getName()+" added to your favorites", Toast.LENGTH_SHORT).show();
+                    UserImage ui = new UserImage(currentPartner,currentPartner.getImgUrl());
+                    currentUser.addFav(ui);
+                    mDatabaseApartment.child(currentUser.getId()).setValue(currentUser);
+                }else{
 
-                   Toast.makeText(partners_scan.this, currentPartner.getName()+" already in your favorites", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(partners_scan.this, currentPartner.getName()+" already in your favorites", Toast.LENGTH_SHORT).show();
 
-               }
+                }
 
             }
         }));
@@ -247,7 +268,7 @@ public class partners_scan extends AppCompatActivity {
 
                 show();
 
-                }
+            }
 
         }));
 

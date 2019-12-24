@@ -110,14 +110,8 @@ public class favorites extends AppCompatActivity {
                 }
                 if(allFav.size()>0){
 
-                    imgUrl=allFav.get(0).getImgUser();
-                    if(imgUrl.equals(""))
-                        imgUrl="https://firebasestorage.googleapis.com/v0/b/appartners-2735b.appspot.com/o/uploads%2FnoPhoto.png?alt=media&token=8fb5f8d9-a80f-4360-843d-7aae13546d13";
-
-                    Picasso.with(favorites.this) // show first User img
-                            .load(imgUrl)
-                            .into(imgView);
-                    currentShow =allFav.get(0);
+                    index=0;
+                   show();
                 }else{
 
                     mRightButton.setVisibility(View.INVISIBLE);
@@ -148,14 +142,7 @@ public class favorites extends AppCompatActivity {
 
                 }
 
-                currentShow =allFav.get(index);
-                 imgUrl= currentShow.getImgUser();
-                if(imgUrl.equals(""))
-                    imgUrl="https://firebasestorage.googleapis.com/v0/b/appartners-2735b.appspot.com/o/uploads%2FnoPhoto.png?alt=media&token=8fb5f8d9-a80f-4360-843d-7aae13546d13";
-
-                Picasso.with(favorites.this)
-                        .load(imgUrl)
-                        .into(imgView);
+              show();
 
 
             }
@@ -172,14 +159,7 @@ public class favorites extends AppCompatActivity {
 
                 }
 
-                currentShow =allFav.get(index);
-                 imgUrl= currentShow.getImgUser();
-                if(imgUrl.equals(""))
-                    imgUrl="https://firebasestorage.googleapis.com/v0/b/appartners-2735b.appspot.com/o/uploads%2FnoPhoto.png?alt=media&token=8fb5f8d9-a80f-4360-843d-7aae13546d13";
-
-                Picasso.with(favorites.this)
-                        .load(imgUrl)
-                        .into(imgView);
+               show();
 
 
             }
@@ -237,13 +217,7 @@ public class favorites extends AppCompatActivity {
                 }else{
 
                     index=0;
-                    currentShow =allFav.get(index);
-                     imgUrl= currentShow.getImgUser();
-                     if(imgUrl.equals(""))
-                         imgUrl="https://firebasestorage.googleapis.com/v0/b/appartners-2735b.appspot.com/o/uploads%2FnoPhoto.png?alt=media&token=8fb5f8d9-a80f-4360-843d-7aae13546d13";
-                    Picasso.with(favorites.this)
-                            .load(imgUrl)
-                            .into(imgView);
+                    show();
 
                 }
             }
@@ -262,6 +236,18 @@ public class favorites extends AppCompatActivity {
             startActivity(new Intent(this,partners_scan.class));
         }
         return;
+    }
+
+    public void show(){
+
+        imgUrl=allFav.get(index).getImgUser();
+        if(imgUrl.equals(""))
+            imgUrl="https://firebasestorage.googleapis.com/v0/b/appartners-2735b.appspot.com/o/uploads%2FnoPhoto.png?alt=media&token=8fb5f8d9-a80f-4360-843d-7aae13546d13";
+
+        Picasso.with(favorites.this) // show first User img
+                .load(imgUrl)
+                .into(imgView);
+        currentShow =allFav.get(index);
     }
 
 }

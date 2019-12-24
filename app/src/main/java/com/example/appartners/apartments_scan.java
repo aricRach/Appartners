@@ -12,6 +12,10 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -44,12 +48,19 @@ public class apartments_scan extends AppCompatActivity {
     private ImageButton mLeft, mRight,mHeart;
     private TextView mCityText;
     private TextView mZeroItemsText;
+    private EditText mMaxPrice;
+    private Button mSearch;
+
+    private ArrayList<Apartment> copyAllApartments;
+    private DataSnapshot allApartmentList;
 
     private String imgUrl;
 
+//    private String yourCity;
+
     private Partner currentUser;
     private Apartment currentApartment;
-    private ArrayList<Apartment> allRoomsHolders;
+    private ArrayList<Apartment> allApartments;
     private int index;
 
     @Override
@@ -63,12 +74,25 @@ public class apartments_scan extends AppCompatActivity {
         mRight = findViewById( R.id.rightBtn );
         mCityText = findViewById( R.id.cityText );
         mZeroItemsText=findViewById(R.id.zeroItemsText);
+        mMaxPrice=findViewById(R.id.maxPriceFilter);
+        mSearch=findViewById(R.id.searchButton);
         mZeroItemsText.setVisibility(View.INVISIBLE);
 
         fAuto = FirebaseAuth.getInstance();
         mDatabaseApartment = FirebaseDatabase.getInstance().getReference("Apartment");
         mDatabasePartner = FirebaseDatabase.getInstance().getReference("Partner");
-        allRoomsHolders = new ArrayList<Apartment>();
+        allApartments = new ArrayList<Apartment>();
+
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>
+                (this,android.R.layout.select_dialog_item,getResources().getStringArray(R.array.city_Array));
+
+        final AutoCompleteTextView actv =  findViewById(R.id.autoCompleteFilter);
+        actv.setThreshold(1); // Will start working from first character
+        actv.setAdapter(adapter); // Setting the adapter data into the AutoCompleteTextView
+
+     //   yourCity=actv.getText().toString().trim();
+
 
         // make ArrayList of all searching partners users
         // because he searching for partners he has room
@@ -78,25 +102,21 @@ public class apartments_scan extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
+                allApartmentList=dataSnapshot;
                 Apartment roomHolder=null;
                 for (DataSnapshot data : dataSnapshot.getChildren()) {
 
                     roomHolder=data.getValue(Apartment.class);
 
-                    allRoomsHolders.add(roomHolder);
+                    allApartments.add(roomHolder);
                 }
 
-                if(allRoomsHolders.size()>0){
+                copyAllApartments=new ArrayList<Apartment>(allApartments);
 
-                    imgUrl=allRoomsHolders.get(0).getImg(0);
-                    if(imgUrl.equals(""))
-                        imgUrl="https://firebasestorage.googleapis.com/v0/b/appartners-2735b.appspot.com/o/uploads%2FnoPhoto.png?alt=media&token=8fb5f8d9-a80f-4360-843d-7aae13546d13";
+                if(allApartments.size()>0){
 
-                    Picasso.with(apartments_scan.this)
-                            .load(imgUrl)
-                            .into(imgView);
-                    currentApartment =allRoomsHolders.get(0);
-                    mCityText.setText( "City: " + currentApartment.getCity() );
+                    index=0;
+                    show();
                 }else{
 
                     mHeart.setVisibility(View.INVISIBLE);
@@ -143,6 +163,77 @@ public class apartments_scan extends AppCompatActivity {
             }
         });
 
+
+        mSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                String yourCity=actv.getText().toString().trim();
+                int maxPriceInt=-1;
+                String maxPriceText= mMaxPrice.getText().toString().trim();
+                if(!maxPriceText.equals("")){ // only for convert to Integer
+
+                    maxPriceInt=Integer.parseInt(maxPriceText);
+                }
+
+                if(!yourCity.equals("") || maxPriceInt!=-1) { // we need to filter by at least one parameter
+
+                    allApartments.clear();
+                    for (DataSnapshot data : allApartmentList.getChildren()) {
+
+                        Apartment temp = data.getValue(Apartment.class);
+
+                        if (!yourCity.equals("") && maxPriceInt == -1) { // only city filter
+
+                            if (temp.getCity().equals(yourCity)) {
+
+                                allApartments.add(temp);
+                            }
+
+                        } else if (yourCity.equals("") && maxPriceInt != -1) { // only price filter
+
+                            if (temp.getPrice() <= maxPriceInt) {
+
+                                allApartments.add(temp);
+                            }
+
+                        } else if (!yourCity.equals("") && maxPriceInt != -1) { // filter by price and city
+
+                            if (temp.getCity().equals(yourCity) && temp.getPrice() <= maxPriceInt) {
+                                allApartments.add(temp);
+                            }
+                        }
+
+                    }
+                    if(allApartments.size()>0){
+
+                        index=0;
+                        show();
+
+                    }
+
+                }
+                else { // the fields are empty
+
+
+                    allApartments.clear();
+                    allApartments.addAll(copyAllApartments);
+                    index = 0;
+                    Toast.makeText(apartments_scan.this, "show all results", Toast.LENGTH_LONG).show();
+                    show();
+                }
+
+                if(allApartments.size()==0) { // if we filtered but there is no any result
+
+                    allApartments.addAll(copyAllApartments);
+                    index=0;
+                    Toast.makeText(apartments_scan.this, "There is no result for your search", Toast.LENGTH_LONG).show();
+                    show();
+
+                }
+            }
+        });
+
         mHeart.setOnClickListener((new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -167,22 +258,12 @@ public class apartments_scan extends AppCompatActivity {
             public void onClick(View view) {
 
                 index++;
-                if(index>=allRoomsHolders.size()){
+                if(index>= allApartments.size()){
 
                     index=0;
 
                 }
-
-                currentApartment =allRoomsHolders.get(index);
-                 imgUrl= currentApartment.getImg(0);
-                if(imgUrl.equals(""))
-                    imgUrl="https://firebasestorage.googleapis.com/v0/b/appartners-2735b.appspot.com/o/uploads%2FnoPhoto.png?alt=media&token=8fb5f8d9-a80f-4360-843d-7aae13546d13";
-
-                Picasso.with(apartments_scan.this)
-                        .load(imgUrl)
-                        .into(imgView);
-                mCityText.setText( "City: " + currentApartment.getCity() );
-
+                    show();
 
             }
         }));
@@ -195,20 +276,11 @@ public class apartments_scan extends AppCompatActivity {
                 index--;
                 if(index<0){
 
-                    index=allRoomsHolders.size()-1;
+                    index= allApartments.size()-1;
 
                 }
 
-                currentApartment =allRoomsHolders.get(index);
-                 imgUrl= currentApartment.getImg(0);
-                if(imgUrl.equals(""))
-                    imgUrl="https://firebasestorage.googleapis.com/v0/b/appartners-2735b.appspot.com/o/uploads%2FnoPhoto.png?alt=media&token=8fb5f8d9-a80f-4360-843d-7aae13546d13";
-
-                Picasso.with(apartments_scan.this)
-                        .load(imgUrl)
-                        .into(imgView);
-                mCityText.setText( "City: " + currentApartment.getCity() );
-
+                show();
 
 
             }
@@ -336,6 +408,20 @@ public class apartments_scan extends AppCompatActivity {
 
     }
 
+    public void show(){
+
+
+        imgUrl=allApartments.get(index).getImg(0);
+        if(imgUrl.equals(""))
+            imgUrl="https://firebasestorage.googleapis.com/v0/b/appartners-2735b.appspot.com/o/uploads%2FnoPhoto.png?alt=media&token=8fb5f8d9-a80f-4360-843d-7aae13546d13";
+
+        Picasso.with(apartments_scan.this) // show first User img
+                .load(imgUrl)
+                .into(imgView);
+        currentApartment =allApartments.get(index);
+        mCityText.setText( "City: " + currentApartment.getCity() );
+
+    }
 
 
 }
