@@ -3,6 +3,10 @@ package com.example.appartners;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.firebase.database.DataSnapshot;
@@ -11,6 +15,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
+
+import java.util.ArrayList;
 
 public class picsApartInfo extends AppCompatActivity {
 
@@ -19,14 +26,21 @@ public class picsApartInfo extends AppCompatActivity {
     private String apartmentEmail;
     private String imgUrl;
     private Apartment currentApartment;
-
+    private LinearLayout gallery;
+    private LayoutInflater inflater;
     private TextView mPrice, mOccupants, mStreet, mRoomNums, mTypeOfRoom;
+
+    private ArrayList<String> allImages;
+    private ImageView mPicApart;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pics_apart_info);
+
+        gallery=findViewById(R.id.gallery);
+        inflater=LayoutInflater.from(this);
 
         mPrice = findViewById( R.id.priceText );
         mOccupants = findViewById( R.id.occupantsText );
@@ -47,18 +61,31 @@ public class picsApartInfo extends AppCompatActivity {
 
                 for (DataSnapshot data : dataSnapshot.getChildren()) {
 
-                     currentApartment = data.getValue(Apartment.class);
+                    currentApartment = data.getValue(Apartment.class);
 
-                    mPrice.setText( "Price: " + currentApartment.getPrice() );
-                    mOccupants.setText( "Occupants: " + currentApartment.getOccupants() );
-                    mStreet.setText( "Street: " + currentApartment.getStreet() );
-                    mRoomNums.setText( "Number Rooms: " + currentApartment.getNumOfRooms() );
-                    mTypeOfRoom.setText( "Type Of Room: " + currentApartment.getRoomType() );
+                    mPrice.setText("Price: " + currentApartment.getPrice());
+                    mOccupants.setText("Occupants: " + currentApartment.getOccupants());
+                    mStreet.setText("Street: " + currentApartment.getStreet());
+                    mRoomNums.setText("Number Rooms: " + currentApartment.getNumOfRooms());
+                    mTypeOfRoom.setText("Type Of Room: " + currentApartment.getRoomType());
 
-                    mDatabaseApartment.child(currentApartment.getId()).setValue(currentApartment);
+                    allImages = currentApartment.getImagesUri();
 
                 }
 
+
+                if (allImages.size() > 0) {
+
+                    for(int i=0;i<allImages.size();i++){
+
+                        imgUrl = allImages.get(i);
+                        View view = inflater.inflate(R.layout.item, gallery, false);
+                        mPicApart=view.findViewById(R.id.showPicApart);
+                        Picasso.with(picsApartInfo.this).load(imgUrl).resize(295,185).into(mPicApart);
+                        gallery.addView(view);
+
+                    }
+                }
             }
 
             @Override
@@ -66,6 +93,7 @@ public class picsApartInfo extends AppCompatActivity {
 
             }
         });
+
 
 
 

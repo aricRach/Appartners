@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<LinearLayout xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="326dp"
+    android:layout_height="259dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    app:layout_editor_absoluteX="8dp"
+    app:layout_editor_absoluteY="8dp"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+<!--    <ImageView-->
+<!--        android:layout_width="200dp"-->
+<!--        android:layout_height="200dp"-->
+<!--        android:scaleType="center"-->
+<!--        tools:srcCompat="@tools:sample/avatars" />-->
+
+
+    <ImageView
+        android:id="@+id/showPicApart"
+        android:layout_width="326dp"
+        android:layout_height="259dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:clickable="true" />
+</LinearLayout>
