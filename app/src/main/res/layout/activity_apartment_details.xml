@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/gradient"
     tools:context=".apartment_details">
 
 
@@ -13,14 +14,12 @@
         android:layout_height="50dp"
         android:layout_marginStart="40dp"
         android:layout_marginLeft="40dp"
-        android:layout_marginTop="83dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="40dp"
         android:layout_marginRight="40dp"
-        android:layout_marginBottom="13dp"
         app:cardBackgroundColor="@color/colorAccent"
         app:cardCornerRadius="25dp"
         app:cardElevation="10dp"
-        app:layout_constraintBottom_toTopOf="@+id/progress_bar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/image_view">
@@ -43,35 +42,17 @@
     </androidx.cardview.widget.CardView>
 
 
-
-    <ImageView
-        android:id="@+id/imageView2"
-        android:layout_width="82dp"
-        android:layout_height="68dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="12dp"
-        android:layout_marginEnd="100dp"
-        android:layout_marginRight="100dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/partners" />
-
-
     <ImageView
         android:id="@+id/image_view"
-        android:layout_width="154dp"
-        android:layout_height="95dp"
+        android:layout_width="202dp"
+        android:layout_height="116dp"
         android:layout_above="@id/progress_bar"
-        android:layout_marginStart="45dp"
-        android:layout_marginLeft="45dp"
-        android:layout_marginTop="92dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="56dp"
         android:layout_marginRight="56dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/button_choose_image"
+        app:layout_constraintHorizontal_bias="0.891"
+        app:layout_constraintStart_toEndOf="@+id/takePicButton"
         app:layout_constraintTop_toBottomOf="@+id/priceText" />
 
     <ProgressBar
@@ -84,37 +65,34 @@
         android:layout_marginTop="13dp"
         android:layout_marginEnd="41dp"
         android:layout_marginRight="41dp"
-        android:layout_marginBottom="71dp"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/updateCard" />
 
     <Button
         android:id="@+id/button_choose_image"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="15dp"
-        android:layout_marginLeft="15dp"
+        android:layout_width="120dp"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="52dp"
-        android:layout_marginRight="52dp"
         android:text="Choose file"
-        app:layout_constraintEnd_toStartOf="@+id/image_view"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/takePicButton" />
 
     <Button
         android:id="@+id/takePicButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="120dp"
+        android:layout_height="50dp"
         android:layout_alignParentBottom="true"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
-        android:layout_marginTop="108dp"
+        android:layout_marginTop="8dp"
         android:text="Take picture"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/streetText" />
+        app:layout_constraintTop_toBottomOf="@+id/priceText" />
 
     <EditText
         android:id="@+id/roomsNumText"
@@ -125,14 +103,11 @@
         android:layout_marginTop="22dp"
         android:layout_marginEnd="91dp"
         android:layout_marginRight="91dp"
-        android:layout_marginBottom="9dp"
         android:ems="10"
         android:hint="number of rooms"
         android:inputType="number"
-        app:layout_constraintBottom_toTopOf="@+id/occupantsText"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toEndOf="@+id/imageView2"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
@@ -144,11 +119,9 @@
         android:layout_marginTop="9dp"
         android:layout_marginEnd="91dp"
         android:layout_marginRight="91dp"
-        android:layout_marginBottom="9dp"
         android:ems="10"
         android:hint="type of room"
         android:inputType="text"
-        app:layout_constraintBottom_toTopOf="@+id/streetText"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/occupantsText" />
@@ -162,11 +135,9 @@
         android:layout_marginTop="9dp"
         android:layout_marginEnd="91dp"
         android:layout_marginRight="91dp"
-        android:layout_marginBottom="9dp"
         android:ems="10"
         android:hint="street"
         android:inputType="textPersonName"
-        app:layout_constraintBottom_toTopOf="@+id/priceText"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/typeOfRoomText" />
@@ -180,11 +151,9 @@
         android:layout_marginTop="9dp"
         android:layout_marginEnd="91dp"
         android:layout_marginRight="91dp"
-        android:layout_marginBottom="9dp"
         android:ems="10"
         android:hint="Number of occupants"
         android:inputType="number"
-        app:layout_constraintBottom_toTopOf="@+id/typeOfRoomText"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/roomsNumText" />

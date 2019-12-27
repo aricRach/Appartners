@@ -8,9 +8,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".login"
-    android:background="@drawable/gradient"
     tools:ignore="NamespaceTypo">
 
+    <VideoView
+        android:id="@+id/video"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#32FFFFFF"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="0dp" />
 
     <EditText
         android:id="@+id/password"
@@ -19,12 +25,13 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
+        android:background="#FFFFFF"
+        android:drawableLeft="@drawable/ic_action_pass"
         android:ems="10"
         android:hint="Password"
         android:inputType="textPassword"
         android:padding="10dp"
         android:textSize="14sp"
-        android:drawableLeft="@drawable/ic_action_pass"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -51,6 +58,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="24dp"
         android:layout_marginEnd="16dp"
+        android:background="#FFFFFF"
         android:drawableLeft="@drawable/ic_action_user"
         android:ems="10"
         android:hint="Your Mail"
@@ -70,6 +78,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
         android:text="New Here ? Create Account"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
@@ -81,6 +90,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
         android:text="Forgot Password?"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
@@ -95,6 +105,7 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="115dp"
         android:layout_marginRight="115dp"
+        android:background="#20FFFFFF"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"

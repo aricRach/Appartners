@@ -4,6 +4,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -13,6 +15,7 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.VideoView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -28,6 +31,7 @@ import com.google.firebase.database.ValueEventListener;
 public class login extends AppCompatActivity {
 
 
+    VideoView mVideo;
     EditText mEmail, mPassword;
     Button mLoginBtn;
     TextView mCreateBtn, mforgotPass;
@@ -40,6 +44,7 @@ public class login extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        mVideo = findViewById( R.id.video );
         mEmail = findViewById(R.id.Email);
         mPassword = findViewById(R.id.password);
         progressBar = findViewById(R.id.progressBar);
@@ -48,6 +53,18 @@ public class login extends AppCompatActivity {
         mCreateBtn = findViewById(R.id.createText);
         mforgotPass = findViewById( R.id.forgotPass );
 //        progressBar.setVisibility(View.INVISIBLE);
+
+        String path = "android.resource://com.example.appartners/"+R.raw.video;
+        Uri u = Uri.parse( path );
+        mVideo.setVideoURI( u );
+        mVideo.start();
+
+        mVideo.setOnPreparedListener( new MediaPlayer.OnPreparedListener() {
+            @Override
+            public void onPrepared(MediaPlayer mp) {
+                mp.setLooping( true );
+            }
+        } );
 
         databaseLoginForPartner = FirebaseDatabase.getInstance().getReference("Partner");
 
@@ -145,5 +162,24 @@ public class login extends AppCompatActivity {
                 startActivity( new Intent( login.this, resetPassword.class ) );
             }
         } );
+
+
+    }
+    @Override
+    protected void onResume(){
+        mVideo.resume();
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause(){
+        mVideo.suspend();
+        super.onPause();
+    }
+
+    @Override
+    protected void onDestroy(){
+        mVideo.stopPlayback();
+        super.onDestroy();
     }
 }
