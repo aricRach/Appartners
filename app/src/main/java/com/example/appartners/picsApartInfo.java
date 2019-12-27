@@ -28,7 +28,7 @@ public class picsApartInfo extends AppCompatActivity {
     private Apartment currentApartment;
     private LinearLayout gallery;
     private LayoutInflater inflater;
-    private TextView mPrice, mOccupants, mStreet, mRoomNums, mTypeOfRoom;
+    private TextView mEmail, mName, mPrice, mOccupants, mStreet, mRoomNums, mTypeOfRoom;
 
     private ArrayList<String> allImages;
     private ImageView mPicApart;
@@ -42,6 +42,8 @@ public class picsApartInfo extends AppCompatActivity {
         gallery=findViewById(R.id.gallery);
         inflater=LayoutInflater.from(this);
 
+        mEmail = findViewById( R.id.emailText );
+        mName = findViewById( R.id.nameText );
         mPrice = findViewById( R.id.priceText );
         mOccupants = findViewById( R.id.occupantsText );
         mStreet = findViewById( R.id.streetText );
@@ -63,6 +65,8 @@ public class picsApartInfo extends AppCompatActivity {
 
                     currentApartment = data.getValue(Apartment.class);
 
+                    mName.setText( "Name: " + currentApartment.getName() );
+                    mEmail.setText( "Email: " + currentApartment.getEmail() );
                     mPrice.setText("Price: " + currentApartment.getPrice());
                     mOccupants.setText("Occupants: " + currentApartment.getOccupants());
                     mStreet.setText("Street: " + currentApartment.getStreet());
