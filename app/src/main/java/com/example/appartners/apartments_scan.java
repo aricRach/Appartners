@@ -332,10 +332,10 @@ public class apartments_scan extends AppCompatActivity {
                 startActivity(intent);
                 return true;
 
-            case R.id.apartment_scan_item:
-                intent=new Intent(this, apartments_scan.class);
-                startActivity(intent);
-                return true;
+//            case R.id.apartment_scan_item:
+//                intent=new Intent(this, apartments_scan.class);
+//                startActivity(intent);
+//                return true;
 
 
             case R.id.LogOutItem:

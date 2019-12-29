@@ -6,9 +6,9 @@
         android:title="Personal details" />
 
 
-    <item
-        android:id="@+id/apartment_scan_item"
-        android:title="Apartment scan" />
+<!--    <item-->
+<!--        android:id="@+id/apartment_scan_item"-->
+<!--        android:title="Apartment scan" />-->
 
     <item
         android:id="@+id/my_fav_item"
