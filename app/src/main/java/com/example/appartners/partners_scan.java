@@ -53,7 +53,7 @@ public class partners_scan extends AppCompatActivity {
     private TextView mZeroItemsText;
 
     private EditText mMaxAge,mGender;
-    private Button mSearch;
+    private ImageButton mSearch;
     //private boolean isFiltered;
     private DataSnapshot allPartnerList;
 
