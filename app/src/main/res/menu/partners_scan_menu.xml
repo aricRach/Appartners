@@ -10,9 +10,9 @@
         android:id="@+id/apartment_details_Item"
         android:title="Apartment details" />
     
-    <item
-        android:id="@+id/partners_scan_item"
-        android:title="Partners scan" />
+<!--    <item-->
+<!--        android:id="@+id/partners_scan_item"-->
+<!--        android:title="Partners scan" />-->
 
     <item
         android:id="@+id/my_fav_item"
@@ -21,6 +21,11 @@
     <item
         android:id="@+id/LogOutItem"
         android:title="Log Out" />
+
+    <item
+        android:id="@+id/my_uploads_items"
+        android:title="My uploads" />
+
 
     <item
         android:icon="@color/colorPrimary"

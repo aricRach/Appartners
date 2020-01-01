@@ -119,27 +119,7 @@ public class login extends AppCompatActivity {
 
                                 }
                             });
-//                            query.addListenerForSingleValueEvent(new ValueEventListener() {
-//                                @Override
-//                                public void onDataChange(DataSnapshot dataSnapshot) {
-//
-//                                    for (DataSnapshot data : dataSnapshot.getChildren()) {
-//
-//                                        User currentUser = data.getValue(User.class);
-//                                        String searchApartmentOrPartner = currentUser.getAprPrt();
-//                                        if(searchApartmentOrPartner.equals("Searching Partner")) {
-//                                            startActivity(new Intent(getApplicationContext(), partners_scan.class));
-//                                        }else if(searchApartmentOrPartner.equals("Searching Apartment")){
-//                                            startActivity(new Intent(getApplicationContext(), apartments_scan.class));
-//                                        }
-//                                    }
-//                                }
-//
-//                                @Override
-//                                public void onCancelled(DatabaseError databaseError) {
-//
-//                                }
-//                            });
+
 
                         }else{
                             Toast.makeText(login.this, "Error ! " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();

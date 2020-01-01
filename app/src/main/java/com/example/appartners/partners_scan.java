@@ -339,10 +339,18 @@ public class partners_scan extends AppCompatActivity {
                 startActivity(intent);
                 return true;
 
-            case R.id.partners_scan_item:
-                intent=new Intent(this, partners_scan.class);
+//            case R.id.partners_scan_item:
+//                intent=new Intent(this, partners_scan.class);
+//                startActivity(intent);
+//                return true;
+
+
+            case R.id.my_uploads_items:
+                intent=new Intent(this, myUploads.class);
                 startActivity(intent);
                 return true;
+
+
 
 
             case R.id.LogOutItem:
