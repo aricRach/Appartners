@@ -49,7 +49,7 @@ public class apartments_scan extends AppCompatActivity {
     private TextView mCityText;
     private TextView mZeroItemsText;
     private EditText mMaxPrice;
-    private Button mSearch;
+    private ImageButton mSearch;
 
     private ArrayList<Apartment> copyAllApartments;
     private DataSnapshot allApartmentList;

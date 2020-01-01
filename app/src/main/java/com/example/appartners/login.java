@@ -2,6 +2,7 @@ package com.example.appartners;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 
 import android.content.Intent;
 import android.media.MediaPlayer;
@@ -31,9 +32,9 @@ import com.google.firebase.database.ValueEventListener;
 public class login extends AppCompatActivity {
 
 
-    VideoView mVideo;
+ //   VideoView mVideo;
     EditText mEmail, mPassword;
-    Button mLoginBtn;
+    CardView mLoginBtn;
     TextView mCreateBtn, mforgotPass;
     ProgressBar progressBar;
     FirebaseAuth fAuth;
@@ -44,7 +45,7 @@ public class login extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        mVideo = findViewById( R.id.video );
+      //  mVideo = findViewById( R.id.video );
         mEmail = findViewById(R.id.Email);
         mPassword = findViewById(R.id.password);
         progressBar = findViewById(R.id.progressBar);
@@ -54,17 +55,17 @@ public class login extends AppCompatActivity {
         mforgotPass = findViewById( R.id.forgotPass );
 //        progressBar.setVisibility(View.INVISIBLE);
 
-        String path = "android.resource://com.example.appartners/"+R.raw.video;
-        Uri u = Uri.parse( path );
-        mVideo.setVideoURI( u );
-        mVideo.start();
+//        String path = "android.resource://com.example.appartners/"+R.raw.video;
+//        Uri u = Uri.parse( path );
+//        mVideo.setVideoURI( u );
+//        mVideo.start();
 
-        mVideo.setOnPreparedListener( new MediaPlayer.OnPreparedListener() {
-            @Override
-            public void onPrepared(MediaPlayer mp) {
-                mp.setLooping( true );
-            }
-        } );
+ //       mVideo.setOnPreparedListener( new MediaPlayer.OnPreparedListener() {
+//            @Override
+//            public void onPrepared(MediaPlayer mp) {
+//                mp.setLooping( true );
+//            }
+//        } );
 
         databaseLoginForPartner = FirebaseDatabase.getInstance().getReference("Partner");
 
@@ -165,21 +166,21 @@ public class login extends AppCompatActivity {
 
 
     }
-    @Override
-    protected void onResume(){
-        mVideo.resume();
-        super.onResume();
-    }
-
-    @Override
-    protected void onPause(){
-        mVideo.suspend();
-        super.onPause();
-    }
-
-    @Override
-    protected void onDestroy(){
-        mVideo.stopPlayback();
-        super.onDestroy();
-    }
+ //   @Override
+//    protected void onResume(){
+//        mVideo.resume();
+//        super.onResume();
+//    }
+//
+//    @Override
+//    protected void onPause(){
+//        mVideo.suspend();
+//        super.onPause();
+//    }
+//
+//    @Override
+//    protected void onDestroy(){
+//        mVideo.stopPlayback();
+//        super.onDestroy();
+//    }
 }

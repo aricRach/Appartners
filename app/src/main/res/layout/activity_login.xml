@@ -8,15 +8,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".login"
+    android:background="@drawable/gradient"
     tools:ignore="NamespaceTypo">
 
-    <VideoView
-        android:id="@+id/video"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#32FFFFFF"
-        tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="0dp" />
+
 
     <EditText
         android:id="@+id/password"
@@ -25,8 +20,6 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
-        android:background="#FFFFFF"
-        android:drawableLeft="@drawable/ic_action_pass"
         android:ems="10"
         android:hint="Password"
         android:inputType="textPassword"
@@ -37,19 +30,36 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/Email" />
 
-    <Button
+    <androidx.cardview.widget.CardView
         android:id="@+id/loginBtn"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="12dp"
         android:layout_marginEnd="16dp"
-        android:text="LOGIN"
-        android:textSize="13dp"
+        app:cardBackgroundColor="@color/colorAccent"
+        app:cardCornerRadius="25dp"
+        app:cardElevation="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/password" />
+        app:layout_constraintTop_toBottomOf="@+id/password">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/login"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="LOGIN"
+                android:textColor="@android:color/white"
+
+                android:textSize="18dp" />
+        </RelativeLayout>
+    </androidx.cardview.widget.CardView>
+
 
     <EditText
         android:id="@+id/Email"
@@ -58,8 +68,6 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="24dp"
         android:layout_marginEnd="16dp"
-        android:background="#FFFFFF"
-        android:drawableLeft="@drawable/ic_action_user"
         android:ems="10"
         android:hint="Your Mail"
         android:inputType="textEmailAddress"
@@ -105,7 +113,6 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="115dp"
         android:layout_marginRight="115dp"
-        android:background="#20FFFFFF"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
