@@ -19,13 +19,15 @@
         android:title="Log Out" />
 
     <item
+        android:checkable="false"
         android:icon="@color/colorPrimary"
         android:title="             OPTIONS" />
 
 
     <item
         android:id="@+id/RemoveItem"
-        android:title="Remove User" />
+        android:title="Remove User"
+        />
 
 
 

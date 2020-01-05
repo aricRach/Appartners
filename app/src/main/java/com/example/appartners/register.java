@@ -126,7 +126,7 @@ final AutoCompleteTextView actv =  findViewById(R.id.autoCompleteTextView);
             @Override
             public void onClick(View v){
                 name = mFullName.getText().toString().trim();
-                email = mEmail.getText().toString().trim();
+                email = mEmail.getText().toString().toLowerCase().trim();
                 password = mPassword.getText().toString().trim();
                 gender="";
                   yourCity = actv.getText().toString().trim();

@@ -14,16 +14,8 @@ public class User {
     private String tellAbout; // tell about yourself/ your Apartment
     private String phone;
 
-    //private String aprPrt;
-  //  private String uId;
-    //private Apartment room;
-    //private String userId;
-    // not need to be in constructor because this is the elements that in personal details.
-    //private String imgUrl;
+    public User(){}
 
-    public User(){
-
-    }
 
     // constructor for register page
     public User(String id,String name, String gender, String city, int age, String email) {
@@ -80,32 +72,20 @@ public class User {
         return phone;
     }
 
-    public void setGender(String gender) {
-        this.gender = gender;
-    }
-
     public String getCity() {
         return city;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
     }
 
     public void setCity(String city) {
         this.city = city;
     }
 
-    public int getAge() {
-        return age;
-    }
-
     public void setAge(int age) {
         this.age = age;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     public void setTellAbout(String tellAbout) {
@@ -116,6 +96,17 @@ public class User {
         this.phone = phone;
     }
 
+    public int getAge() {
+        return age;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
     @Override
     public String toString() {

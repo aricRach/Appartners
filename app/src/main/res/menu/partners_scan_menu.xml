@@ -19,16 +19,15 @@
         android:title="My favorites" />
 
     <item
+        android:id="@+id/my_uploads_items"
+        android:title="My uploads" />
+
+    <item
         android:id="@+id/LogOutItem"
         android:title="Log Out" />
 
     <item
-        android:id="@+id/my_uploads_items"
-        android:title="My uploads" />
-
-
-    <item
-        android:icon="@color/colorPrimary"
+        android:icon="@color/colorAccent"
         android:title="             OPTIONS" />
 
     <item
