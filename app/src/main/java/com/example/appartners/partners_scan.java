@@ -141,7 +141,6 @@ public class partners_scan extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-               // isFiltered=false;
                 int maxAgeInt=-1;
                 String gender=mGender.getText().toString().trim();
                 String maxAgeText= mMaxAge.getText().toString().trim();
@@ -159,7 +158,7 @@ public class partners_scan extends AppCompatActivity {
 
                         if (!gender.equals("") && maxAgeInt == -1) { // only gender
 
-                            if (temp.getGender().equals(gender)) {
+                            if (temp.getGender().toUpperCase().equals(gender.toUpperCase())) {
 
                                 allPartners.add(temp);
                             }
@@ -173,7 +172,7 @@ public class partners_scan extends AppCompatActivity {
 
                         } else if (!gender.equals("") && maxAgeInt != -1) { // filter by age and gender
 
-                            if (temp.getGender().equals(gender) && temp.getAge() <= maxAgeInt) {
+                            if (temp.getGender().toUpperCase().equals(gender.toUpperCase()) && temp.getAge() <= maxAgeInt) {
                                 allPartners.add(temp);
                             }
                         }

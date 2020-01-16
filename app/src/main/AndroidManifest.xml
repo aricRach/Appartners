@@ -24,7 +24,6 @@
         <activity android:name=".picsUserInfo" />
         <activity android:name=".picsApartInfo" />
         <activity android:name=".apartment_details" />
-        <activity android:name=".apartments_filter" />
         <activity android:name=".apartments_scan" />
         <activity android:name=".partners_scan" />
         <activity android:name=".personal_details" />

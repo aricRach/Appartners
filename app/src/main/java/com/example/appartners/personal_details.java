@@ -338,7 +338,6 @@ public class personal_details extends AppCompatActivity {
                                     for (DataSnapshot data : dataSnapshot.getChildren()) {
 
                                         Partner currentPartner = data.getValue(Partner.class);
-                                        Toast.makeText(personal_details.this, currentPartner.toString(), Toast.LENGTH_SHORT).show();
                                         currentPartner.setImgUrl(urlGallery);
                                         //call updateField(currentUser) function that set the data from the page into currentUser object
                                         mDatabaseRefPartner.child(currentPartner.getId()).setValue(currentPartner);

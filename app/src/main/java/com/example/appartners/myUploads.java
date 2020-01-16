@@ -94,16 +94,20 @@ public class myUploads extends AppCompatActivity {
 
                     for(int i=0;i<allImages.size();i++){
 
+                        // show the images
                         imgUrl = allImages.get(i);
                         View view = inflater.inflate(R.layout.item, uploadsGallery, false);
                         mPicApart=view.findViewById(R.id.showPicApart);
                         Picasso.with(myUploads.this).load(imgUrl).resize(295,185).into(mPicApart);
                         uploadsGallery.addView(view);
-                        indexes[i]=""+i;
+                        // initialize the list to delete
+                        indexes[i]=""+(i+1);
                     }
                 }else{
 
                     mDelButton.setVisibility(View.INVISIBLE);
+                    mTitleText.setText("you don't have any upload");
+
                 }
             }
 
@@ -157,7 +161,7 @@ public class myUploads extends AppCompatActivity {
                 int size= selectedImages.size();
                 for(int i=0;i<size;i++){
 
-                    currImg = copyAllImg[Integer.parseInt(selectedImages.get(i))];
+                    currImg = copyAllImg[Integer.parseInt(selectedImages.get(i))-1];
                     if(!currImg.equals("")){
 
                         StorageReference photoRef = FirebaseStorage.getInstance().getReferenceFromUrl(currImg);
@@ -174,7 +178,7 @@ public class myUploads extends AppCompatActivity {
                         });
                     }
 
-                    allImages.remove(copyAllImg[Integer.parseInt(selectedImages.get(i))]);
+                    allImages.remove(copyAllImg[Integer.parseInt(selectedImages.get(i))-1]);
 
                 }
 
