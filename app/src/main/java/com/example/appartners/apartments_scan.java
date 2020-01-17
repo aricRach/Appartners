@@ -347,8 +347,8 @@ public class apartments_scan extends AppCompatActivity {
             case R.id.RemoveItem:
 
                 new AlertDialog.Builder(this)
-                        .setTitle("Delete entry")
-                        .setMessage("Are you sure you want to delete this entry?")
+                        .setTitle("Delete User")
+                        .setMessage("Are you sure you want to delete this User?")
 
                         // Specifying a listener allows you to take an action before dismissing the dialog.
                         // The dialog is automatically dismissed when a dialog button is clicked.

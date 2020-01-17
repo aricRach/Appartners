@@ -149,7 +149,7 @@ public class myUploads extends AppCompatActivity {
 
            );
 
-        dialogBuilder.setPositiveButton("done", new DialogInterface.OnClickListener() {
+        dialogBuilder.setPositiveButton("delete", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
 
